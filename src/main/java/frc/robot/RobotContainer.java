@@ -18,8 +18,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 
 public class RobotContainer {
-  private static final double MaxSpeed = 6; // 6 meters per second desired top speed
-  private static final double MaxAngularRate = Math.PI; // Half a rotation per second max angular velocity
+  private static final double MaxSpeed = Constants.Swerve.kMaxSpeedMetersPerSecond;
+  private static final double MaxAngularRate = Constants.Swerve.kMaxAngularVelocity;
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final Joystick left = new Joystick(0);
