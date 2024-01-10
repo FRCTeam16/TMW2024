@@ -1,11 +1,13 @@
 package frc.robot.commands;
 
 
-import edu.wpi.first.math.geometry.Translation2d;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Subsystems;
-import frc.robot.subsystems.RotationController;
 import frc.robot.subsystems.util.VisionAlignmentHelper;
 import frc.robot.subsystems.vision.Limelight.CameraMode;
 import frc.robot.subsystems.vision.Limelight.LEDMode;
@@ -15,9 +17,12 @@ public class VisionAlign extends Command {
     private VisionAlignmentHelper helper = new VisionAlignmentHelper();
     private double robotAngle = 180.0;
     private Pipeline visionPipeline = Pipeline.RetroHigh;
-    private double robotSpeed = 0.25;
     private int seenScans = 0;
 
+    private final SwerveRequest.FieldCentricFacingAngle alignDrive =
+    new SwerveRequest.FieldCentricFacingAngle()
+        .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+       
     public VisionAlign() {
         addRequirements(Subsystems.swerveSubsystem);
     }
@@ -38,7 +43,7 @@ public class VisionAlign extends Command {
     }
 
     public VisionAlign withRobotSpeed(double speedPercent) {
-        this.robotSpeed = speedPercent;
+        this.helper.overrideMaxSpeed(speedPercent);
         return this;
     }
     
@@ -54,27 +59,24 @@ public class VisionAlign extends Command {
     @Override
     public void execute() {
         // FIXME: Needs to use new swerve system
+        double currentAngle = Subsystems.swerveSubsystem.getPigeon2().getYaw().getValueAsDouble();
+        double horizontalComponent = this.helper.calculate();   // pid adjustment
 
-        // RotationController controller = Subsystems.swerveSubsystem.getRotationController();
-        // double currentAngle = Subsystems.swerveSubsystem.getYaw().getDegrees();
-        // double twist = controller.calculate(currentAngle, robotAngle);
-        // double horizontalComponent = this.helper.calculate();
+        // assuming field relative
+        double direction = (Math.abs(currentAngle) < 90) ? 1 : -1;
+        double velocity = direction * horizontalComponent * Constants.Swerve.kMaxSpeedMetersPerSecond;
 
-        // // assuming field relative
-        // double direction = (Math.abs(Subsystems.swerveSubsystem.getYaw().getDegrees()) < 90) ? 1 : -1;
-        // Translation2d translation = new Translation2d(0, direction * horizontalComponent);
+        // Track how long we've been in position
+        if (this.helper.inPosition()) {
+           seenScans++;
+        } else {
+            seenScans = 0;
+        }
 
-        // if (this.helper.inPosition()) {
-        //    seenScans++;
-        // } else {
-        //     seenScans = 0;
-        // }
-
-        // Subsystems.swerveSubsystem.drive(
-        //     translation.times(robotSpeed * Constants.Swerve.kMaxSpeedMetersPerSecond), 
-        //     Math.toRadians(twist), 
-        //     true, 
-        //     true);
+        Subsystems.swerveSubsystem.applyRequest( () ->
+            alignDrive.withVelocityX(0)
+            .withVelocityY(velocity)
+            .withTargetDirection(Rotation2d.fromDegrees(robotAngle)));
     }
 
     @Override

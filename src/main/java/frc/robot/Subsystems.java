@@ -5,6 +5,7 @@ import java.util.List;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.RotationController;
 import frc.robot.subsystems.DMS.LEDSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 
@@ -17,8 +18,10 @@ public class Subsystems {
     public static CommandSwerveDrivetrain swerveSubsystem;
     public static VisionSubsystem visionSubsystem;
     public static LEDSubsystem ledSubsystem;
-    
-    
+
+    // Utility
+    public static RotationController rotationController = new RotationController();
+
     public static List<Lifecycle> lifecycleSubsystems = new ArrayList<>();
 
     private Subsystems() {

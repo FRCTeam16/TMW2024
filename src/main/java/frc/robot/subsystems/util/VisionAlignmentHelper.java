@@ -46,7 +46,8 @@ public class VisionAlignmentHelper {
             output = this.pid.calculate(visionInfo.xOffset, 0);
         }
         // double clampVal = SmartDashboard.getNumber("VisionAlign/maxSpeed", maxSpeed);
-        double clampVal = maxSpeed;        double clampedValue = MathUtil.clamp(output, -clampVal, clampVal);
+        double clampVal = maxSpeed;        
+        double clampedValue = MathUtil.clamp(output, -clampVal, clampVal);
         return clampedValue;
     }
 
