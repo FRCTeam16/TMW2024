@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.generated.TunerConstants;
 
 public class RobotContainer {
@@ -35,20 +36,21 @@ public class RobotContainer {
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
+  private final Trigger robotCentric = new Trigger(left::getTrigger);
+
   private void configureBindings() {
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(-right.getY() * MaxSpeed) // Drive forward with
-                                                                                    // negative Y (forward)
-            .withVelocityY(-right.getX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(-left.getX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        ));
+        drivetrain.applyRequest(() -> drive.withVelocityX(right.getX() * MaxSpeed)
+            .withVelocityY(-right.getY() * MaxSpeed)
+            .withRotationalRate(-left.getX() * MaxAngularRate)));
 
     xboxController.a().whileTrue(drivetrain.applyRequest(() -> brake));
     xboxController.b().whileTrue(drivetrain
-        .applyRequest(() -> point.withModuleDirection(new Rotation2d(-xboxController.getLeftY(), -xboxController.getLeftX()))));
+        .applyRequest(
+            () -> point.withModuleDirection(new Rotation2d(-xboxController.getLeftY(), -xboxController.getLeftX()))));
 
     // reset the field-centric heading on left bumper press
-    xboxController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
+    robotCentric.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
