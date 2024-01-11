@@ -18,6 +18,8 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     // try force zero wheel?
 
+    Subsystems.swerveSubsystem.getPigeon2().setYaw(0);
+
     /*
      * addPeriodic(Subsystems.ledSubsystem::Report, 0.1);
      */

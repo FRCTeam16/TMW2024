@@ -25,8 +25,9 @@ public class RobotContainer {
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final Joystick left = new Joystick(0);
   private final Joystick right = new Joystick(1);
-  private final CommandXboxController xboxController = new CommandXboxController(2); // My joystick
-  private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
+  private final CommandXboxController xboxController = new CommandXboxController(2); 
+  private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; 
+  private Subsystems subsystems = Subsystems.getInstance();
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -38,10 +39,13 @@ public class RobotContainer {
 
   private final Trigger robotCentric = new Trigger(left::getTrigger);
 
+  
+
   private void configureBindings() {
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(right.getX() * MaxSpeed)
-            .withVelocityY(-right.getY() * MaxSpeed)
+        drivetrain.applyRequest(() -> drive
+            .withVelocityX(-right.getY() * MaxSpeed)
+            .withVelocityY(-right.getX() * MaxSpeed)
             .withRotationalRate(-left.getX() * MaxAngularRate)));
 
     xboxController.a().whileTrue(drivetrain.applyRequest(() -> brake));
