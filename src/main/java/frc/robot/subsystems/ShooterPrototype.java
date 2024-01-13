@@ -35,9 +35,8 @@ public class ShooterPrototype extends SubsystemBase implements Lifecycle {
         SmartDashboard.setDefaultNumber("ShooterPrototype/OpenLoop1", 0);
         SmartDashboard.setDefaultNumber("ShooterPrototype/OpenLoop2", 0);
 
-        SmartDashboard.setDefaultNumber("ShooterPrototype/ClosedLoop1_V", 0);
-        SmartDashboard.setDefaultNumber("ShooterPrototype/ClosedLoop2_V", 0);
-
+        pidHelper1.initialize(0, 0, 0, 0, 0, 0);
+        pidHelper2.initialize(0, 0, 0, 0, 0, 0);
     }
 
     @Override
@@ -48,23 +47,19 @@ public class ShooterPrototype extends SubsystemBase implements Lifecycle {
     }
     
     public void enableMotor1OpenLoop() {
-        System.out.println("**************** enableMotor1OpenLoop");
         this.controlMode = ControlMode.OpenLoop;
         this.motor1Enabled = true;
     }
 
     public void disableMotor1OpenLoop() {
-        System.out.println("**************** disableMotor1OpenLoop");
         this.motor1Enabled = false;
     }
 
     public void disableMotor2OpenLoop() {
-        System.out.println("**************** disableMotor2OpenLoop");
         this.motor2Enabled = false;
     }
 
     public void enableMotor2OpenLoop() {
-        System.out.println("**************** enableMotor2OpenLoop");
         this.controlMode = ControlMode.OpenLoop;
         this.motor2Enabled = true;
     }
@@ -115,17 +110,15 @@ public class ShooterPrototype extends SubsystemBase implements Lifecycle {
             pid1.setP(pidHelper1.kP);
             pid1.setI(pidHelper1.kI);
             pid1.setD(pidHelper1.kD);
-            var speed1 = SmartDashboard.getNumber("ShooterPrototype/ClosedLoop1_V", 0);
 
             var pid2 = motor2.getPIDController();
             pid2.setP(pidHelper1.kP);
             pid2.setI(pidHelper1.kI);
             pid2.setD(pidHelper1.kD);
-            var speed2 = SmartDashboard.getNumber("ShooterPrototype/ClosedLoop2_V", 0);
 
             if (closedLoopEnabled) {
-                pid1.setReference(speed1, ControlType.kVelocity);
-                pid2.setReference(speed2, ControlType.kVelocity);
+                pid1.setReference(pidHelper1.kV, ControlType.kVelocity);
+                pid2.setReference(pidHelper2.kV, ControlType.kVelocity);
             } else {
                 pid1.setReference(0, ControlType.kVelocity);
                 pid2.setReference(0, ControlType.kVelocity);
