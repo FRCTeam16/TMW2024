@@ -12,11 +12,16 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.ShooterPrototype;
 
 public class RobotContainer {
   private static final double MaxSpeed = Constants.Swerve.kMaxSpeedMetersPerSecond;
@@ -39,6 +44,9 @@ public class RobotContainer {
 
   private final Trigger robotCentric = new Trigger(left::getTrigger);
 
+  private final Trigger shooterPrototypeOpenLoop = xboxController.x();
+  private final Trigger shooterPrototypeClosedLoop = xboxController.a();
+  
   
 
   private void configureBindings() {
@@ -48,10 +56,14 @@ public class RobotContainer {
             .withVelocityY(-right.getX() * MaxSpeed)
             .withRotationalRate(-left.getX() * MaxAngularRate)));
 
-    xboxController.a().whileTrue(drivetrain.applyRequest(() -> brake));
+    xboxController.y().whileTrue(drivetrain.applyRequest(() -> brake));
     xboxController.b().whileTrue(drivetrain
         .applyRequest(
             () -> point.withModuleDirection(new Rotation2d(-xboxController.getLeftY(), -xboxController.getLeftX()))));
+
+    shooterPrototypeOpenLoop.onTrue(new InstantCommand(Subsystems.shooterPrototype::toggleOpenLoop));
+    shooterPrototypeClosedLoop.onTrue(new InstantCommand(Subsystems.shooterPrototype::toggleClosedLoop));
+
 
     // reset the field-centric heading on left bumper press
     robotCentric.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
