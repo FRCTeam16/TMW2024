@@ -1,7 +1,9 @@
 package frc.robot.auto.strategies;
 
+import edu.wpi.first.networktables.Subscriber;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Subsystems;
 import frc.robot.commands.auto.InitializeAutoState;
 
 public class DebugAuto extends SequentialCommandGroup {
@@ -9,8 +11,9 @@ public class DebugAuto extends SequentialCommandGroup {
     // double speed = 0.5;
     // double offset = -90.0;
     addCommands(
-      new InitializeAutoState(180),
+      new InitializeAutoState(0),
       new PrintCommand("DEBUG AUTO")
+      // Subsystems.swerveSubsystem.getAutoPath("Test")
       // new RotateToAngle(0)
       //   .withTimeout(3)
     );

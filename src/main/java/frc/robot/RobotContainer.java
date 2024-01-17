@@ -5,23 +5,21 @@
 package frc.robot;
 
 import com.ctre.phoenix6.Utils;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.auto.AutoManager;
+import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.ShooterPrototype;
 
 public class RobotContainer {
   private static final double MaxSpeed = Constants.Swerve.kMaxSpeedMetersPerSecond;
@@ -33,6 +31,7 @@ public class RobotContainer {
   private final CommandXboxController xboxController = new CommandXboxController(2); 
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; 
   private Subsystems subsystems = Subsystems.getInstance();
+  private final AutoManager autoManager = new AutoManager();
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -76,10 +75,16 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
+    configureDashboardButtons();
+  }
+
+  private void configureDashboardButtons() {
+    
+    SmartDashboard.putData("Tare Odometry", new RunWithDisabledInstantCommand( () -> Subsystems.swerveSubsystem.tareEverything()));
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return autoManager.getSelectedCommand();
   }
 
   public void teleopInit() {

@@ -8,11 +8,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auto.strategies.DebugAuto;
+import frc.robot.auto.strategies.DebugPathAuto;
 
 public class AutoManager {
 
     public enum AutoStrategies {
-        DebugAuto
+        DebugAuto,
+        DebugTestPath,
+        DebugTestMultipath,
+        DebugCurly
     }
 
     private final SendableChooser<AutoStrategies> chooser = new SendableChooser<>();
@@ -20,6 +24,9 @@ public class AutoManager {
 
     public AutoManager() {
         registerStrategy("Debug Auto", AutoStrategies.DebugAuto, DebugAuto::new);
+        registerStrategy("Test Path", AutoStrategies.DebugTestPath, () -> new DebugPathAuto("TestStageLeft"));
+        registerStrategy("Test MultiPath", AutoStrategies.DebugTestMultipath, () -> new DebugPathAuto("Multipoint Test"));
+        registerStrategy("Test Curly", AutoStrategies.DebugCurly, () -> new DebugPathAuto("TestCurly"));
 
         // Send selector Dashboard. If it doesn't show in SD, you may need to change the
         // name here.
