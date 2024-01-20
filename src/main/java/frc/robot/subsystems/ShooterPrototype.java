@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.util.PIDHelper;
@@ -12,6 +13,10 @@ public class ShooterPrototype extends SubsystemBase implements Lifecycle {
     private CANSparkMax motor1 = new CANSparkMax(31, MotorType.kBrushless);
     private CANSparkMax motor2 = new CANSparkMax(32, MotorType.kBrushless);
 
+    private Servo finger1 = new Servo(1);
+    private Servo finger2 = new Servo(2);
+
+
     private ControlMode controlMode = ControlMode.OpenLoop;
     private boolean motor1Enabled = false;
     private boolean motor2Enabled = false;
@@ -19,6 +24,9 @@ public class ShooterPrototype extends SubsystemBase implements Lifecycle {
     private PIDHelper pidHelper1 = new PIDHelper("ShooterPrototype/Motor1PID");
     private PIDHelper pidHelper2 = new PIDHelper("ShooterPrototype/Motor2PID");
     private boolean closedLoopEnabled = false;
+
+
+    private boolean oneShot = true;
 
     private enum ControlMode {
         OpenLoop,
@@ -30,13 +38,21 @@ public class ShooterPrototype extends SubsystemBase implements Lifecycle {
         motor2.restoreFactoryDefaults();
 
         motor1.setOpenLoopRampRate(1.0);
+        motor1.setClosedLoopRampRate(1.0);
         motor2.setOpenLoopRampRate(1.0);
+        motor2.setClosedLoopRampRate(1.0);
 
         SmartDashboard.setDefaultNumber("ShooterPrototype/OpenLoop1", 0);
         SmartDashboard.setDefaultNumber("ShooterPrototype/OpenLoop2", 0);
 
-        pidHelper1.initialize(0, 0, 0, 0, 0, 0);
-        pidHelper2.initialize(0, 0, 0, 0, 0, 0);
+        SmartDashboard.setDefaultNumber("ShooterPrototype/m1Setpoint", 0);
+        SmartDashboard.setDefaultNumber("ShooterPrototype/m2Setpoint", 0);
+
+        pidHelper1.initialize(0.00005, 0, 0, 0.00018, 0, 0);
+        pidHelper2.initialize(0.00005, 0, 0, 0.00018, 0, 0);
+
+        SmartDashboard.setDefaultNumber("Prototype/Finger1Angle", 0);
+        SmartDashboard.setDefaultNumber("Prototype/Finger2Angle", 0);
     }
 
     @Override
@@ -88,8 +104,16 @@ public class ShooterPrototype extends SubsystemBase implements Lifecycle {
 
     @Override
     public void periodic() {
+        controlServo();
+        SmartDashboard.putBoolean("ShooterPrototype/M1Enabled", this.motor1Enabled);
+        SmartDashboard.putBoolean("ShooterPrototype/M2Enabled", this.motor2Enabled);
+        SmartDashboard.putBoolean("ShooterPrototype/closedLoopEnabled", this.closedLoopEnabled);
+
+        SmartDashboard.putNumber("ShooterPrototype/M1Velocity", this.motor1.getEncoder().getVelocity());
+
         // System.out.println("SHooterPrototype periodic");
         if (ControlMode.OpenLoop == controlMode) {
+
             double m1Speed = SmartDashboard.getNumber("ShooterPrototype/OpenLoop1", 0);
             double m2Speed = SmartDashboard.getNumber("ShooterPrototype/OpenLoop2", 0);
             if (motor1Enabled) {
@@ -107,25 +131,44 @@ public class ShooterPrototype extends SubsystemBase implements Lifecycle {
             pidHelper2.updateValuesFromDashboard();
 
             var pid1 = motor1.getPIDController();
+            // pid1.setFF(0);
+            if (oneShot) {
             pid1.setP(pidHelper1.kP);
             pid1.setI(pidHelper1.kI);
             pid1.setD(pidHelper1.kD);
+            pid1.setFF(pidHelper1.kF);
+            }
 
             var pid2 = motor2.getPIDController();
-            pid2.setP(pidHelper1.kP);
-            pid2.setI(pidHelper1.kI);
-            pid2.setD(pidHelper1.kD);
+            // pid2.setFF(0);
+            if (oneShot) {
+            pid2.setP(pidHelper2.kP);
+            pid2.setI(pidHelper2.kI);
+            pid2.setD(pidHelper2.kD);
+            pid2.setFF(pidHelper2.kF);
+            }
+
+            // if (oneShot) { oneShot = false; }
 
             if (closedLoopEnabled) {
-                pid1.setReference(pidHelper1.kV, ControlType.kVelocity);
-                pid2.setReference(pidHelper2.kV, ControlType.kVelocity);
+                double m1Setpoint = SmartDashboard.getNumber("ShooterPrototype/m1Setpoint", 0);
+                double m2Setpoint = SmartDashboard.getNumber("ShooterPrototype/m2Setpoint", 0);
+                pid1.setReference(m1Setpoint, ControlType.kVelocity);
+                pid2.setReference(m2Setpoint, ControlType.kVelocity);
             } else {
+                // System.out.println("ShooterProrotype - disabled closed loop");
                 pid1.setReference(0, ControlType.kVelocity);
                 pid2.setReference(0, ControlType.kVelocity);
             }
         }
+ 
+    }
 
+    private void controlServo() {
+        finger1.set(SmartDashboard.getNumber("Prototype/Finger1Angle", 0));
+        finger2.set(SmartDashboard.getNumber("Prototype/Finger2Angle", 0));
     }
     
 }
+
 
