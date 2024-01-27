@@ -16,9 +16,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auto.AutoManager;
 import frc.robot.commands.RunWithDisabledInstantCommand;
+import frc.robot.commands.auto.RotateToAngle;
 import frc.robot.generated.TunerConstants;
 
 public class RobotContainer {
@@ -45,6 +47,10 @@ public class RobotContainer {
 
   private final Trigger shooterPrototypeOpenLoop = xboxController.x();
   private final Trigger shooterPrototypeClosedLoop = xboxController.a();
+
+  private final JoystickButton lockAngle1 = new JoystickButton(left, 8);
+    private final JoystickButton lockAngle2 = new JoystickButton(left, 9);
+
   
   
 
@@ -66,6 +72,12 @@ public class RobotContainer {
 
     // reset the field-centric heading on left bumper press
     robotCentric.onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
+
+    lockAngle1.onTrue(new RotateToAngle(-60));
+    lockAngle2.onTrue(new RotateToAngle(0));
+
+
+
 
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -28,6 +29,9 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run(); 
+    SmartDashboard.putNumber("Drive/robotAngle", Subsystems.swerveSubsystem.getPigeon2().getAngle());
+    SmartDashboard.putNumber("Drive/RawYaw", Subsystems.swerveSubsystem.getPigeon2().getYaw().getValueAsDouble());
+    SmartDashboard.putNumber("Drive/swerveYaw", Subsystems.swerveSubsystem.getYaw());
   }
 
   @Override

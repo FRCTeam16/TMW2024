@@ -8,7 +8,7 @@ public class RotationController extends PIDController {
     private static final double maxDegreesPerSecond = Math.toDegrees(Constants.Swerve.kMaxAngularVelocity) / 2;
     private static final double SPEED_CLAMP = 0.2;
 
-    private static final double kP = 7.2; // 13.0; //0.01; //4.25;
+    private static final double kP = 0.007; // 13.0; //0.01; //4.25;
     // private static final double kI = 1.35; // 3.0;
     private static final double kI = 0.0; // 3.0;
     private static final double kD = 0.0; // 0.5; // 0;

@@ -8,8 +8,8 @@ public final class Constants {
 
     // TODO: speeds need tuning
     public static final class Swerve {
-        public static final double kMaxSpeedMetersPerSecond = 6.0;
-        public static final double kMaxAngularVelocity = 3 * Math.PI;
+        public static final double kMaxSpeedMetersPerSecond = 5.0;
+        public static final double kMaxAngularVelocity = 4 * Math.PI;
     }
     
     public static final class AutoConstants {

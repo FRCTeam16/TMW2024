@@ -96,4 +96,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
+    public double getYaw(){
+        return this.getPigeon2().getYaw().getValueAsDouble() % 360;
+    }
+
 }
