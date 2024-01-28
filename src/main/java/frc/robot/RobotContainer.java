@@ -14,12 +14,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auto.AutoManager;
 import frc.robot.commands.RunWithDisabledInstantCommand;
+import frc.robot.commands.VisionAlign;
+import frc.robot.commands.ZeroAndSetOffsetCommand;
 import frc.robot.commands.auto.RotateToAngle;
 import frc.robot.generated.TunerConstants;
 
@@ -45,11 +46,16 @@ public class RobotContainer {
 
   private final Trigger robotCentric = new Trigger(left::getTrigger);
 
+  //
+  // Testing Controls
+  //
   private final Trigger shooterPrototypeOpenLoop = xboxController.x();
   private final Trigger shooterPrototypeClosedLoop = xboxController.a();
 
   private final JoystickButton lockAngle1 = new JoystickButton(left, 8);
   private final JoystickButton lockAngle2 = new JoystickButton(left, 9);
+
+  private final Trigger runVisionAlign = new Trigger(right::getTrigger);
 
 
   private void configureBindings() {
@@ -64,8 +70,8 @@ public class RobotContainer {
         .applyRequest(
             () -> point.withModuleDirection(new Rotation2d(-xboxController.getLeftY(), -xboxController.getLeftX()))));
 
-    shooterPrototypeOpenLoop.onTrue(new InstantCommand(Subsystems.shooterPrototype::toggleOpenLoop));
-    shooterPrototypeClosedLoop.onTrue(new InstantCommand(Subsystems.shooterPrototype::toggleClosedLoop));
+    // shooterPrototypeOpenLoop.onTrue(new InstantCommand(Subsystems.shooterPrototype::toggleOpenLoop));
+    // shooterPrototypeClosedLoop.onTrue(new InstantCommand(Subsystems.shooterPrototype::toggleClosedLoop));
 
 
     // reset the field-centric heading on left bumper press
@@ -73,6 +79,8 @@ public class RobotContainer {
 
     lockAngle1.onTrue(new RotateToAngle(-60));
     lockAngle2.onTrue(new RotateToAngle(0));
+
+    runVisionAlign.whileTrue(new VisionAlign());
 
 
     if (Utils.isSimulation()) {
@@ -87,8 +95,8 @@ public class RobotContainer {
   }
 
   private void configureDashboardButtons() {
-    
     SmartDashboard.putData("Tare Odometry", new RunWithDisabledInstantCommand( () -> Subsystems.swerveSubsystem.tareEverything()));
+    SmartDashboard.putData("Zero Gyro", new ZeroAndSetOffsetCommand(0).ignoringDisable(true));
   }
 
   public Command getAutonomousCommand() {

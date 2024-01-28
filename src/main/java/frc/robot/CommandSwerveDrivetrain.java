@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.generated.TunerConstants;
 
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements
@@ -106,7 +105,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     }
 
     public double getYaw() {
-        return this.getPigeon2().getYaw().getValueAsDouble() % 360;
+        return this.getState().Pose.getRotation().getDegrees();
+        // return this.getPigeon2().getYaw().getValueAsDouble() % 360;
     }
 
 }

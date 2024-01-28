@@ -29,9 +29,9 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run(); 
-    SmartDashboard.putNumber("Drive/robotAngle", Subsystems.swerveSubsystem.getPigeon2().getAngle());
-    SmartDashboard.putNumber("Drive/RawYaw", Subsystems.swerveSubsystem.getPigeon2().getYaw().getValueAsDouble());
-    SmartDashboard.putNumber("Drive/swerveYaw", Subsystems.swerveSubsystem.getYaw());
+    SmartDashboard.putNumber("Yaw/PigeonAngle", Subsystems.swerveSubsystem.getPigeon2().getAngle());
+    SmartDashboard.putNumber("Yaw/PigeonYaw", Subsystems.swerveSubsystem.getPigeon2().getYaw().getValueAsDouble());
+    SmartDashboard.putNumber("Yaw/SwerveYaw", Subsystems.swerveSubsystem.getYaw());
   }
 
   @Override
