@@ -3,45 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 6.197438471909753,
+        "y": 4.239322829572906
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5,
-        "y": 7.0
+        "x": 7.197438471909754,
+        "y": 3.739322829572906
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "WaveEnd"
     },
     {
       "anchor": {
-        "x": 4.0,
-        "y": 7.0
+        "x": 7.007287860729568,
+        "y": 5.841230143998749
       },
       "prevControl": {
-        "x": 2.59,
-        "y": 7.0
+        "x": 7.895312713702353,
+        "y": 4.69666477794494
       },
       "nextControl": {
-        "x": 5.41,
-        "y": 7.0
+        "x": 6.140379044146087,
+        "y": 6.958579285373015
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.0,
-        "y": 7.0
+        "x": 1.9948809128387501,
+        "y": 6.9660616244309415
       },
       "prevControl": {
-        "x": 4.4799999999999995,
-        "y": 7.0
+        "x": 3.099978507649325,
+        "y": 7.094331880971455
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "WaveStart"
     }
   ],
   "rotationTargets": [],
@@ -55,7 +55,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 1.974934010882153,
     "rotateFast": false
   },
   "reversed": false,
