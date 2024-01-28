@@ -43,6 +43,9 @@ public class AutoManager {
         SmartDashboard.putData("Auto Selector", chooser);
     }
 
+    /**
+     * Registers Named commands for use in PathPlanner GUI
+     */
     private void registerCommmands(){
         NamedCommands.registerCommand("rotate45", new RotateToAngle(-45));
     }

@@ -22,7 +22,8 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.generated.TunerConstants;
 
 /**
- * Class that extends the Phoenix SwerveDrivetrain class and implements subsystem
+ * Class that extends the Phoenix SwerveDrivetrain class and implements
+ * subsystem
  * so it can be used in command-based projects easily.
  */
 public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsystem {
@@ -33,13 +34,15 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     // Internal command used for path planning auto
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
 
-    public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency, SwerveModuleConstants... modules) {
+    public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency,
+            SwerveModuleConstants... modules) {
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
         configurePathPlanner();
         if (Utils.isSimulation()) {
             startSimThread();
         }
     }
+
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
         configurePathPlanner();
@@ -55,30 +58,29 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         }
 
         AutoBuilder.configureHolonomic(
-            () -> this.getState().Pose,
-            this::seedFieldRelative,
-            this::getCurrentRobotChassisSpeeds,
-            (speeds) -> this.setControl(autoRequest.withSpeeds(speeds)),
-            new HolonomicPathFollowerConfig(
-                new PIDConstants(6, 0, 0),
-                new PIDConstants(10, 0, 0),
-                Constants.AutoConstants.kMaxSpeedMetersPerSecond, //TunerConstants.kSpeedAtVoltsMps,
-                driveBaseRadius,
-                new ReplanningConfig()),
-            () -> false, // change if need to flip on red vs. blue
-            this);
+                () -> this.getState().Pose,
+                this::seedFieldRelative,
+                this::getCurrentRobotChassisSpeeds,
+                (speeds) -> this.setControl(autoRequest.withSpeeds(speeds)),
+                new HolonomicPathFollowerConfig(
+                        new PIDConstants(6, 0, 0),
+                        new PIDConstants(10, 0, 0),
+                        Constants.AutoConstants.kMaxSpeedMetersPerSecond, // TunerConstants.kSpeedAtVoltsMps,
+                        driveBaseRadius,
+                        new ReplanningConfig()),
+                () -> false, // change if need to flip on red vs. blue
+                this);
 
     }
-    
+
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
     public Command getAutoPath(String pathName) {
-        try{
+        try {
             return new PathPlannerAuto(pathName);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e);
             return new PrintCommand("Cannot Locate path" + pathName);
         }
@@ -103,7 +105,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
-    public double getYaw(){
+    public double getYaw() {
         return this.getPigeon2().getYaw().getValueAsDouble() % 360;
     }
 

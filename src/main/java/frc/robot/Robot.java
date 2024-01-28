@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,9 +17,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    DataLogManager.start();
     m_robotContainer = new RobotContainer();
-    // try force zero wheel?
-
     Subsystems.swerveSubsystem.getPigeon2().setYaw(0);
 
     /*

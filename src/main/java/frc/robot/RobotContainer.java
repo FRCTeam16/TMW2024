@@ -32,7 +32,7 @@ public class RobotContainer {
   private final Joystick right = new Joystick(1);
   private final CommandXboxController xboxController = new CommandXboxController(2); 
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; 
-  private Subsystems subsystems = Subsystems.getInstance();
+  private final Subsystems subsystems = Subsystems.getInstance();
   private final AutoManager autoManager = new AutoManager();
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -41,7 +41,7 @@ public class RobotContainer {
                                                                // driving in open loop
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-  private final Telemetry logger = new Telemetry(MaxSpeed);
+  private final SwerveStateTelemetry swerveStateTelemtry = new SwerveStateTelemetry(MaxSpeed);
 
   private final Trigger robotCentric = new Trigger(left::getTrigger);
 
@@ -49,10 +49,8 @@ public class RobotContainer {
   private final Trigger shooterPrototypeClosedLoop = xboxController.a();
 
   private final JoystickButton lockAngle1 = new JoystickButton(left, 8);
-    private final JoystickButton lockAngle2 = new JoystickButton(left, 9);
+  private final JoystickButton lockAngle2 = new JoystickButton(left, 9);
 
-  
-  
 
   private void configureBindings() {
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
@@ -77,12 +75,10 @@ public class RobotContainer {
     lockAngle2.onTrue(new RotateToAngle(0));
 
 
-
-
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
     }
-    drivetrain.registerTelemetry(logger::telemeterize);
+    drivetrain.registerTelemetry(swerveStateTelemtry::telemeterize);
   }
 
   public RobotContainer() {
