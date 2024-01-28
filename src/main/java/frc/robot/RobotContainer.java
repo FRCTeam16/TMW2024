@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -109,6 +110,26 @@ public class RobotContainer {
 
   public void autoInit() {
     Subsystems.lifecycleSubsystems.stream().filter(s -> s != null).forEach((s) -> s.autoInit());
+  }
+
+  public void robotPeriodic() {
+
+    // FIXME: Basic tracking is kind of going, but very noisy and we need to figure out yaw handling
+    /*
+    var info = Subsystems.visionSubsystem.getVisionInfo();
+    System.out.println("VP: " + info.botPose);
+    System.out.println("HT: " + info.hasTarget);
+    if (info.hasTarget && info.botPose != null) {
+      System.out.println(info.botPose);
+      double captureTime = Timer.getFPGATimestamp() - (info.poseLatency/1000.0);
+      Subsystems.swerveSubsystem.addVisionMeasurement(info.botPose, captureTime);
+    }
+    */
+
+    // Debug telemetry
+    SmartDashboard.putNumber("Yaw/PigeonAngle", Subsystems.swerveSubsystem.getPigeon2().getAngle());
+    SmartDashboard.putNumber("Yaw/PigeonYaw", Subsystems.swerveSubsystem.getPigeon2().getYaw().getValueAsDouble());
+    SmartDashboard.putNumber("Yaw/SwerveYaw", Subsystems.swerveSubsystem.getYaw());
   }
 
 }
