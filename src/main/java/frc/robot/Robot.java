@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,10 +18,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    DataLogManager.start();
     m_robotContainer = new RobotContainer();
-    // try force zero wheel?
-
     Subsystems.swerveSubsystem.getPigeon2().setYaw(0);
+
+
+    // Forward LimeLight ports so they are available over USB
+    for (int port = 5800; port <= 5807; port++) {
+        PortForwarder.add(port, "limelight.local", port);
+    }
 
     /*
      * addPeriodic(Subsystems.ledSubsystem::Report, 0.1);
@@ -28,10 +35,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    CommandScheduler.getInstance().run(); 
-    SmartDashboard.putNumber("Drive/robotAngle", Subsystems.swerveSubsystem.getPigeon2().getAngle());
-    SmartDashboard.putNumber("Drive/RawYaw", Subsystems.swerveSubsystem.getPigeon2().getYaw().getValueAsDouble());
-    SmartDashboard.putNumber("Drive/swerveYaw", Subsystems.swerveSubsystem.getYaw());
+    CommandScheduler.getInstance().run();
+    m_robotContainer.robotPeriodic();
   }
 
   @Override

@@ -1,7 +1,13 @@
 package frc.robot.subsystems.vision;
 
+import java.util.Optional;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** 
@@ -30,6 +36,16 @@ public class Limelight {
         si.xOffset = dataTable.getEntry("tx").getDouble(0.0);
         si.yOffset = dataTable.getEntry("ty").getDouble(0.0);
         si.targetArea = dataTable.getEntry("ta").getDouble(0.0);
+
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+            String ntKey = Alliance.Red.equals(alliance.get()) ? "botpose_wpired" : "botpose_wpiblue";
+            double botPose[] = new double[7];
+            botPose = dataTable.getEntry(ntKey).getDoubleArray(botPose);
+            Pose2d visionPose = new Pose2d(botPose[0], botPose[1], Rotation2d.fromDegrees(botPose[5]));
+            si.botPose = visionPose;
+            si.poseLatency = botPose[6];
+        }
 
         SmartDashboard.putNumber("SceneInfo.activePipeline", si.activePipeline);
         SmartDashboard.putBoolean("SceneInfo.hasTarget", si.hasTarget);
@@ -147,6 +163,11 @@ public class Limelight {
 
         /* AprilTag ID */
         public double targetId = -1.0;
+
+        /* Robot Pose */
+        public Pose2d botPose;
+        public double poseLatency;
+
     }
 
     /**

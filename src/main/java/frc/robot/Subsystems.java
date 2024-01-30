@@ -30,12 +30,13 @@ public class Subsystems {
         swerveSubsystem = TunerConstants.DriveTrain;
         visionSubsystem = new VisionSubsystem();
         ledSubsystem = new LEDSubsystem();
-        shooterPrototype = new ShooterPrototype();
+        // shooterPrototype = new ShooterPrototype();
 
         lifecycleSubsystems.add(visionSubsystem);
         lifecycleSubsystems.add(ledSubsystem);
-        lifecycleSubsystems.add(shooterPrototype);
+        // lifecycleSubsystems.add(shooterPrototype);
     }
+
 
     public static Subsystems getInstance() {
         if (instance == null) {

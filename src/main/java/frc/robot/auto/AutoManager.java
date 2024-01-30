@@ -9,6 +9,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auto.strategies.DebugAuto;
 import frc.robot.auto.strategies.DebugPathAuto;
+import frc.robot.commands.auto.RotateToAngle;
+
+import com.pathplanner.lib.auto.NamedCommands;
+
 
 public class AutoManager {
 
@@ -16,21 +20,34 @@ public class AutoManager {
         DebugAuto,
         DebugTestPath,
         DebugTestMultipath,
-        DebugCurly
+        DebugCurly,
+        DebugWavy,
+        DebugTests2
     }
 
     private final SendableChooser<AutoStrategies> chooser = new SendableChooser<>();
     private final HashMap<AutoStrategies, Supplier<Command>> strategyLookup = new HashMap<>();
 
     public AutoManager() {
+        registerCommmands();
         registerStrategy("Debug Auto", AutoStrategies.DebugAuto, DebugAuto::new);
         registerStrategy("Test Path", AutoStrategies.DebugTestPath, () -> new DebugPathAuto("TestStageLeft"));
         registerStrategy("Test MultiPath", AutoStrategies.DebugTestMultipath, () -> new DebugPathAuto("Multipoint Test"));
         registerStrategy("Test Curly", AutoStrategies.DebugCurly, () -> new DebugPathAuto("TestCurly"));
-
+        registerStrategy("Test Wavy", AutoStrategies.DebugWavy, () -> new DebugPathAuto("TestWave"));
+        registerStrategy("Tests2", AutoStrategies.DebugTests2, () -> new DebugPathAuto("Tests2"));
+        
+        
         // Send selector Dashboard. If it doesn't show in SD, you may need to change the
         // name here.
         SmartDashboard.putData("Auto Selector", chooser);
+    }
+
+    /**
+     * Registers Named commands for use in PathPlanner GUI
+     */
+    private void registerCommmands(){
+        NamedCommands.registerCommand("rotate45", new RotateToAngle(-45));
     }
 
     private void registerStrategy(String displayName, AutoStrategies strategyEnum, Supplier<Command> strategy) {
