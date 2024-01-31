@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import com.ctre.phoenix6.Utils;
@@ -12,7 +8,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -29,7 +24,6 @@ public class RobotContainer {
   private static final double MaxSpeed = Constants.Swerve.kMaxSpeedMetersPerSecond;
   private static final double MaxAngularRate = Constants.Swerve.kMaxAngularVelocity;
 
-  /* Setting up bindings for necessary control of the swerve drive platform */
   private final Joystick left = new Joystick(0);
   private final Joystick right = new Joystick(1);
   private final CommandXboxController xboxController = new CommandXboxController(2); 
@@ -57,6 +51,7 @@ public class RobotContainer {
   private final JoystickButton lockAngle2 = new JoystickButton(left, 9);
 
   private final Trigger runVisionAlign = new Trigger(right::getTrigger);
+  private final JoystickButton runVisionAlignAngle = new JoystickButton(right, 2);
 
 
   private void configureBindings() {
@@ -65,7 +60,7 @@ public class RobotContainer {
             .withVelocityX(-right.getY() * MaxSpeed)
             .withVelocityY(-right.getX() * MaxSpeed)
             .withRotationalRate(-left.getX() * MaxAngularRate)));
-
+    
     xboxController.y().whileTrue(drivetrain.applyRequest(() -> brake));
     xboxController.b().whileTrue(drivetrain
         .applyRequest(
@@ -82,6 +77,7 @@ public class RobotContainer {
     lockAngle2.onTrue(new RotateToAngle(0));
 
     runVisionAlign.whileTrue(new VisionAlign());
+    runVisionAlignAngle.whileTrue(new VisionAlign().withRobotAngle(90.0));
 
 
     if (Utils.isSimulation()) {

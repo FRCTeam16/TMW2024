@@ -1,8 +1,12 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+
+import java.util.Optional;
+
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -16,21 +20,23 @@ import frc.robot.subsystems.vision.Pipeline;
 
 public class VisionAlign extends Command {
     private VisionAlignmentHelper helper = new VisionAlignmentHelper();
-    private double robotAngle = 180.0;
+    private Optional<Double> robotAngle = Optional.empty();
     private Pipeline visionPipeline = Pipeline.April;
     private int seenScans = 0;
 
-    private final SwerveRequest.RobotCentric alignDrive = new SwerveRequest.RobotCentric()
+    private final SwerveRequest.RobotCentric alignRobotCentricDrive = new SwerveRequest.RobotCentric()
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     DoubleLogEntry pidLog;
     DoubleLogEntry velocityLog;
+    DoubleLogEntry twistLog;
 
     public VisionAlign() {
         addRequirements(Subsystems.swerveSubsystem);
         DataLog log = DataLogManager.getLog();
         pidLog = new DoubleLogEntry(log, "VisionAlign/PID");
         velocityLog = new DoubleLogEntry(log, "VisionAlign/Velocity");
+        twistLog = new DoubleLogEntry(log, "Visionlign/Twist");
     }
 
     public VisionAlign withVisionPipeline(Pipeline pipeline) {
@@ -38,11 +44,10 @@ public class VisionAlign extends Command {
         return this;
     }
 
-    // TODO: Do we want to do angle rotation still?
-    // public VisionAlign withRobotAngle(double angle) {
-    // this.robotAngle = angle;
-    // return this;
-    // }
+    public VisionAlign withRobotAngle(double angle) {
+        this.robotAngle = Optional.of(angle);
+        return this;
+    }
 
     public VisionAlign withTolerance(double tolerance) {
         this.helper.setTolerance(tolerance);
@@ -60,18 +65,13 @@ public class VisionAlign extends Command {
         Subsystems.visionSubsystem.selectPipelineSync(this.visionPipeline);
         // Subsystems.visionSubsystem.getLimelight().setCurrentPipeline(Pipeline.RetroHigh.pipelineNumber);
         Subsystems.visionSubsystem.getLimelight().setLEDMode(LEDMode.CurrentPipeline);
-        DataLogManager.log("[VisionAlign] command initialized");
+        DataLogManager.log("[VisionAlign] starting");
     }
 
     @Override
     public void execute() {
-        double currentAngle = Subsystems.swerveSubsystem.getYaw();
-        double horizontalComponent = this.helper.calculate(); // pid adjustment
-
-        // assuming field relative
-        // double direction = (Math.abs(currentAngle) < 90) ? 1 : -1;
-        double direction = 1;
-        double velocity = direction * horizontalComponent * Constants.Swerve.kMaxSpeedMetersPerSecond;
+        double horizontalComponent = this.helper.calculate(); // pid adjustment for vision offset
+        double velocity = horizontalComponent * Constants.Swerve.kMaxSpeedMetersPerSecond;
 
         seenScans = this.helper.inPosition() ? seenScans + 1 : 0;
 
@@ -79,15 +79,27 @@ public class VisionAlign extends Command {
         pidLog.append(horizontalComponent);
         velocityLog.append(velocity);
 
-        Subsystems.swerveSubsystem.setControl(alignDrive.withVelocityX(0)
-                .withVelocityY(velocity));
+        if (robotAngle.isEmpty()) {
+            Subsystems.swerveSubsystem.setControl(alignRobotCentricDrive.withVelocityX(0)
+                    .withVelocityY(velocity));
+        } else {
+            double twistRate = Subsystems.rotationController.calculate(Subsystems.swerveSubsystem.getYaw(),
+                    robotAngle.get()) * Constants.Swerve.kMaxAngularVelocity;
+
+            twistLog.append(twistRate);
+            Subsystems.swerveSubsystem.setControl(alignRobotCentricDrive
+                    .withVelocityX(0)
+                    .withVelocityY(velocity)
+                    .withRotationalRate(twistRate));
+        }
+
     }
 
     @Override
     public boolean isFinished() {
         boolean finished = this.helper.inPosition() && seenScans > 5;
         if (finished) {
-            DataLogManager.log("[VisionAlign] finished within threshold ***");
+            DataLogManager.log("[VisionAlign] finished within threshold");
         }
         return finished;
     }
