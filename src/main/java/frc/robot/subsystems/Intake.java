@@ -12,8 +12,8 @@ import frc.robot.subsystems.Lifecycle;
 
 public class Intake extends SubsystemBase implements Lifecycle{
     
-    private TalonFX intakeDrive = new TalonFX(0); // google tells me the Krakens are on TalonFX for code
-    private TalonFX pivotDrive = new TalonFX(1); // this is geared down 48:1
+    private TalonFX intakeDrive = new TalonFX(9); // google tells me the Krakens are on TalonFX for code
+    private TalonFX pivotDrive = new TalonFX(10); // this is geared down 48:1
 
     private TalonFXConfiguration defaultConfig = new TalonFXConfiguration();
  
