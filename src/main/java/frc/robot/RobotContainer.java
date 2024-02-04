@@ -44,8 +44,6 @@ public class RobotContainer {
   //
   // Testing Controls
   //
-  private final Trigger shooterPrototypeOpenLoop = xboxController.x();
-  private final Trigger shooterPrototypeClosedLoop = xboxController.a();
 
   private final JoystickButton lockAngle1 = new JoystickButton(left, 8);
   private final JoystickButton lockAngle2 = new JoystickButton(left, 9);
@@ -66,8 +64,6 @@ public class RobotContainer {
         .applyRequest(
             () -> point.withModuleDirection(new Rotation2d(-xboxController.getLeftY(), -xboxController.getLeftX()))));
 
-    // shooterPrototypeOpenLoop.onTrue(new InstantCommand(Subsystems.shooterPrototype::toggleOpenLoop));
-    // shooterPrototypeClosedLoop.onTrue(new InstantCommand(Subsystems.shooterPrototype::toggleClosedLoop));
 
 
     // reset the field-centric heading on left bumper press
