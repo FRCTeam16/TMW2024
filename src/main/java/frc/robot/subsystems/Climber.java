@@ -32,4 +32,5 @@ this.ClimberPosition = ClimberPosition.up;
 this.intake = intake.down;//sample number
 //same with the enum positions of both the intake and shooter
   }
+ }
 }
