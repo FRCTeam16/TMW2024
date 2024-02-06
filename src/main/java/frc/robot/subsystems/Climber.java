@@ -34,6 +34,6 @@ public class Climber extends SubsystemBase implements Lifecycle {
   // climbing action
   public void climb() {
     this.currentPosition = ClimberPosition.up;
-    // TODO: Need to synchronize action with other subsystems
+    // TODO: Need to synchronize actions with other subsystems
   }
 }

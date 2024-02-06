@@ -7,6 +7,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -36,6 +37,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency,
             SwerveModuleConstants... modules) {
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
+        postConstructConfig();
         configurePathPlanner();
         if (Utils.isSimulation()) {
             startSimThread();
@@ -44,9 +46,19 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
+        postConstructConfig();
         configurePathPlanner();
         if (Utils.isSimulation()) {
             startSimThread();
+        }
+    }
+
+    private void postConstructConfig() {
+        this.configNeutralMode(NeutralModeValue.Coast);
+        for (int i = 0; i < this.ModuleCount; i++) {
+            var module = this.getModule(i);
+            module.getDriveMotor().setNeutralMode(NeutralModeValue.Coast);
+            module.getSteerMotor().setNeutralMode(NeutralModeValue.Coast);
         }
     }
 
