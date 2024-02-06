@@ -26,7 +26,9 @@ public class Intake extends SubsystemBase implements Lifecycle{
     private final MotionMagicConfigs intakeDrive_req = new MotionMagicConfigs();
 
     private double INTAKE_MAX_SPEED = 1;
-    private double INTAKE_SLOW_SPEED = 0.25;
+    private double INTAKE_SLOW_SPEED = 0.75;
+
+    private double OpenLoopSpeed = 0;
 
     private boolean OpenLoop = false;
         
@@ -58,6 +60,21 @@ public class Intake extends SubsystemBase implements Lifecycle{
         OpenLoop = false;
     }
 
+    public void IntakePart() {
+        OpenLoopSpeed = .75;
+        OpenLoopDriveIntake();        
+    }
+
+    public void SlowIntake() {
+        OpenLoopSpeed = .15;
+        OpenLoopDriveIntake();        
+    }
+
+    public void Eject() {
+        OpenLoopSpeed = -.5;
+        OpenLoopDriveIntake();
+    }
+
     public void gotoSetpoint(IntakePosition pos){
         
     }
@@ -65,10 +82,10 @@ public class Intake extends SubsystemBase implements Lifecycle{
     @Override
     public void periodic(){
         if(OpenLoop){
-            intakeDrive.setControl(intakeDrive_Request.withOutput(INTAKE_SLOW_SPEED)); // go brr code?
+            intakeDrive.setControl(intakeDrive_Request.withOutput(OpenLoopSpeed)); // go brr code?
             
         } else {
-            //TODO: UUHHH DO THIS
+            intakeDrive.setControl(intakeDrive_Request.withOutput(0));
         }     
     }
 

@@ -8,6 +8,7 @@ import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.RotationController;
 import frc.robot.subsystems.DMS.LEDSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.subsystems.Intake;
 
 /**
  * Global subsystem declaration and tracking to allow easier injection
@@ -18,6 +19,7 @@ public class Subsystems {
     public static CommandSwerveDrivetrain swerveSubsystem;
     public static VisionSubsystem visionSubsystem;
     public static LEDSubsystem ledSubsystem;
+    public static Intake intake;
 
     // Utility
     public static RotationController rotationController = new RotationController();
@@ -28,9 +30,11 @@ public class Subsystems {
         swerveSubsystem = TunerConstants.DriveTrain;
         visionSubsystem = new VisionSubsystem();
         ledSubsystem = new LEDSubsystem();
+        intake = new Intake();
         
         lifecycleSubsystems.add(visionSubsystem);
         lifecycleSubsystems.add(ledSubsystem);
+        lifecycleSubsystems.add(intake);
     }
 
 

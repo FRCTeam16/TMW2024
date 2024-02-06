@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -48,8 +49,12 @@ public class RobotContainer {
   private final JoystickButton lockAngle1 = new JoystickButton(left, 8);
   private final JoystickButton lockAngle2 = new JoystickButton(left, 9);
 
-  private final Trigger runVisionAlign = new Trigger(right::getTrigger);
+  private final Trigger runVisionAlign = new JoystickButton(right, 3);
   private final JoystickButton runVisionAlignAngle = new JoystickButton(right, 2);
+
+  private final JoystickButton intake = new JoystickButton(right, 1);
+  private final JoystickButton slowIntake = new JoystickButton(right, 4);
+  private final JoystickButton eject = new JoystickButton(left, 1);
 
 
   private void configureBindings() {
@@ -80,7 +85,11 @@ public class RobotContainer {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
     }
     drivetrain.registerTelemetry(swerveStateTelemtry::telemeterize);
-  }
+
+    intake.onTrue(new InstantCommand(()    -> subsystems.intake.IntakePart())).onFalse(new InstantCommand(() -> subsystems.intake.OpenLoopStop()));
+    slowIntake.onTrue(new InstantCommand(()    -> subsystems.intake.SlowIntake())).onFalse(new InstantCommand(() -> subsystems.intake.OpenLoopStop()));
+    eject.onTrue(new InstantCommand(()     -> subsystems.intake.Eject())).onFalse( new InstantCommand(()   -> subsystems.intake.OpenLoopStop()));
+}
 
   public RobotContainer() {
     configureBindings();
