@@ -22,7 +22,8 @@ public class AutoManager {
         DebugTestMultipath,
         DebugCurly,
         DebugWavy,
-        DebugTests2
+        DebugTests2,
+        DCL_BCL
     }
 
     private final SendableChooser<AutoStrategies> chooser = new SendableChooser<>();
@@ -36,6 +37,7 @@ public class AutoManager {
         registerStrategy("Test Curly", AutoStrategies.DebugCurly, () -> new DebugPathAuto("TestCurly"));
         registerStrategy("Test Wavy", AutoStrategies.DebugWavy, () -> new DebugPathAuto("TestWave"));
         registerStrategy("Tests2", AutoStrategies.DebugTests2, () -> new DebugPathAuto("Tests2"));
+        registerStrategy("DCL-BCL", AutoStrategies.DCL_BCL, () -> new DebugPathAuto("DCL_BCL"));
         
         
         // Send selector Dashboard. If it doesn't show in SD, you may need to change the
