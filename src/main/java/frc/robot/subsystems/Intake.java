@@ -7,6 +7,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.Lifecycle;
@@ -24,9 +25,6 @@ public class Intake extends SubsystemBase implements Lifecycle{
 
     private final DutyCycleOut intakeDrive_Request = new DutyCycleOut(0.0); // CTRE pheonix 6 API
     private final MotionMagicConfigs intakeDrive_req = new MotionMagicConfigs();
-
-    private double INTAKE_MAX_SPEED = 1;
-    private double INTAKE_SLOW_SPEED = 0.75;
 
     private double OpenLoopSpeed = 0;
 
@@ -48,8 +46,10 @@ public class Intake extends SubsystemBase implements Lifecycle{
     public Intake(){
         intakeDrive_configurer.apply(defaultConfig);
         pivotDrive_configurer.apply(defaultConfig);
-        
-        
+
+        SmartDashboard.setDefaultNumber("Intake/FastSpeed", 0.75);
+        SmartDashboard.setDefaultNumber("Intake/SlowSpeed", 0.15);
+        SmartDashboard.setDefaultNumber("Intake/EjectSpeed", -0.5);
     }
 
     public void OpenLoopDriveIntake(){
@@ -61,17 +61,17 @@ public class Intake extends SubsystemBase implements Lifecycle{
     }
 
     public void IntakePart() {
-        OpenLoopSpeed = .75;
+        OpenLoopSpeed = SmartDashboard.getNumber("Intake/FastSpeed", 0.75);
         OpenLoopDriveIntake();        
     }
 
     public void SlowIntake() {
-        OpenLoopSpeed = .15;
+        OpenLoopSpeed = SmartDashboard.getNumber("Intake/SlowSpeed", 0.15);
         OpenLoopDriveIntake();        
     }
 
     public void Eject() {
-        OpenLoopSpeed = -.5;
+        OpenLoopSpeed = SmartDashboard.getNumber("Intake/EjectSpeed", -0.5);
         OpenLoopDriveIntake();
     }
 
