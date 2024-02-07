@@ -1,34 +1,30 @@
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Subsystems;
 
 public class ScorePositionDetector {
-    private TargetInfo currentTarget;
+    private double targetDistance;
 
     public ScorePositionDetector() {
         SmartDashboard.setDefaultNumber("ScorePositionDetector/xThreshold", 0.5);
         SmartDashboard.setDefaultNumber("ScorePositionDetector/dThreshold", 0.5);
     }
 
-    public void setCurrentTarget(TargetInfo targetInfo) {
-        this.currentTarget = targetInfo;
-        SmartDashboard.putString("ScorePositionDetector/CurrentTarget", this.currentTarget.name());
+    public void setCurrentTarget(double targetDistance) {
+        this.targetDistance = targetDistance;
+        SmartDashboard.putNumber("ScorePositionDetector/CurrentTarget", this.targetDistance);
     }
 
-    public boolean inRequestedScoringPosition() {
-        if (currentTarget == null) {
-            return false;
-        }
-
+    public boolean inRequestedScoringPosition(VisionTypes.TargetInfo targetInfo, VisionTypes.LimelightInfo limelightInfo) {
         double xThreshold = SmartDashboard.getNumber("ScorePositionDetector/xThreshold", 0.5);
         double dThreshold = SmartDashboard.getNumber("ScorePositionDetector/dThreshold", 0.5);
 
-        double targetDistance = currentTarget.distance;
-        var visionInfo = Subsystems.visionSubsystem.getVisionInfo();
 
-        var currentX = Math.abs(visionInfo.xOffset);
-        var currentD = visionInfo.distanceToTarget;
+        var currentX = Math.abs(targetInfo.xOffset());
+        var currentD = targetInfo.calculateDistance(
+                limelightInfo.heightToCamera(),
+                targetInfo.yOffset(),
+                limelightInfo.cameraAngle());
 
         if ((currentX < xThreshold) && (Math.abs(currentD - targetDistance) < dThreshold)) {
             return true;

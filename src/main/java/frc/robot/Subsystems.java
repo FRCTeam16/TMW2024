@@ -1,16 +1,20 @@
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.DMS.LEDSubsystem;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.RotationController;
-import frc.robot.subsystems.DMS.LEDSubsystem;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.vision.Limelight;
 import frc.robot.subsystems.vision.VisionSubsystem;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.vision.VisionTypes;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -19,27 +23,28 @@ import frc.robot.subsystems.Intake;
  */
 @SuppressWarnings("InstantiationOfUtilityClass")
 public class Subsystems {
-    private static Subsystems instance;
     public static CommandSwerveDrivetrain swerveSubsystem;
     public static VisionSubsystem visionSubsystem;
     public static LEDSubsystem ledSubsystem;
     public static Intake intake;
-
     public static Shooter shooter;
-
     // Utility
     public static RotationController rotationController = new RotationController();
-
     public static List<Lifecycle> lifecycleSubsystems = new ArrayList<>();
+    private static Subsystems instance;
 
     private Subsystems() {
         swerveSubsystem = TunerConstants.DriveTrain;
-        visionSubsystem = new VisionSubsystem();
+        visionSubsystem = new VisionSubsystem(
+                Stream.of(
+                        new VisionTypes.LimelightInfo("limelight", 10, 0),
+                        new VisionTypes.LimelightInfo("note", 10, 0))
+                        .map(Limelight::new).collect(Collectors.toSet()));
         ledSubsystem = new LEDSubsystem();
         //TODO add if to prevent comp bot subsystem calls on practice bot
         intake = new Intake();
         shooter = new Shooter();
-        
+
         lifecycleSubsystems.add(visionSubsystem);
         lifecycleSubsystems.add(ledSubsystem);
         lifecycleSubsystems.add(intake);

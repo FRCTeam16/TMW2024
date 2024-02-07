@@ -2,9 +2,8 @@ package frc.robot.subsystems.vision;
 
 public enum Pipeline {
     April(0),
-    RetroHigh(1),
-    Cone(2),
-    Cube(3);
+    Note(1);
+
 
     public final int pipelineNumber;
 
@@ -13,11 +12,11 @@ public enum Pipeline {
     }
 
     public static Pipeline findPipeline(int value) {
-      for (var pipeline : Pipeline.values()) {
-        if (pipeline.pipelineNumber == value) {
-          return pipeline;
+        for (var pipeline : Pipeline.values()) {
+            if (pipeline.pipelineNumber == value) {
+                return pipeline;
+            }
         }
-      }
-      return null;
+        return null;
     }
 }

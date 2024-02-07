@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auto.AutoManager;
 import frc.robot.commands.RunWithDisabledInstantCommand;
-import frc.robot.commands.VisionAlign;
+import frc.robot.commands.vision.VisionAlign;
 import frc.robot.commands.ZeroAndSetOffsetCommand;
 import frc.robot.commands.auto.RotateToAngle;
 import frc.robot.generated.TunerConstants;

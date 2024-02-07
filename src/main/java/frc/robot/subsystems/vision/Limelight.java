@@ -1,179 +1,85 @@
 package frc.robot.subsystems.vision;
 
-import java.util.Optional;
-
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 
-/** 
- * Limelight operation support 
- * 
- * The limelight will update its network table entries at 100Mhz.
- */
+import java.util.Optional;
+import java.util.function.Consumer;
+
 public class Limelight {
+    private final String name;
+    private final VisionTypes.LimelightInfo info;
 
-    private final NetworkTable dataTable;
-
-    public Limelight() {
-        this.dataTable = NetworkTableInstance.getDefault().getTable("limelight");
-        setCameraMode(CameraMode.ImageProcessing);
-        setLEDMode(LEDMode.CurrentPipeline);
+    public Limelight(VisionTypes.LimelightInfo info) {
+        this.name = LimelightHelpers.sanitizeName(info.name());
+        this.info = info;
+        this.setLEDMode(VisionTypes.LEDMode.CurrentPipeline);
+        this.setCameraMode(VisionTypes.CameraMode.ImageProcessing);
     }
 
-    /**
-     * Returns Scene Information from Limelight.
-     * @return SceneInfo structure containing data
-     */
-    public SceneInfo getScene() {
-        SceneInfo si = new SceneInfo();
-        si.activePipeline = dataTable.getEntry("getpipe").getDouble(0.0);
-        si.hasTarget = (dataTable.getEntry("tv").getNumber(0.0).doubleValue() > 0.5);
-        si.xOffset = dataTable.getEntry("tx").getDouble(0.0);
-        si.yOffset = dataTable.getEntry("ty").getDouble(0.0);
-        si.targetArea = dataTable.getEntry("ta").getDouble(0.0);
+    public String getName() {
+        return this.name;
+    }
 
-        Optional<Alliance> alliance = DriverStation.getAlliance();
+    public void setPipelineIndex(int pipelineIndex) {
+        LimelightHelpers.setPipelineIndex(this.name, pipelineIndex);
+    }
+
+    public double getAprilTagID() {
+        return LimelightHelpers.getFiducialID(this.name);
+    }
+
+    public double getNeuralClassID() {
+        return LimelightHelpers.getNeuralClassID(this.name);
+    }
+
+    public Command requestPipeline(int pipelineNumber) {
+        return Commands.runOnce(() -> this.setPipelineIndex(pipelineNumber));
+    }
+
+    public VisionTypes.TargetInfo getTargetInfo() {
+        return new VisionTypes.TargetInfo(
+                LimelightHelpers.getTV(this.name),
+                LimelightHelpers.getTX(this.name),
+                LimelightHelpers.getTY(this.name),
+                LimelightHelpers.getTX(this.name)
+        );
+    }
+
+    public VisionTypes.PoseInfo getBotPoseForCurrentAlliance() {
+        Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
         if (alliance.isPresent()) {
-            String ntKey = Alliance.Red.equals(alliance.get()) ? "botpose_wpired" : "botpose_wpiblue";
-            double botPose[] = new double[7];
-            botPose = dataTable.getEntry(ntKey).getDoubleArray(botPose);
-            Pose2d visionPose = new Pose2d(botPose[0], botPose[1], Rotation2d.fromDegrees(botPose[5]));
-            si.botPose = visionPose;
-            si.poseLatency = botPose[6];
-        }
-
-        SmartDashboard.putNumber("SceneInfo.activePipeline", si.activePipeline);
-        SmartDashboard.putBoolean("SceneInfo.hasTarget", si.hasTarget);
-        SmartDashboard.putNumber("SceneInfo.xOffset", si.xOffset);
-
-        // Optional items
-        si.skew = dataTable.getEntry("ts").getDouble(0.0);
-        si.latency = dataTable.getEntry("tl").getDouble(0.0) + 11;
-        return si;
-    }
-
-    /**
-     * Returns april tag information from the Limelight
-     * @return AprilInfo structure containing data
-     */
-    public AprilInfo getAprilInfo() {
-        AprilInfo ai = new AprilInfo();
-        ai.targetId = dataTable.getEntry("tid").getDouble(-1);
-
-        SmartDashboard.putNumber("AprilInfo.id", ai.targetId);
-
-        return ai;
-    }
-
-    public int getCurrentPipelin() {
-        return Double.valueOf(dataTable.getEntry("pipeline").getDouble(-1.0)).intValue();
-    }
-
-    public void setCurrentPipeline(int pipeline) {
-        if (pipeline < 0 || pipeline > 9) {
-            throw new IllegalArgumentException("Valid pipeline numbers are from 0-9, you passed in" + pipeline);
-        }
-        System.out.println("[Limelight] setting pipeline to: " + pipeline);
-        dataTable.getEntry("pipeline").setNumber(pipeline);
-    }
-
-    public CameraMode getCameraMode() {
-        int rawMode = (int) dataTable.getEntry("camMode").getNumber(CameraMode.Unknown.mode);
-        for (CameraMode cameraMode : CameraMode.values()) {
-            if (cameraMode.mode == rawMode) {
-                return cameraMode;
-            }
-        }
-        return CameraMode.Unknown;
-    }
-
-    public void setCameraMode(CameraMode cameraMode) {
-        dataTable.getEntry("camMode").setNumber(cameraMode.mode);
-    }
-
-    public LEDMode getLEDMode() {
-        int rawMode = (int) dataTable.getEntry("ledMode").getNumber(LEDMode.CurrentPipeline.mode);
-        for (LEDMode ledMode : LEDMode.values()) {
-            if (ledMode.mode == rawMode) {
-                return ledMode;
-            }
-        }
-        // Warning?
-        return LEDMode.CurrentPipeline;
-    }
-
-    public void setLEDMode(LEDMode ledMode) {
-        System.out.println("Setting LED Mode: " + ledMode + " | " + ledMode.mode);
-        dataTable.getEntry("ledMode").setNumber(ledMode.mode);
-    }
-
-    /**
-     * Camera Modes
-     */
-    public enum CameraMode {
-        Unknown(-1),
-        ImageProcessing(0),
-        DriverCamera(1);
-
-        private final int mode;
-
-        CameraMode(int mode) {
-            this.mode = mode;
+            Pose2d pose = DriverStation.Alliance.Red.equals(alliance.get()) ?
+                    LimelightHelpers.getBotPose2d_wpiRed(this.name) :
+                    LimelightHelpers.getBotPose2d_wpiBlue(this.name);
+            double latency = LimelightHelpers.getLatency_Capture(this.name) +
+                    LimelightHelpers.getLatency_Pipeline(this.name);
+            return new VisionTypes.PoseInfo(pose, latency);
+        } else {
+            DataLogManager.log("[Limelight] No alliance information available from DriverStation");
+            throw new RuntimeException("No alliance information available");
         }
     }
 
-    /**
-     * LED modes
-     */
-    public enum LEDMode {
-        CurrentPipeline(0),
-        ForceOff(1),
-        ForceBlink(2),
-        ForceOn(3);
-
-        private final int mode;
-
-        LEDMode(int mode) {
-            this.mode = mode;
-        }
+    public void setCameraMode(VisionTypes.CameraMode cameraMode) {
+        Consumer<String> selector = switch (cameraMode) {
+            case ImageProcessing -> LimelightHelpers::setCameraMode_Processor;
+            case DriverCamera -> LimelightHelpers::setCameraMode_Driver;
+        };
+        selector.accept(this.name);
     }
 
-    /**
-     * Information about the scene 
-     */
-    public static class SceneInfo {
-        /* active pipeline number */
-        public double activePipeline = 0.0;
-        /* Whether the limelight has any valid targets */
-        public boolean hasTarget = false;
-        /* Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees) */
-        public double xOffset = 0.0;
-        /* Vertical Offset From Crosshair To Target (-20.5 degrees to 20.5 degrees) */
-        public double yOffset = 0.0;
-        /* Target Area (0% of image to 100% of image) */
-        public double targetArea = 0.0;
 
-        public double skew = 0.0;
-        public double latency = 0.0;
-
-        /* AprilTag ID */
-        public double targetId = -1.0;
-
-        /* Robot Pose */
-        public Pose2d botPose;
-        public double poseLatency;
-
-    }
-
-    /**
-     * Information about AprilTag (and future 3D data if needed)
-     */
-    public static class AprilInfo {
-        public double targetId = -1;
+    public void setLEDMode(VisionTypes.LEDMode ledMode) {
+        Consumer<String> selector = switch (ledMode) {
+            case CurrentPipeline -> LimelightHelpers::setLEDMode_PipelineControl;
+            case ForceOff -> LimelightHelpers::setLEDMode_ForceOff;
+            case ForceBlink -> LimelightHelpers::setLEDMode_ForceBlink;
+            case ForceOn -> LimelightHelpers::setLEDMode_ForceOn;
+        };
+        selector.accept(this.name);
     }
 }
