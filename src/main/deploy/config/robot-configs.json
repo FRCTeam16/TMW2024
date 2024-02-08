@@ -1,0 +1,54 @@
+{
+  "configurations": {
+    "practice": {
+      "pigeonId": 1,
+      "swerve": {
+        "fl": {
+          "driveId": 0,
+          "steerId": 1,
+          "encoderId": 2
+        },
+        "fr": {
+          "driveId": 3,
+          "steerId": 4,
+          "encoderId": 5
+        },
+        "rl": {
+          "driveId": 6,
+          "steerId": 7,
+          "encoderId": 8
+        },
+        "rr": {
+          "driveId": 9,
+          "steerId": 10,
+          "encoderId": 11
+        }
+      }
+    },
+    "competition": {
+      "pigeonId": 1,
+      "swerve": {
+        "fl": {
+          "driveId": 1,
+          "steerId": 2,
+          "encoderId": 1
+        },
+        "fr": {
+          "driveId": 3,
+          "steerId": 4,
+          "encoderId": 2
+        },
+        "rl": {
+          "driveId": 5,
+          "steerId": 6,
+          "encoderId": 3
+        },
+        "rr": {
+          "driveId": 7,
+          "steerId": 8,
+          "encoderId": 4
+        }
+      }
+    }
+  }
+}
