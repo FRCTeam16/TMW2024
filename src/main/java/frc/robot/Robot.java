@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.config.BuildConstants;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -20,6 +21,23 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     DataLogManager.start();
     m_robotContainer = new RobotContainer();
+
+    // Log Startup Message
+    DataLogManager.log(
+            String.format("""
+                            *********************************
+                            *** Deployed Code Informatiom ***
+                            Project Name: %s
+                            Branch: %s
+                            Dirty: %s
+                            Build Date: %s
+                            Git SHA: %s
+                            Git Date: %s
+                            *********************************
+                            """, BuildConstants.MAVEN_NAME, BuildConstants.GIT_BRANCH,
+                    BuildConstants.DIRTY == 1, BuildConstants.BUILD_DATE,
+                    BuildConstants.GIT_SHA, BuildConstants.GIT_DATE));
+
     Subsystems.swerveSubsystem.getPigeon2().setYaw(0);
 
 
