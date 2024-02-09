@@ -3,8 +3,6 @@ name: TMW2024-CI
 on:
   push:
     # Run on all branches for now branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
