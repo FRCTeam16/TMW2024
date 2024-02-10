@@ -49,6 +49,7 @@ public class AutoManager {
      * Registers Named commands for use in PathPlanner GUI
      */
     private void registerCommmands(){
+        //TODO: add if to prevent any comp bot subsystem calls on practice bot
         NamedCommands.registerCommand("rotate45", new RotateToAngle(-45));
     }
 

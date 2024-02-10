@@ -59,7 +59,7 @@ public class Shooter extends SubsystemBase implements Lifecycle{
         SmartDashboard.setDefaultNumber("Shooter/beltFastSpeed", 0.75); // make editable from Elastic
         SmartDashboard.setDefaultNumber("Shooter/beltSlowSpeed", 0.25);
         SmartDashboard.setDefaultNumber("Shooter/feederFastSpeed", 0.50);
-    } 
+    }
 
 
     public void runFeederOpenLoop(){

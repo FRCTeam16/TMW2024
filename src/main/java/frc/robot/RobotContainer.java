@@ -45,7 +45,7 @@ public class RobotContainer {
   //
   // Testing Controls
   //
-
+  
   private final JoystickButton lockAngle1 = new JoystickButton(left, 8);
   private final JoystickButton lockAngle2 = new JoystickButton(left, 9);
 
@@ -85,6 +85,9 @@ public class RobotContainer {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
     }
     drivetrain.registerTelemetry(swerveStateTelemtry::telemeterize);
+
+
+    //TODO: add if to prevent comp bot subsystem calls on practice bot
 
     intake.onTrue(new InstantCommand(()    -> subsystems.intake.IntakePart())).onFalse(new InstantCommand(() -> subsystems.intake.OpenLoopStop()));
     slowIntake.onTrue(new InstantCommand(()    -> subsystems.intake.SlowIntake())).onFalse(new InstantCommand(() -> subsystems.intake.OpenLoopStop()));
