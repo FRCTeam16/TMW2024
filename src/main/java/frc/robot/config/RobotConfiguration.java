@@ -22,10 +22,10 @@ public class RobotConfiguration {
     public static RobotConfig config;
 
     // Path to the file containing the name of the selected robot configuration
-    private static final String DEFAULT_CONFIG_FILENAME = "/home/lvuser/deploy/selected-config.txt";
+    private static final String DEFAULT_CONFIG_FILENAME = "/home/lvuser/robot-config.txt";
 
     // Default path to the configurations file on the RoboRio
-    private static final String CONFIG_FILE_PATH = "/home/lvuser/deploy/robot-configs.json";
+    private static final String CONFIG_FILE_PATH = "/home/lvuser/deploy/config/robot-configs.json";
 
     // Override System.env name for selected configuration
     static final String SELECTED_CONFIG_ENV = "SELECTED_CONFIG_NAME";
