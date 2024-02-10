@@ -8,6 +8,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.ClosedLoopOutputType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants.SteerFeedbackType;
 
 import edu.wpi.first.math.util.Units;
+import frc.robot.config.RobotConfiguration;
 import frc.robot.CommandSwerveDrivetrain;
 
 public class TunerConstants {
@@ -37,22 +38,22 @@ public class TunerConstants {
 
     // Theoretical free speed (m/s) at 12v applied output;
     // This needs to be tuned to your individual robot
-    private static final double kSpeedAt12VoltsMps = 5.471554147;
+    public static final double kSpeedAt12VoltsMps = RobotConfiguration.config.swerve().speedAt12v();
 
     // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
     // This may need to be tuned to your individual robot
-    private static final double kCoupleRatio = 3.12500;
+    private static final double kCoupleRatio = RobotConfiguration.config.swerve().coupleRatio();
 
-    private static final double kDriveGearRatio = 5.357142857;
-    private static final double kSteerGearRatio = 21.428571428571427;
+    private static final double kDriveGearRatio = RobotConfiguration.config.swerve().driveGearRatio();
+    private static final double kSteerGearRatio = RobotConfiguration.config.swerve().steerGearRatio();
     private static final double kWheelRadiusInches = 1.9;
 
     private static final boolean kSteerMotorReversed = true;
     private static final boolean kInvertLeftSide = false;
     private static final boolean kInvertRightSide = true;
 
-    private static final String kCANbusName = "Drivetrain CANivore";
-    private static final int kPigeonId = 1;
+    private static final String kCANbusName = RobotConfiguration.config.canbusName();
+    private static final int kPigeonId = RobotConfiguration.config.pigeonId();
 
 
     // These are only used for simulation
@@ -81,37 +82,37 @@ public class TunerConstants {
 
 
     // Front Left
-    private static final int kFrontLeftDriveMotorId = 1;
-    private static final int kFrontLeftSteerMotorId = 2;
-    private static final int kFrontLeftEncoderId = 1;
-    private static final double kFrontLeftEncoderOffset = 0.171631;
+    private static final int kFrontLeftDriveMotorId = RobotConfiguration.config.swerve().fl().driveId();
+    private static final int kFrontLeftSteerMotorId = RobotConfiguration.config.swerve().fl().steerId();
+    private static final int kFrontLeftEncoderId = RobotConfiguration.config.swerve().fl().encoderId();
+    private static final double kFrontLeftEncoderOffset = RobotConfiguration.config.swerve().fl().encoderOffset();
 
     private static final double kFrontLeftXPosInches = 11.375;
     private static final double kFrontLeftYPosInches = 11.375;
 
     // Front Right
-    private static final int kFrontRightDriveMotorId = 3;
-    private static final int kFrontRightSteerMotorId = 4;
-    private static final int kFrontRightEncoderId = 2;
-    private static final double kFrontRightEncoderOffset = 0.454590;
+    private static final int kFrontRightDriveMotorId = RobotConfiguration.config.swerve().fr().driveId();
+    private static final int kFrontRightSteerMotorId = RobotConfiguration.config.swerve().fr().steerId();
+    private static final int kFrontRightEncoderId = RobotConfiguration.config.swerve().fr().encoderId();
+    private static final double kFrontRightEncoderOffset = RobotConfiguration.config.swerve().fr().encoderOffset();
 
     private static final double kFrontRightXPosInches = 11.375;
     private static final double kFrontRightYPosInches = -11.375;
 
     // Back Left
-    private static final int kBackLeftDriveMotorId = 5;
-    private static final int kBackLeftSteerMotorId = 6;
-    private static final int kBackLeftEncoderId = 3;
-    private static final double kBackLeftEncoderOffset = -0.304199;
+    private static final int kBackLeftDriveMotorId = RobotConfiguration.config.swerve().rl().driveId();
+    private static final int kBackLeftSteerMotorId = RobotConfiguration.config.swerve().rl().steerId();
+    private static final int kBackLeftEncoderId = RobotConfiguration.config.swerve().rl().encoderId();
+    private static final double kBackLeftEncoderOffset = RobotConfiguration.config.swerve().rl().encoderOffset();
 
     private static final double kBackLeftXPosInches = -11.375;
     private static final double kBackLeftYPosInches = 11.375;
 
     // Back Right
-    private static final int kBackRightDriveMotorId = 7;
-    private static final int kBackRightSteerMotorId = 8;
-    private static final int kBackRightEncoderId = 4;
-    private static final double kBackRightEncoderOffset = -0.490479;
+    private static final int kBackRightDriveMotorId = RobotConfiguration.config.swerve().rr().driveId();
+    private static final int kBackRightSteerMotorId = RobotConfiguration.config.swerve().rr().steerId();
+    private static final int kBackRightEncoderId = RobotConfiguration.config.swerve().rr().encoderId();
+    private static final double kBackRightEncoderOffset = RobotConfiguration.config.swerve().rr().encoderOffset();
 
     private static final double kBackRightXPosInches = -11.375;
     private static final double kBackRightYPosInches = -11.375;
