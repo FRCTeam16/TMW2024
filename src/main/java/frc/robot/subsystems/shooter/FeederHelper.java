@@ -1,5 +1,8 @@
 package frc.robot.subsystems.shooter;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.util.sendable.Sendable;
@@ -11,11 +14,19 @@ public class FeederHelper implements Sendable {
     private final TalonFX motor;
 
     private final DutyCycleOut openLoopOut = new DutyCycleOut(0.0);
-    private double openLoopSetpoint = 0.0;
+    private double openLoopSetpoint = -0.50;
 
     public FeederHelper(String parent, String name, TalonFX motor) {
         this.name = name;
         this.motor = motor;
+
+        TalonFXConfiguration config = new TalonFXConfiguration();
+        config.withOpenLoopRamps(
+                new OpenLoopRampsConfigs().withDutyCycleOpenLoopRampPeriod(0.0))
+                .withCurrentLimits(
+                        new CurrentLimitsConfigs().withSupplyCurrentLimit(40)
+                                .withSupplyCurrentLimitEnable(true));
+        this.motor.getConfigurator().apply(config);
     }
 
     public void setOpenLoopSetpoint(double openLoopSetpoint) {

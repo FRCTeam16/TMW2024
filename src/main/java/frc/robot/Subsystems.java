@@ -5,6 +5,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.DMS.LEDSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.RotationController;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.vision.Limelight;
@@ -28,6 +29,7 @@ public class Subsystems {
     public static LEDSubsystem ledSubsystem;
     public static Intake intake;
     public static Shooter shooter;
+    public static Pivot pivot;
     // Utility
     public static RotationController rotationController = new RotationController();
     public static List<Lifecycle> lifecycleSubsystems = new ArrayList<>();
@@ -44,13 +46,16 @@ public class Subsystems {
         //TODO add if to prevent comp bot subsystem calls on practice bot
         intake = new Intake();
         shooter = new Shooter();
+        pivot = new Pivot();
 
         lifecycleSubsystems.add(visionSubsystem);
         lifecycleSubsystems.add(ledSubsystem);
         lifecycleSubsystems.add(intake);
         lifecycleSubsystems.add(shooter);
+        lifecycleSubsystems.add(pivot);
 
         SmartDashboard.putData("ShooterSubsystem", shooter);
+        SmartDashboard.putData("PivotSubsystem", pivot);
     }
 
 

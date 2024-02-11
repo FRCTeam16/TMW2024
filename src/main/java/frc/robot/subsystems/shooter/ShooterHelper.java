@@ -24,6 +24,8 @@ public class ShooterHelper implements Sendable {
     private double openLoopSetpoint = 0.0;
     private double velocitySetpoint = 0.0;
 
+    private boolean invert = false;
+
     private DutyCycleOut openLoopOut = new DutyCycleOut(0);
     private VelocityVoltage velocityOut = new VelocityVoltage(0).withSlot(0);
 
@@ -32,7 +34,7 @@ public class ShooterHelper implements Sendable {
     // https://pro.docs.ctr-electronics.com/en/stable/docs/api-reference/device-specific/talonfx/basic-pid-control.html#velocity-control
     private static final double kraken_kv = 1 / ((6000 / 12.0) / 60.0);
     private static final double kraken_kA = 0.01; // 1 rps acceleration requires 0.01 V
-    private static final double kraken_kS = 0.25;   // how many volts to overcome static friction
+    private static final double kraken_kS = 0.00;   // how many volts to overcome static friction
 
 
     public ShooterHelper(String parentName, String name, TalonFX motor) {
@@ -74,6 +76,14 @@ public class ShooterHelper implements Sendable {
         return openLoop;
     }
 
+    public void setInvert(boolean invert) {
+        this.invert = invert;
+    }
+
+    public boolean isInvert() {
+        return invert;
+    }
+
     public double getOpenLoopSetpoint() {
         return openLoopSetpoint;
     }
@@ -90,15 +100,19 @@ public class ShooterHelper implements Sendable {
         this.velocitySetpoint = velocitySetpoint;
     }
 
+    private int direction() {
+        return (invert) ? -1 : 1;
+    }
+
     void periodic() {
         if (enabled) {
             if (openLoop) {
-                this.motor.setControl(openLoopOut.withOutput(openLoopSetpoint));
+                this.motor.setControl(openLoopOut.withOutput(direction() * openLoopSetpoint));
             } else {
                 if (false) {
                     this.setMotorPID();
                 }
-                this.motor.setControl(velocityOut.withVelocity(velocitySetpoint).withFeedForward(pid.kF).withEnableFOC(true));
+                this.motor.setControl(velocityOut.withVelocity(direction() * velocitySetpoint).withFeedForward(pid.kF).withEnableFOC(true));
             }
         }
         else {

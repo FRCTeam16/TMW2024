@@ -5,7 +5,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
-public class AimHelper implements Sendable {
+@Deprecated  public class AimHelper implements Sendable {
     private boolean enabled = false;
     private final String name;
     private final TalonFX motor;

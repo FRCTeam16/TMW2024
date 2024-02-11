@@ -21,6 +21,7 @@ import frc.robot.commands.ZeroAndSetOffsetCommand;
 import frc.robot.commands.auto.RotateToAngle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.Pivot;
 
 import java.util.Objects;
 
@@ -44,24 +45,22 @@ public class RobotContainer {
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
     private final SwerveStateTelemetry swerveStateTelemetry = new SwerveStateTelemetry(MaxSpeed);
 
-    private final Trigger robotCentric = new Trigger(left::getTrigger);
+    //
+    // Left Joystick
+    //
+    private final JoystickButton intake = new JoystickButton(left, 1);
+    private final JoystickButton eject = new JoystickButton(left, 2);
+    private final JoystickButton slowIntake = new JoystickButton(left, 4);
+
+
 
     //
-    // Testing Controls
+    // Right Joystick
     //
-
-    private final JoystickButton lockAngle1 = new JoystickButton(left, 8);
-    private final JoystickButton lockAngle2 = new JoystickButton(left, 9);
-
-    private final Trigger runVisionAlign = new JoystickButton(right, 3);
+    private final Trigger feed = new Trigger(right::getTrigger);
     private final JoystickButton runVisionAlignAngle = new JoystickButton(right, 2);
 
-    private final JoystickButton intake = new JoystickButton(right, 1);
-    private final JoystickButton slowIntake = new JoystickButton(right, 4);
-    private final JoystickButton eject = new JoystickButton(left, 1);
 
-    private final JoystickButton shoot = new JoystickButton(left, 2);
-    private final JoystickButton feed = new JoystickButton(left, 3);
 
 
     public RobotContainer() {
@@ -76,35 +75,44 @@ public class RobotContainer {
                         .withVelocityY(-right.getX() * MaxSpeed)
                         .withRotationalRate(-left.getX() * MaxAngularRate)));
 
-        xboxController.y().whileTrue(drivetrain.applyRequest(() -> brake));
-        xboxController.b().whileTrue(drivetrain
-                .applyRequest(
-                        () -> point.withModuleDirection(new Rotation2d(-xboxController.getLeftY(), -xboxController.getLeftX()))));
 
+        //
+        // Debug
+        //
 
-        // reset the field-centric heading on left bumper press
-        // FIXME this does not work
-        robotCentric.onTrue(drivetrain.runOnce(drivetrain::seedFieldRelative));
+//        xboxController.y().whileTrue(drivetrain.applyRequest(() -> brake));
+//        xboxController.b().whileTrue(drivetrain
+//                .applyRequest(
+//                        () -> point.withModuleDirection(new Rotation2d(-xboxController.getLeftY(), -xboxController.getLeftX()))));
 
+        xboxController.rightBumper().onTrue(Commands.runOnce(Subsystems.pivot::openLoopUp)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
+        xboxController.leftBumper().onTrue(Commands.runOnce(Subsystems.pivot::openLoopDown)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
+        xboxController.y().onTrue(Commands.runOnce(() -> Subsystems.pivot.setPivotPosition(Pivot.PivotPosition.StartingPosition)));
+        xboxController.x().onTrue(Commands.runOnce(() -> Subsystems.pivot.setPivotPosition(Pivot.PivotPosition.FeedPosition)));
+        xboxController.a().onTrue(Commands.runOnce(() -> Subsystems.pivot.setPivotPosition(Pivot.PivotPosition.Up)));
 
+//        lockAngle1.onTrue(new RotateToAngle(-60));
+//        lockAngle2.onTrue(new RotateToAngle(0));
+
+        //
         // Intake Subsystem
+        //
         intake.onTrue(new InstantCommand(() -> Subsystems.intake.IntakePart())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenLoopStop()));
         slowIntake.onTrue(new InstantCommand(() -> Subsystems.intake.SlowIntake())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenLoopStop()));
         eject.onTrue(new InstantCommand(() -> Subsystems.intake.Eject())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenLoopStop()));
 
 
+        //
         // Shooter
-        shoot.onTrue(Commands.runOnce(Subsystems.shooter::runShooterOpenLoop))
-                .onFalse(Commands.runOnce(Subsystems.shooter::stopShooter));
+        //
+        SmartDashboard.putData("Start Shooter", Commands.runOnce(Subsystems.shooter::runShooter));
+        SmartDashboard.putData("Stop Shooter", Commands.runOnce(Subsystems.shooter::stopShooter));
         feed.onTrue(Commands.runOnce(Subsystems.shooter::runFeeder))
                 .onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
 
 
         // Debug
-        lockAngle1.onTrue(new RotateToAngle(-60));
-        lockAngle2.onTrue(new RotateToAngle(0));
 
-        runVisionAlign.whileTrue(new VisionAlign());
         runVisionAlignAngle.whileTrue(new VisionAlign().withRobotAngle(90.0));
 
 

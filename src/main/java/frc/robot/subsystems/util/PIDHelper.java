@@ -2,6 +2,7 @@ package frc.robot.subsystems.util;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -66,25 +67,12 @@ public class PIDHelper {
         this.kA = a;
     }
 
-    // public void updateTalonFX(TalonFX motor, int slot) {
-    //     if (slot != 0) {
-    //         System.err.println("PIDHelper 2024 has not been updated to use non-zero slots");
-    //     }
-    //     motor.getConfigurator().apply(
-    //             new SlotConfigs()
-    //                     .withKP(this.kP)
-    //                     .withKA(this.kA)
-    //                     .withKD(this.kD)
-    //     // .withKF(this.kf)
-    //     );
-    //     motor.getConfigurator().apply(
-    //             new MotionMagicConfigs()
-    //             .withMotionMagicAcceleration(this.kA)
-    //             .withMotionMagicCruiseVelocity(this.kV));
-
-    // }
 
     public void updatePIDController(PIDController pid) {
+        pid.setPID(this.kP, this.kI, this.kD);
+    }
+
+    public void updateProfiledPIDController(ProfiledPIDController pid) {
         pid.setPID(this.kP, this.kI, this.kD);
     }
 
