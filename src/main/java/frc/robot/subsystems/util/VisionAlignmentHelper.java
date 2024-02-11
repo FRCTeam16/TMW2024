@@ -2,8 +2,8 @@ package frc.robot.subsystems.util;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import frc.robot.Subsystems;
-import frc.robot.subsystems.vision.VisionSubsystem.VisionInfo;
+import frc.robot.subsystems.vision.Limelight;
+import frc.robot.subsystems.vision.VisionTypes;
 
 public class VisionAlignmentHelper {
     private static final double DEFAULT_KP = 0.02;
@@ -12,10 +12,13 @@ public class VisionAlignmentHelper {
     private double tolerance = 1.0;
     private double maxSpeed = 0.3;
 
-    public VisionAlignmentHelper() {
+    public VisionAlignmentHelper(Limelight limelight) {
         pidHelper.initialize(DEFAULT_KP, 0, 0, 0, 0, 0);
         this.pid.setTolerance(tolerance);
         this.pid.setIntegratorRange(-1.0, 1.0);
+    }
+    public VisionAlignmentHelper() {
+        this(null);
     }
 
     public VisionAlignmentHelper overrideMaxSpeed(double speed) {
@@ -32,13 +35,12 @@ public class VisionAlignmentHelper {
         this.tolerance = tolerance;
     }
 
-    public double calculate() {
+    public double calculate(VisionTypes.TargetInfo targetInfo) {
         pidHelper.updateValuesFromDashboard();
         pidHelper.updatePIDController(this.pid);
-        VisionInfo visionInfo = Subsystems.visionSubsystem.getVisionInfo();
         double output = 0.0;
-        if (visionInfo.hasTarget) {
-            output = this.pid.calculate(visionInfo.xOffset, 0);
+        if (targetInfo.hasTarget()) {
+            output = this.pid.calculate(targetInfo.xOffset(), 0);
         }
         double clampVal = maxSpeed;
         double clampedValue = MathUtil.clamp(output, -clampVal, clampVal);
