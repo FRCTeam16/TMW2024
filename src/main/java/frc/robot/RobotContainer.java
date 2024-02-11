@@ -107,6 +107,13 @@ public class RobotContainer {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
     }
     drivetrain.registerTelemetry(swerveStateTelemtry::telemeterize);
+
+
+    //TODO: add if to prevent comp bot subsystem calls on practice bot
+
+    intake.onTrue(new InstantCommand(()    -> subsystems.intake.IntakePart())).onFalse(new InstantCommand(() -> subsystems.intake.OpenLoopStop()));
+    slowIntake.onTrue(new InstantCommand(()    -> subsystems.intake.SlowIntake())).onFalse(new InstantCommand(() -> subsystems.intake.OpenLoopStop()));
+    eject.onTrue(new InstantCommand(()     -> subsystems.intake.Eject())).onFalse( new InstantCommand(()   -> subsystems.intake.OpenLoopStop()));
 }
 
   public RobotContainer() {

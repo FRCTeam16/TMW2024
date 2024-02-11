@@ -34,6 +34,7 @@ public class Subsystems {
         swerveSubsystem = TunerConstants.DriveTrain;
         visionSubsystem = new VisionSubsystem();
         ledSubsystem = new LEDSubsystem();
+        //TODO add if to prevent comp bot subsystem calls on practice bot
         intake = new Intake();
         shooter = new Shooter();
         
