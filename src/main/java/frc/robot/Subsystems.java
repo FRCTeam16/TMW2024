@@ -12,10 +12,12 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.subsystems.Intake;
 
+
 /**
- * Global subsystem declaration and tracking to allow easier injection
- * for commands
+ * The Subsystems class represents a collection of subsystems used in the robot.
+ * It provides singleton access to all the subsystem instances and manages their lifecycle.
  */
+@SuppressWarnings("InstantiationOfUtilityClass")
 public class Subsystems {
     private static Subsystems instance;
     public static CommandSwerveDrivetrain swerveSubsystem;

@@ -1,16 +1,13 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
-import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Subsystems;
 import frc.robot.subsystems.Lifecycle;
 
 
@@ -37,7 +34,7 @@ public class Intake extends SubsystemBase implements Lifecycle{
     private boolean positionChanged = false; // motion magic trigger value
 
         
-    private enum IntakePosition{
+    public enum IntakePosition{
         Zero(0),
         Passing(30), // TODO: WILD GUESS
         Pickup(180), // TODO: WILD GUESS

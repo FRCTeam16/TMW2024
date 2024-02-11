@@ -15,6 +15,7 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -92,7 +93,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         try {
             return new PathPlannerAuto(pathName);
         } catch (Exception e) {
-            System.out.println(e);
+            DataLogManager.log("!!! Error attempting to locate auto path %s: %s".formatted(pathName, e));
             return new PrintCommand("Cannot Locate path" + pathName);
         }
     }

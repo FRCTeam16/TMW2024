@@ -13,15 +13,15 @@ import frc.robot.config.RobotConfiguration;
 import frc.robot.config.BuildConstants;
 
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
+  private Command autonomousCommand;
 
-  private RobotContainer m_robotContainer;
+  private RobotContainer robotContainer;
 
   @Override
   public void robotInit() {
     DataLogManager.start();
     RobotConfiguration.initialize();
-    m_robotContainer = new RobotContainer();
+    robotContainer = new RobotContainer();
 
     // Log Startup Message
     DataLogManager.log(
@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    m_robotContainer.robotPeriodic();
+    robotContainer.robotPeriodic();
   }
 
   @Override
@@ -69,12 +69,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    autonomousCommand = robotContainer.getAutonomousCommand();
 
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+    if (autonomousCommand != null) {
+      autonomousCommand.schedule();
     }
-    m_robotContainer.autoInit();
+    robotContainer.autoInit();
   }
 
   @Override
@@ -85,10 +85,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
+    if (autonomousCommand != null) {
+      autonomousCommand.cancel();
     }
-    m_robotContainer.teleopInit();
+    robotContainer.teleopInit();
   }
 
   @Override

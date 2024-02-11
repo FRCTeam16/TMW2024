@@ -3,7 +3,6 @@ package frc.robot.subsystems.shooter;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.util.sendable.Sendable;
@@ -53,7 +52,6 @@ public class ShooterHelper implements Sendable {
     }
 
     private void setMotorPID() {
-        // TODO Do we need to make helper method to retry
         StatusCode code = this.motor.getConfigurator().apply(config);
         if (!code.isOK()) {
             DataLogManager.log("ShooterHelper(" + this.name + ") problem: " + code.getDescription());
@@ -97,13 +95,10 @@ public class ShooterHelper implements Sendable {
             if (openLoop) {
                 this.motor.setControl(openLoopOut.withOutput(openLoopSetpoint));
             } else {
-                double vout = velocitySetpoint;
-                if (enabled) {
-                    if (false) {
-                        this.setMotorPID();
-                    }
+                if (false) {
+                    this.setMotorPID();
                 }
-                this.motor.setControl(velocityOut.withVelocity(vout).withFeedForward(pid.kF).withEnableFOC(true));
+                this.motor.setControl(velocityOut.withVelocity(velocitySetpoint).withFeedForward(pid.kF).withEnableFOC(true));
             }
         }
         else {
@@ -111,7 +106,6 @@ public class ShooterHelper implements Sendable {
         }
 
         SmartDashboard.putNumber(parentName + "/" + name + "/ActualVelocity", this.motor.getVelocity().getValue());
-        
     }
 
 
