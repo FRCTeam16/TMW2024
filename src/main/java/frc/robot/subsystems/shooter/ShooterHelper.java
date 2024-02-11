@@ -42,7 +42,7 @@ public class ShooterHelper implements Sendable {
         this.motor = motor;
 
         this.pid = new PIDHelper(parentName + "/" + name);
-        this.pid.initialize(0,0,0,0,kraken_kv,kraken_kA);
+        this.pid.initialize(0.04,0,0,0,kraken_kv,kraken_kA);
 
         config = new TalonFXConfiguration();
         config.Slot0.withKS(kraken_kS);   // overcome static friction
@@ -93,17 +93,21 @@ public class ShooterHelper implements Sendable {
     }
 
     void periodic() {
-        if (openLoop) {
-            double out = enabled ? openLoopSetpoint : 0;
-            this.motor.setControl(openLoopOut.withOutput(out));
-        } else {
-            double vout = 0.0;
-            if (enabled) {
-                if (updateConfig) {
-                    this.setMotorPID();
+        if (enabled) {
+            if (openLoop) {
+                this.motor.setControl(openLoopOut.withOutput(openLoopSetpoint));
+            } else {
+                double vout = velocitySetpoint;
+                if (enabled) {
+                    if (false) {
+                        this.setMotorPID();
+                    }
                 }
+                this.motor.setControl(velocityOut.withVelocity(vout).withFeedForward(pid.kF).withEnableFOC(true));
             }
-            this.motor.setControl(velocityOut.withVelocity(vout).withFeedForward(pid.kF));
+        }
+        else {
+            this.motor.setControl(openLoopOut.withOutput(0));
         }
 
         SmartDashboard.putNumber(parentName + "/" + name + "/ActualVelocity", this.motor.getVelocity().getValue());
