@@ -180,3 +180,7 @@ logs/
 
 # Folder that has CTRE Phoenix Sim device config storage
 ctre_sim/
+/.DataLogTool/datalogtool.json
+/networktables.json
+/simgui.json
+/simgui-ds.json

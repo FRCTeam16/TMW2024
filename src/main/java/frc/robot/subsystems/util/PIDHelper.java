@@ -1,5 +1,6 @@
 package frc.robot.subsystems.util;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -90,6 +91,16 @@ public class PIDHelper {
     public void overrideP(double value) {
         SmartDashboard.putNumber(name + "/kP", value);
         this.kP = value;
+    }
+
+    public TalonFXConfiguration updateConfiguration(TalonFXConfiguration config) {
+        config.Slot0
+                .withKP(kP)
+                .withKI(kI)
+                .withKD(kD)
+                .withKV(kV)
+                .withKA(kA);
+        return config;
     }
 
 }

@@ -3,10 +3,12 @@ package frc.robot;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.RotationController;
 import frc.robot.subsystems.DMS.LEDSubsystem;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.subsystems.Intake;
 
@@ -21,6 +23,8 @@ public class Subsystems {
     public static LEDSubsystem ledSubsystem;
     public static Intake intake;
 
+    public static Shooter shooter;
+
     // Utility
     public static RotationController rotationController = new RotationController();
 
@@ -31,10 +35,14 @@ public class Subsystems {
         visionSubsystem = new VisionSubsystem();
         ledSubsystem = new LEDSubsystem();
         intake = new Intake();
+        shooter = new Shooter();
         
         lifecycleSubsystems.add(visionSubsystem);
         lifecycleSubsystems.add(ledSubsystem);
         lifecycleSubsystems.add(intake);
+        lifecycleSubsystems.add(shooter);
+
+        SmartDashboard.putData("ShooterSubsystem", shooter);
     }
 
 

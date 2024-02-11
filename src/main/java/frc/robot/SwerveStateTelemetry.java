@@ -104,7 +104,7 @@ public class SwerveStateTelemetry {
             m_moduleDirections[i].setAngle(state.ModuleStates[i].angle);
             m_moduleSpeeds[i].setLength(state.ModuleStates[i].speedMetersPerSecond / (2 * MaxSpeed));
 
-            SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
+            SmartDashboard.putData("SwerveState/Module " + i, m_moduleMechanisms[i]);
         }
     }
 }
