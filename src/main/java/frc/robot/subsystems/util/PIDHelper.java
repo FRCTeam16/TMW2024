@@ -1,13 +1,12 @@
 package frc.robot.subsystems.util;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * @FIXME Needs work and testing for > 2023 usage
- */
+
 public class PIDHelper {
     private final String name;
     private final boolean useDashboard;
@@ -83,13 +82,13 @@ public class PIDHelper {
         this.kP = value;
     }
 
-    public TalonFXConfiguration updateConfiguration(TalonFXConfiguration config) {
-        config.Slot0
-                .withKP(kP)
-                .withKI(kI)
-                .withKD(kD)
-                .withKV(kV)
-                .withKA(kA);
+    public Slot0Configs updateConfiguration(Slot0Configs config) {
+        config
+            .withKP(kP)
+            .withKI(kI)
+            .withKD(kD)
+            .withKV(kV)
+            .withKA(kA);
         return config;
     }
 

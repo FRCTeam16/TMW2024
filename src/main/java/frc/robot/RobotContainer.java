@@ -18,7 +18,6 @@ import frc.robot.auto.AutoManager;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.vision.VisionAlign;
 import frc.robot.commands.ZeroAndSetOffsetCommand;
-import frc.robot.commands.auto.RotateToAngle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.Pivot;
@@ -53,13 +52,15 @@ public class RobotContainer {
     private final JoystickButton slowIntake = new JoystickButton(left, 4);
 
 
-
     //
     // Right Joystick
     //
     private final Trigger feed = new Trigger(right::getTrigger);
     private final JoystickButton runVisionAlignAngle = new JoystickButton(right, 2);
 
+    //
+    // Controller
+    //
 
 
 
@@ -77,7 +78,7 @@ public class RobotContainer {
 
 
         //
-        // Debug
+        // Debug/Development
         //
 
 //        xboxController.y().whileTrue(drivetrain.applyRequest(() -> brake));
@@ -91,15 +92,18 @@ public class RobotContainer {
         xboxController.x().onTrue(Commands.runOnce(() -> Subsystems.pivot.setPivotPosition(Pivot.PivotPosition.FeedPosition)));
         xboxController.a().onTrue(Commands.runOnce(() -> Subsystems.pivot.setPivotPosition(Pivot.PivotPosition.Up)));
 
-//        lockAngle1.onTrue(new RotateToAngle(-60));
-//        lockAngle2.onTrue(new RotateToAngle(0));
+        runVisionAlignAngle.whileTrue(new VisionAlign().withRobotAngle(90.0));
+        //        lockAngle1.onTrue(new RotateToAngle(-60));
+        //        lockAngle2.onTrue(new RotateToAngle(0));
+
+
 
         //
         // Intake Subsystem
         //
-        intake.onTrue(new InstantCommand(() -> Subsystems.intake.IntakePart())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenLoopStop()));
-        slowIntake.onTrue(new InstantCommand(() -> Subsystems.intake.SlowIntake())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenLoopStop()));
-        eject.onTrue(new InstantCommand(() -> Subsystems.intake.Eject())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenLoopStop()));
+        intake.onTrue(Commands.runOnce(Subsystems.intake::runIntakeFast)).onFalse(Commands.runOnce(Subsystems.intake::stopIntake));
+        slowIntake.onTrue(Commands.runOnce(Subsystems.intake::runIntakeSlow)).onFalse(Commands.runOnce(Subsystems.intake::stopIntake));
+        eject.onTrue(Commands.runOnce(Subsystems.intake::runIntakeEject)).onFalse(Commands.runOnce(Subsystems.intake::stopIntake));
 
 
         //
@@ -111,13 +115,8 @@ public class RobotContainer {
                 .onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
 
 
-        // Debug
-
-        runVisionAlignAngle.whileTrue(new VisionAlign().withRobotAngle(90.0));
-
-
         if (Utils.isSimulation()) {
-            drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
+            drivetrain.seedFieldRelative(new Pose2d(new Translation2d(3,3), Rotation2d.fromDegrees(0)));
         }
         drivetrain.registerTelemetry(swerveStateTelemetry::telemeterize);
 
