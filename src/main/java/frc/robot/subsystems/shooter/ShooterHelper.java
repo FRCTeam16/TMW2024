@@ -53,6 +53,9 @@ public class ShooterHelper implements Sendable {
         setMotorPID();
     }
 
+    /**
+     * Sets the PID values for the motor based on the config passed in
+     */
     private void setMotorPID() {
         StatusCode code = this.motor.getConfigurator().apply(config);
         if (!code.isOK()) {
@@ -109,7 +112,8 @@ public class ShooterHelper implements Sendable {
             if (openLoop) {
                 this.motor.setControl(openLoopOut.withOutput(direction() * openLoopSetpoint));
             } else {
-                if (false) {
+                if (pid.updateValuesFromDashboard()) {
+                    // TODO test this doesn't interfere pid.updateConfiguration(config);
                     this.setMotorPID();
                 }
                 this.motor.setControl(velocityOut.withVelocity(direction() * velocitySetpoint).withFeedForward(pid.kF).withEnableFOC(true));

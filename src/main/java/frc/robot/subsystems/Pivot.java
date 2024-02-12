@@ -8,6 +8,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -36,6 +37,8 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     private PIDController pid;
     private TrapezoidProfile.State goal = new TrapezoidProfile.State(0,0);
 
+    private final DoubleLogEntry setpointLog;
+
 
     public enum PivotPosition {
         StartingPosition(0),
@@ -52,8 +55,8 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     }
 
 
-    private static class EncoderCounts {
-        static final double ZERO = 0.3285406832135171;
+    private static class EncoderConstants {
+        static final double ZERO_OFFSET = 0.3285406832135171;
         static final double MIN_ANGLE = -1.0;
         static final double MAX_ANGLE = 81.75;      // 0.12004950300123758
     }
@@ -66,14 +69,13 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         pid = new PIDController(0,0,0);
         pidHelper.updatePIDController(pid);
 
-        encoder.setPositionOffset(EncoderCounts.ZERO);
+        encoder.setPositionOffset(EncoderConstants.ZERO_OFFSET);
 
-        SmartDashboard.setDefaultNumber("Pivot/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
+        setpointLog = new DoubleLogEntry(DataLogManager.getLog(), "PivotSetpoint");
 
         this.holdPosition();
-
-        openLoop = true;
         speed = 0.0;
+        SmartDashboard.setDefaultNumber("Pivot/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
     }
 
     @Override
@@ -123,6 +125,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
             return;
         }
         openLoop = false;
+        setpointLog.append(setpoint);
         this.goal = new TrapezoidProfile.State(setpoint, 0);
     }
 
@@ -159,7 +162,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
 //
 //        }
 
-        if (this.getPivotAngleDegrees() > EncoderCounts.MAX_ANGLE || this.getPivotAngleDegrees() < EncoderCounts.MIN_ANGLE) {
+        if (this.getPivotAngleDegrees() > EncoderConstants.MAX_ANGLE || this.getPivotAngleDegrees() < EncoderConstants.MIN_ANGLE) {
             DataLogManager.log("[Pivot] SOFT LIMIT BREAK");
             motor.setControl(openLoopOut.withOutput(0));
             return;
@@ -176,6 +179,23 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         }
     }
 
+    public Double getMotorPosition() {
+        return this.motor.getPosition().getValue();
+    }
+
+    public Double getMotorVelocity() {
+        return this.motor.getVelocity().getValue();
+    }
+
+    public Double getMotorVoltage() {
+        return this.motor.getMotorVoltage().getValue();
+    }
+
+    public Double getMotorSupplyCurrent() {
+        return this.motor.getStatorCurrent().getValue();
+    }
+
+
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("Pivot");
@@ -184,10 +204,10 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         builder.addDoubleProperty("Goal", this::getPivotSetpoint, this::setPivotSetpoint);
         builder.addDoubleProperty("Speed", this::getSpeed, null /*this::setSpeed*/);
 
-//        builder.addDoubleProperty("Motor/Position", () -> this.motor.getPosition().getValue(), null);
-//        builder.addDoubleProperty("Motor/Velocity", () -> this.motor.getVelocity().getValue(), null);
-//        builder.addDoubleProperty("Motor/Voltage", () -> this.motor.getMotorVoltage().getValue(), null);
-//        builder.addDoubleProperty("Motor/Amps", () -> this.motor.getStatorCurrent().getValue(), null);
+        builder.addDoubleProperty("Motor/Position", this::getMotorPosition, null);
+        builder.addDoubleProperty("Motor/Velocity", this::getMotorVelocity, null);
+        builder.addDoubleProperty("Motor/Voltage", this::getMotorVoltage, null);
+        builder.addDoubleProperty("Motor/SupplyCurrent", this::getMotorSupplyCurrent, null);
 
         builder.addDoubleProperty("Encoder/Pos", this::getPivotEncoderPosition, null);
         builder.addDoubleProperty("Encoder/Angle", this::getPivotAngleDegrees, null);

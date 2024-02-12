@@ -47,10 +47,10 @@ public class PIDHelper {
         }
     }
 
-    public void updateValuesFromDashboard() {
+    public boolean updateValuesFromDashboard() {
         if (!this.useDashboard) {
             // Do nothing if we don't use dashboard
-            return;
+            return false;
         }
         double p = SmartDashboard.getNumber(name + "/kP", kP);
         double i = SmartDashboard.getNumber(name + "/kI", kI);
@@ -59,12 +59,14 @@ public class PIDHelper {
         double v = SmartDashboard.getNumber(name + "/kV", kV);
         double a = SmartDashboard.getNumber(name + "/kA", kA);
 
-        this.kP = p;
-        this.kI = i;
-        this.kD = d;
-        this.kF = ff;
-        this.kV = v;
-        this.kA = a;
+        DoubleChanger changer = new DoubleChanger();
+        this.kP = changer.change(this.kP, p);
+        this.kI = changer.change(this.kI, i);
+        this.kD = changer.change(this.kD, d);
+        this.kF = changer.change(this.kF, ff);
+        this.kV = changer.change(this.kV, v);
+        this.kA = changer.change(this.kA, a);
+        return changer.isChanged();
     }
 
 
