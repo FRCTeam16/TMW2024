@@ -172,8 +172,9 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         if (openLoop) {
             motor.setControl(openLoopOut.withOutput(speed));
         } else {
-            pidHelper.updateValuesFromDashboard();
-            pidHelper.updatePIDController(pid);
+                if (pidHelper.updateValuesFromDashboard()) {
+                pidHelper.updatePIDController(pid);
+            }
             double output = pid.calculate(this.getPivotAngleDegrees(), goal.position);
             motor.setControl(openLoopOut.withOutput(output));
         }
