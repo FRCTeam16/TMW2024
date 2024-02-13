@@ -32,40 +32,10 @@
           "encoderId": 11,
           "encoderOffset": -0.15576171875
         }
-      }
-    },
-    "competition": {
-      "canbusName": "Drivetrain CANivore",
-      "pigeonId": 1,
-      "swerve": {
-        "speedAt12v": 5.471554147,
-        "coupleRatio": 3.12500,
-        "driveGearRatio": 5.357142857,
-        "steerGearRatio": 21.428571428571427,
-        "fl": {
-          "driveId": 1,
-          "steerId": 2,
-          "encoderId": 1,
-          "encoderOffset": 0.171631
-        },
-        "fr": {
-          "driveId": 3,
-          "steerId": 4,
-          "encoderId": 2,
-          "encoderOffset": 0.454590
-        },
-        "rl": {
-          "driveId": 5,
-          "steerId": 6,
-          "encoderId": 3,
-          "encoderOffset": -0.304199
-        },
-        "rr": {
-          "driveId": 7,
-          "steerId": 8,
-          "encoderId": 4,
-          "encoderOffset": -0.490479
-        }
+      },
+      "intake": {
+        "intakeID": 35,
+        "pivotID": 36
       }
     }
   }

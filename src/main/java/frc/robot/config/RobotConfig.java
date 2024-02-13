@@ -6,7 +6,7 @@ package frc.robot.config;
 public record RobotConfig (
         String canbusName,
         SwerveConfig swerve,
-        int pigeonId) {
+        int pigeonId, IntakeConfig intake) {
 
     static RobotConfig createDefaultConfig() {
         return new RobotConfig(
@@ -21,7 +21,9 @@ public record RobotConfig (
                         new SwerveModuleConfig(5, 6, 3, -0.304199),
                         new SwerveModuleConfig(7, 8, 4, -0.490479)
                 ),
-                1
+                1,
+                new IntakeConfig(9,10)
+
         );
     }
 }
