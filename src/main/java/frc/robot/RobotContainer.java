@@ -62,6 +62,9 @@ public class RobotContainer {
     // Controller
     //
 
+    //
+    MusicController music = new MusicController();
+
 
     public RobotContainer() {
         configureBindings();
@@ -136,6 +139,9 @@ public class RobotContainer {
     private void configureDashboardButtons() {
         SmartDashboard.putData("Tare Odometry", new RunWithDisabledInstantCommand(() -> Subsystems.swerveSubsystem.tareEverything()));
         SmartDashboard.putData("Zero Gyro", new ZeroAndSetOffsetCommand(0).ignoringDisable(true));
+
+        SmartDashboard.putData("Play Lowrida", music.getPlayCommand());
+        SmartDashboard.putData("Stop Music", music.getPauseommand());
     }
 
     public Command getAutonomousCommand() {

@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase implements Lifecycle {
   // motor configuration
-  private TalonFX climberDrive = new TalonFX(11);// set to 125:1
+  private TalonFX climberDrive = new TalonFX(60);// set to 125:1
 
   // make climber go up and down
   private static double moveUp = .1; // arbitrary number
