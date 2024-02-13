@@ -48,11 +48,14 @@ public class ShooterHelper implements Sendable {
         config = new TalonFXConfiguration();
         config.Slot0.withKS(kraken_kS);   // overcome static friction
 
-        pid.updateConfiguration(config);
+        pid.updateConfiguration(config.Slot0);
 
         setMotorPID();
     }
 
+    /**
+     * Sets the PID values for the motor based on the config passed in
+     */
     private void setMotorPID() {
         StatusCode code = this.motor.getConfigurator().apply(config);
         if (!code.isOK()) {
@@ -109,8 +112,9 @@ public class ShooterHelper implements Sendable {
             if (openLoop) {
                 this.motor.setControl(openLoopOut.withOutput(direction() * openLoopSetpoint));
             } else {
-                if (false) {
-                    this.setMotorPID();
+                if (pid.updateValuesFromDashboard()) {
+                    // TODO test this doesn't interfere pid.updateConfiguration(config);
+                    // this.setMotorPID();
                 }
                 this.motor.setControl(velocityOut.withVelocity(direction() * velocitySetpoint).withFeedForward(pid.kF).withEnableFOC(true));
             }

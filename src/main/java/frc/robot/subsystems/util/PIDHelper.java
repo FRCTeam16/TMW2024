@@ -1,13 +1,12 @@
 package frc.robot.subsystems.util;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * @FIXME Needs work and testing for > 2023 usage
- */
+
 public class PIDHelper {
     private final String name;
     private final boolean useDashboard;
@@ -47,10 +46,10 @@ public class PIDHelper {
         }
     }
 
-    public void updateValuesFromDashboard() {
+    public boolean updateValuesFromDashboard() {
         if (!this.useDashboard) {
             // Do nothing if we don't use dashboard
-            return;
+            return false;
         }
         double p = SmartDashboard.getNumber(name + "/kP", kP);
         double i = SmartDashboard.getNumber(name + "/kI", kI);
@@ -59,12 +58,14 @@ public class PIDHelper {
         double v = SmartDashboard.getNumber(name + "/kV", kV);
         double a = SmartDashboard.getNumber(name + "/kA", kA);
 
-        this.kP = p;
-        this.kI = i;
-        this.kD = d;
-        this.kF = ff;
-        this.kV = v;
-        this.kA = a;
+        DoubleChanger changer = new DoubleChanger();
+        this.kP = changer.change(this.kP, p);
+        this.kI = changer.change(this.kI, i);
+        this.kD = changer.change(this.kD, d);
+        this.kF = changer.change(this.kF, ff);
+        this.kV = changer.change(this.kV, v);
+        this.kA = changer.change(this.kA, a);
+        return changer.isChanged();
     }
 
 
@@ -81,13 +82,13 @@ public class PIDHelper {
         this.kP = value;
     }
 
-    public TalonFXConfiguration updateConfiguration(TalonFXConfiguration config) {
-        config.Slot0
-                .withKP(kP)
-                .withKI(kI)
-                .withKD(kD)
-                .withKV(kV)
-                .withKA(kA);
+    public Slot0Configs updateConfiguration(Slot0Configs config) {
+        config
+            .withKP(kP)
+            .withKI(kI)
+            .withKD(kD)
+            .withKV(kV)
+            .withKA(kA);
         return config;
     }
 
