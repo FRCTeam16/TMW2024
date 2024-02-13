@@ -56,6 +56,7 @@ public class Subsystems {
 
         SmartDashboard.putData("ShooterSubsystem", shooter);
         SmartDashboard.putData("PivotSubsystem", pivot);
+        SmartDashboard.putData("IntakeSubsystem", intake);
     }
 
 

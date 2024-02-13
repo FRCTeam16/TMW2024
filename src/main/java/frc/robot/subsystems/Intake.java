@@ -13,6 +13,7 @@ import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.util.CachedValue;
 import frc.robot.subsystems.util.DoubleChanger;
@@ -33,6 +34,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
     private final DutyCycleOut intakeDrive_Request = new DutyCycleOut(0.0); // CTRE pheonix 6 API
     private double intakeOpenLoopSeed = 0;
     private final IntakeSpeeds intakeSpeeds = new IntakeSpeeds();
+    private final DigitalInput noteDetector = new DigitalInput(0);
 
     //
     // Pivot
@@ -78,6 +80,10 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
     @Override
     public void autoInit() {
         intakeOpenLoopSeed = 0.0;
+    }
+
+    public boolean isNoteDetected() {
+        return !noteDetector.get();
     }
 
     public void runIntakeFast() {
@@ -143,7 +149,11 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void periodic() {
-        intakeDrive.setControl(intakeDrive_Request.withOutput(intakeOpenLoopSeed));
+        double intakeOut = intakeOpenLoopSeed;
+        if (isNoteDetected()) {
+            intakeOut = 0.0;
+        }
+        intakeDrive.setControl(intakeDrive_Request.withOutput(intakeOut));
 
         if (pivotOpenLoop) {
             pivotDrive.setControl(pivotOpenLoopDriveRequest.withOutput(pivotOpenLoopSpeed));
@@ -163,6 +173,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         builder.addDoubleProperty("Intake/FastSpeed", this.intakeSpeeds::getFastSpeed, this.intakeSpeeds::setFastSpeed);
         builder.addDoubleProperty("Intake/SlowSpeed", this.intakeSpeeds::getSlowSpeed, this.intakeSpeeds::setSlowSpeed);
         builder.addDoubleProperty("Intake/EjectSpeed", this.intakeSpeeds::getEjectSpeed, this.intakeSpeeds::setEjectSpeed);
+        builder.addBooleanProperty("Intake/NoteDetected", this::isNoteDetected,null);
 
         builder.addBooleanProperty("Pivot/OpenLoop", this::isPivotOpenLoop, this::setPivotOpenLoop);
         builder.addDoubleProperty("Pivot/UpSpeed", pivotOpenLoopSpeeds::getUpSpeed, pivotOpenLoopSpeeds::setUpSpeed);
