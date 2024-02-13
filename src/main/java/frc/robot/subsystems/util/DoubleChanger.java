@@ -4,7 +4,7 @@ package frc.robot.subsystems.util;
 public class DoubleChanger {
 
     private boolean changed = false;
-    private static double epsilon = 0.0001; // you can set it to any small value you'd like
+    private static final double epsilon = 0.000_001; // you can set it to any small value you'd like
 
     /**
      * Updates the value with the new value if the difference between them exceeds a certain threshold.
@@ -33,10 +33,6 @@ public class DoubleChanger {
      */
     public boolean isChanged() {
         return changed;
-    }
-
-    public void setEpsilon(double epsilon) {
-        this.epsilon = epsilon;
     }
 
     public double getEpsilon() {

@@ -1,7 +1,6 @@
 package frc.robot.subsystems.util;
 
 import java.util.function.BiPredicate;
-import java.util.function.DoublePredicate;
 
 public class CachedValue<T> {
     private final BiPredicate<T, T> comparer;
@@ -13,6 +12,15 @@ public class CachedValue<T> {
     }
 
     public boolean update(T newValue) {
+        if(value == null && newValue == null) {
+            return false;
+        }
+
+        if(value == null || newValue == null){
+            value = newValue;
+            return true;
+        }
+
         if (comparer.test(value, newValue)) {
             value = newValue;
             return true;
