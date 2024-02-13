@@ -63,7 +63,6 @@ public class RobotContainer {
     //
 
 
-
     public RobotContainer() {
         configureBindings();
         configureDashboardButtons();
@@ -92,6 +91,15 @@ public class RobotContainer {
         xboxController.x().onTrue(Commands.runOnce(() -> Subsystems.pivot.setPivotPosition(Pivot.PivotPosition.FeedPosition)));
         xboxController.a().onTrue(Commands.runOnce(() -> Subsystems.pivot.setPivotPosition(Pivot.PivotPosition.Up)));
 
+
+        xboxController.leftTrigger()
+                .onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().pivotOpenLoopDown()))
+                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().pivotOpenLoopStop()));
+        xboxController.rightTrigger()
+                .onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().pivotOpenLoopUp()))
+                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().pivotOpenLoopStop()));
+
+
         runVisionAlignAngle.whileTrue(new VisionAlign().withRobotAngle(90.0));
         //        lockAngle1.onTrue(new RotateToAngle(-60));
         //        lockAngle2.onTrue(new RotateToAngle(0));
@@ -101,9 +109,12 @@ public class RobotContainer {
         //
         // Intake Subsystem
         //
-        intake.onTrue(Commands.runOnce(Subsystems.intake::runIntakeFast)).onFalse(Commands.runOnce(Subsystems.intake::stopIntake));
-        slowIntake.onTrue(Commands.runOnce(Subsystems.intake::runIntakeSlow)).onFalse(Commands.runOnce(Subsystems.intake::stopIntake));
-        eject.onTrue(Commands.runOnce(Subsystems.intake::runIntakeEject)).onFalse(Commands.runOnce(Subsystems.intake::stopIntake));
+        intake.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeFast()))
+                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));
+        slowIntake.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeSlow()))
+                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));
+        eject.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeEject()))
+                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));
 
 
         //

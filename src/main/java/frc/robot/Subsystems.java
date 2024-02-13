@@ -3,7 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.DMS.LEDSubsystem;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.RotationController;
