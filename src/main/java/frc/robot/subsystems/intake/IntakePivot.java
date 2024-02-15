@@ -9,6 +9,7 @@ import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.util.CachedValue;
 import frc.robot.subsystems.util.PIDHelper;
@@ -118,6 +119,8 @@ public class IntakePivot implements Lifecycle, Sendable {
     public void periodic() {
         if (pivotOpenLoop) {
             pivotDrive.setControl(pivotOpenLoopDriveRequest.withOutput(pivotOpenLoopSpeed));
+            SmartDashboard.putNumber("PivotSubsystem/RotationV", this.pivotDrive.getVelocity().getValueAsDouble());
+            SmartDashboard.putNumber("PivotSubsystem/RotationA", this.pivotDrive.getAcceleration().getValueAsDouble());
         } else {
             if (pidHelper.updateValuesFromDashboard()) {
                 pidHelper.updateConfiguration(pivotConfiguration.Slot0);
@@ -129,8 +132,8 @@ public class IntakePivot implements Lifecycle, Sendable {
 
 
     static class PivotOpenLoopSpeeds {
-        private double upSpeed;
-        private double downSpeed;
+        private double upSpeed = .5;
+        private double downSpeed = -.5;
 
         public double getUpSpeed() {
             return upSpeed;
