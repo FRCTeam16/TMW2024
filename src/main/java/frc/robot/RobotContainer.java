@@ -97,10 +97,10 @@ public class RobotContainer {
 
         xboxController.leftTrigger()
                 .onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().pivotOpenLoopDown()))
-                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().pivotOpenLoopStop()));
+                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().holdPosition())); /* pivotOpenLoopStop */
         xboxController.rightTrigger()
                 .onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().pivotOpenLoopUp()))
-                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().pivotOpenLoopStop()));
+                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().holdPosition())); /* pivotOpenLoopStop */
 
 
         runVisionAlignAngle.whileTrue(new VisionAlign().withRobotAngle(90.0));
@@ -139,6 +139,9 @@ public class RobotContainer {
     private void configureDashboardButtons() {
         SmartDashboard.putData("Tare Odometry", new RunWithDisabledInstantCommand(() -> Subsystems.swerveSubsystem.tareEverything()));
         SmartDashboard.putData("Zero Gyro", new ZeroAndSetOffsetCommand(0).ignoringDisable(true));
+
+
+        SmartDashboard.putData("Update IntakeRotate PID", Subsystems.intake.getIntakePivot().updatePIDFromDashbboardCommand().ignoringDisable(true));
 
         SmartDashboard.putData("Play Lowrida", music.getPlayCommand());
         SmartDashboard.putData("Stop Music", music.getPauseommand());
