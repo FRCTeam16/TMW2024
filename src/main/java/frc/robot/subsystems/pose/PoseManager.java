@@ -13,8 +13,8 @@ public class PoseManager {
     public enum Pose {
         StartingConfig,
         Drive,
-        Handoff,
         Pickup,
+        Handoff,
         Climb
     }
 
@@ -25,9 +25,9 @@ public class PoseManager {
     private final StringLogEntry poseLog;
 
     public PoseManager() {
-        registry.put(Pose.StartingConfig, MoveToStartingConfigPose::new);
-
         poseLog = new StringLogEntry(DataLogManager.getLog(), "/pose");
+
+        registry.put(Pose.StartingConfig, MoveToStartingConfigPose::new);
     }
 
     public Command getPoseCommand(Pose requestedPose) {
@@ -52,5 +52,6 @@ public class PoseManager {
     public Pose getLastPose() {
         return lastPose;
     }
+
 
 }

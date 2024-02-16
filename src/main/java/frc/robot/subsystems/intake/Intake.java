@@ -4,8 +4,11 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.Pivot;
 
 
 public class Intake extends SubsystemBase implements Lifecycle, Sendable {
@@ -87,6 +90,10 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         builder.addBooleanProperty("NoteDetected", this::isNoteDetected, null);
         intakeSpeed.initSendable(builder);
         intakePivot.initSendable(builder);
+    }
+
+    public Command moveToStateCmd(IntakeState state) {
+        return Commands.runOnce(() -> this.setIntakeState(state));
     }
 
 }

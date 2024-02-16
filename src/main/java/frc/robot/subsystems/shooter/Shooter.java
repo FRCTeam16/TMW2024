@@ -4,8 +4,11 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.Pivot;
 
 /**
  * The Shooter class represents the shooter subsystem of the robot.
@@ -21,7 +24,6 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
     public Shooter(){
         upper.setInvert(true);
     }
-
 
     public void runFeeder(){
         feeder.setEnabled(true);

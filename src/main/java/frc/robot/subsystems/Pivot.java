@@ -14,6 +14,8 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.util.PIDHelper;
 
@@ -215,6 +217,10 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         builder.addDoubleProperty("Encoder/Angle", this::getPivotAngleDegrees, null);
         builder.addDoubleProperty("Encoder/AbsolutePos", this::getPivotEncoderAbsolutePosition, null);
         builder.addDoubleProperty("Encoder/Offset", this::getPivotEncoderPositionOffset, null);
+    }
+
+    public Command moveToPositionCmd(PivotPosition position) {
+        return Commands.runOnce(() -> this.setPivotPosition(position));
     }
 
 }

@@ -142,6 +142,8 @@ public class RobotContainer {
 
 
         SmartDashboard.putData("Update IntakeRotate PID", Subsystems.intake.getIntakePivot().updatePIDFromDashbboardCommand().ignoringDisable(true));
+        SmartDashboard.putData("Set IntakeRotater Offset", Subsystems.intake.getIntakePivot().getSetPivotEncoderOffestCmd().ignoringDisable(true));
+
 
         SmartDashboard.putData("Play Lowrida", music.getPlayCommand());
         SmartDashboard.putData("Stop Music", music.getPauseommand());
