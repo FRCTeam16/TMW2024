@@ -50,15 +50,21 @@ public class IntakePivot implements Lifecycle, Sendable {
 
         // kp = 0.25, ka = 0.01
         // kp 15, ka = 0.01
-        pidHelper.initialize(0.25, 0, 0, 0, 0.12, 0.01);
+        pidHelper.initialize(0.7, 0.2, 0, 0, 0.12, 0.01);
+        motionMagicConfig.setkS(0);
+        motionMagicConfig.setkG(0.2);
+        motionMagicConfig.setVelocity(60);
+        motionMagicConfig.setAcceleration(220);
+        motionMagicConfig.setJerk(500);
 
         pivotConfiguration.SoftwareLimitSwitch
                 .withForwardSoftLimitThreshold(0)
-                .withReverseSoftLimitThreshold(-22);
+                .withReverseSoftLimitThreshold(-23);
 
         pidHelper.updateConfiguration(pivotConfiguration.Slot0);
         pivotConfiguration.Slot0.withGravityType(GravityTypeValue.Arm_Cosine);
 
+        motionMagicConfig.updateSlot0Config(pivotConfiguration.Slot0);
         motionMagicConfig.updateMotionMagicConfig(pivotConfiguration.MotionMagic);
 
         DataLogManager.log("[Pivot:IntakePivot config: " + pivotConfiguration);
@@ -81,6 +87,7 @@ public class IntakePivot implements Lifecycle, Sendable {
 
     public void setIntakePosition(IntakePosition newPosition) {
         pivotCurrentPosition = newPosition;
+        setPivotSetpoint(pivotCurrentPosition.setpoint);
         telemetry.logPositionChange(newPosition);
     }
 
@@ -153,9 +160,7 @@ public class IntakePivot implements Lifecycle, Sendable {
 
     public void updatePIDFromDashboard() {
         pidHelper.updateConfiguration(pivotConfiguration.Slot0);
-        pivotConfiguration.Slot0
-                .withKG(motionMagicConfig.kG)
-                .withKS(motionMagicConfig.kS);
+        motionMagicConfig.updateSlot0Config(pivotConfiguration.Slot0);
         motionMagicConfig.updateMotionMagicConfig(pivotConfiguration.MotionMagic);
         StatusCode result = pivotDrive.getConfigurator().apply(pivotConfiguration);
         DataLogManager.log("[IntakePivot] update PID info from dash: " + pivotConfiguration + ": result = " + result);
@@ -163,6 +168,10 @@ public class IntakePivot implements Lifecycle, Sendable {
 
     public Command updatePIDFromDashbboardCommand() {
         return Commands.runOnce(this::updatePIDFromDashboard);
+    }
+
+    public Command getIntakePivotPositionCmd(IntakePosition position) {
+        return Commands.runOnce(() -> this.setIntakePosition(position));
     }
 
     @Override
@@ -190,13 +199,13 @@ public class IntakePivot implements Lifecycle, Sendable {
 
     public enum IntakePosition {
         Zero(0),
-        Passing(24), // TODO: WILD GUESS
-        Pickup(20), // TODO: WILD GUESS
-        AMP(10);     // TODO: WILD GUESS
+        Vertical(-7),
+        Pickup(-22.5),
+        AMPShot(-10);
 
-        private final int setpoint;
+        private final double setpoint;
 
-        IntakePosition(int setpoint) {
+        IntakePosition(double setpoint) {
             this.setpoint = setpoint;
         }
     }

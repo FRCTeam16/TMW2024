@@ -21,6 +21,7 @@ import frc.robot.commands.ZeroAndSetOffsetCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.pose.PoseManager;
 
 import java.util.Objects;
 
@@ -90,9 +91,9 @@ public class RobotContainer {
 
         xboxController.rightBumper().onTrue(Commands.runOnce(Subsystems.pivot::openLoopUp)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
         xboxController.leftBumper().onTrue(Commands.runOnce(Subsystems.pivot::openLoopDown)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
-        xboxController.y().onTrue(Commands.runOnce(() -> Subsystems.pivot.setPivotPosition(Pivot.PivotPosition.StartingPosition)));
-        xboxController.x().onTrue(Commands.runOnce(() -> Subsystems.pivot.setPivotPosition(Pivot.PivotPosition.FeedPosition)));
-        xboxController.a().onTrue(Commands.runOnce(() -> Subsystems.pivot.setPivotPosition(Pivot.PivotPosition.Up)));
+//        xboxController.y().onTrue(Commands.runOnce(() -> Subsystems.pivot.setPivotPosition(Pivot.PivotPosition.StartingPosition)));
+//        xboxController.x().onTrue(Commands.runOnce(() -> Subsystems.pivot.setPivotPosition(Pivot.PivotPosition.FeedPosition)));
+//        xboxController.a().onTrue(Commands.runOnce(() -> Subsystems.pivot.setPivotPosition(Pivot.PivotPosition.Up)));
 
 
         xboxController.leftTrigger()
@@ -119,6 +120,22 @@ public class RobotContainer {
         eject.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeEject()))
                 .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));
 
+        xboxController.x().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup));
+        xboxController.a().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Handoff));
+        xboxController.y().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
+
+
+        // Testing
+        xboxController.povUp().onTrue(Commands.runOnce(() -> {
+            double value = SmartDashboard.getNumber("DebugFeederSpeeds", -0.3);
+                    Subsystems.shooter.getFeeder().setOpenLoopSetpoint(value);
+                    Subsystems.intake.getIntakeSpeed().runIntakeDebug(value);
+                    Subsystems.shooter.runFeeder();
+                }))
+                .onFalse(Commands.runOnce(() -> {
+                    Subsystems.shooter.getFeeder().setOpenLoopSetpoint(0.0);
+                    Subsystems.intake.getIntakeSpeed().runIntakeDebug(0.0);
+                }));
 
         //
         // Shooter
@@ -127,6 +144,13 @@ public class RobotContainer {
         SmartDashboard.putData("Stop Shooter", Commands.runOnce(Subsystems.shooter::stopShooter));
         feed.onTrue(Commands.runOnce(Subsystems.shooter::runFeeder))
                 .onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
+
+        xboxController.povLeft().onTrue(Commands.runOnce(Subsystems.shooter::runShooter));
+        xboxController.povDown().onTrue(Commands.runOnce(Subsystems.shooter::stopShooter));
+        xboxController.start().onTrue(Commands.runOnce(Subsystems.shooter::runShooter));
+        xboxController.back().onTrue(Commands.runOnce(Subsystems.shooter::stopShooter));
+
+
 
 
         if (Utils.isSimulation()) {
@@ -147,6 +171,9 @@ public class RobotContainer {
 
         SmartDashboard.putData("Play Lowrida", music.getPlayCommand());
         SmartDashboard.putData("Stop Music", music.getPauseommand());
+
+        // Debug
+        SmartDashboard.putNumber("DebugFeederSpeeds", -0.3);
     }
 
     public Command getAutonomousCommand() {

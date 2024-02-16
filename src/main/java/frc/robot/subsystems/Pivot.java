@@ -46,7 +46,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     public enum PivotPosition {
         StartingPosition(0),
         Horizontal(0),
-        FeedPosition(20.0),
+        FeedPosition(21.0),
         ScoringAngle(30),
         Up(70);
 
@@ -68,7 +68,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         TalonFXConfiguration config = new TalonFXConfiguration();
         motor.setNeutralMode(NeutralModeValue.Coast);
 
-        pidHelper.initialize(0.01, 0, 0, 0, 0, 0);
+        pidHelper.initialize(0.02, 0, 0, 0, 0, 0);
         pid = new PIDController(0,0,0);
         pidHelper.updatePIDController(pid);
 

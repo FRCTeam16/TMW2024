@@ -60,6 +60,11 @@ public class IntakeSpeed implements Lifecycle, Sendable {
         telemetry.logIntakeSpeed(intakeOpenLoopSeed);
     }
 
+    public void runIntakeDebug(double value) {
+        intakeOpenLoopSeed = value;
+        telemetry.logIntakeSpeed(value);
+    }
+
     void periodic() {
         intakeDrive.setControl(intakeDrive_Request.withOutput(intakeOpenLoopSeed));
     }
@@ -72,7 +77,7 @@ public class IntakeSpeed implements Lifecycle, Sendable {
     }
 
     static class IntakeSpeeds {
-        private double fastSpeed = 0.30;
+        private double fastSpeed = 0.50;
         private double slowSpeed = 0.15;
         private double ejectSpeed = -1;
 

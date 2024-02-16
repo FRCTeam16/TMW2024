@@ -8,6 +8,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.RotationController;
+import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.vision.Limelight;
 import frc.robot.subsystems.vision.VisionSubsystem;
@@ -33,6 +34,8 @@ public class Subsystems {
     public static Pivot pivot;
     public static Climber climber;
     // Utility
+    public static PoseManager poseManager;
+
     public static RotationController rotationController = new RotationController();
     public static List<Lifecycle> lifecycleSubsystems = new ArrayList<>();
     private static Subsystems instance;
@@ -50,6 +53,9 @@ public class Subsystems {
         shooter = new Shooter();
         pivot = new Pivot();
 //        climber = new Climber();
+
+        poseManager = new PoseManager();
+
 
         lifecycleSubsystems.add(visionSubsystem);
         lifecycleSubsystems.add(ledSubsystem);

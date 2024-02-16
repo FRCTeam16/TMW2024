@@ -64,12 +64,12 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
     public void setIntakeState(IntakeState state) {
         switch (state) {
             case IntakeFromFloor -> {
-                intakeSpeed.runIntakeFast();
+//                intakeSpeed.runIntakeFast();
 //                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Passing);
             }
             case HoldNote -> {
                 intakeSpeed.stopIntake();
-//                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Passing);
+                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Vertical);
             }
         }
     }

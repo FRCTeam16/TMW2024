@@ -1,6 +1,7 @@
 package frc.robot.subsystems.util;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 
 public class MotionMagicConfig {
     public double kS = 0.0;
@@ -53,5 +54,9 @@ public class MotionMagicConfig {
         config.withMotionMagicAcceleration(this.acceleration)
                 .withMotionMagicCruiseVelocity(this.velocity)
                 .withMotionMagicJerk(this.jerk);
+    }
+
+    public void updateSlot0Config(Slot0Configs config) {
+        config.withKG(this.kG).withKS(this.kS);
     }
 }

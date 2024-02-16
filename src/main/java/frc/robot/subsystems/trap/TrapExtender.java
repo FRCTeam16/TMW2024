@@ -60,9 +60,7 @@ public class TrapExtender implements Lifecycle, Sendable {
 
     public void updatePIDFromDashboard() {
         pidHelper.updateConfiguration(configuration.Slot0);
-        configuration.Slot0
-                .withKG(motionMagicConfig.kG)
-                .withKS(motionMagicConfig.kS);
+        motionMagicConfig.updateSlot0Config(configuration.Slot0);
         motionMagicConfig.updateMotionMagicConfig(configuration.MotionMagic);
         StatusCode result = motor.getConfigurator().apply(configuration);
         DataLogManager.log("[TrapExtender] update PID info from dash: " + configuration + ": result = " + result);

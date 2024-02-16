@@ -27,7 +27,9 @@ public class PoseManager {
     public PoseManager() {
         poseLog = new StringLogEntry(DataLogManager.getLog(), "/pose");
 
-        registry.put(Pose.StartingConfig, MoveToStartingConfigPose::new);
+        registry.put(Pose.Pickup, PoseCommands::moveToPickupPose);
+        registry.put(Pose.Handoff, PoseCommands::moveToHandoffPose);
+        registry.put(Pose.Drive, PoseCommands::moveToDrivePose);
     }
 
     public Command getPoseCommand(Pose requestedPose) {
