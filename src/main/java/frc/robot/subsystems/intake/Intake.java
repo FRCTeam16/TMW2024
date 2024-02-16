@@ -10,6 +10,7 @@ import frc.robot.subsystems.Lifecycle;
 
 public class Intake extends SubsystemBase implements Lifecycle, Sendable {
 
+    public static final String SUBSYSTEM_NAME = "IntakeSubsystem";
     private final IntakeSpeed intakeSpeed = new IntakeSpeed(new TalonFX(9));
     private final IntakePivot intakePivot = new IntakePivot(new TalonFX(10));
     private final DigitalInput noteDetector = new DigitalInput(0);
@@ -82,7 +83,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.setSmartDashboardType("IntakeSubsystem");
+        builder.setSmartDashboardType(SUBSYSTEM_NAME);
         builder.addBooleanProperty("NoteDetected", this::isNoteDetected, null);
         intakeSpeed.initSendable(builder);
         intakePivot.initSendable(builder);

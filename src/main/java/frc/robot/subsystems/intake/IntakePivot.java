@@ -1,9 +1,10 @@
 package frc.robot.subsystems.intake;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.util.datalog.DataLog;
@@ -26,8 +27,9 @@ public class IntakePivot implements Lifecycle, Sendable {
     private final TalonFXConfiguration pivotConfiguration = new TalonFXConfiguration();
     private final DutyCycleOut pivotOpenLoopDriveRequest = new DutyCycleOut(0);
 
+
     private final MotionMagicConfig motionMagicConfig = new MotionMagicConfig();
-    private final MotionMagicDutyCycle pivotMotionMagicDutyCycle = new MotionMagicDutyCycle(IntakePosition.Zero.setpoint);
+    private final MotionMagicVoltage pivotMotionMagicDutyCycle = new MotionMagicVoltage(IntakePosition.Zero.setpoint);
     private final PivotOpenLoopSpeeds pivotOpenLoopSpeeds = new PivotOpenLoopSpeeds();
     //
     // Util
@@ -116,8 +118,8 @@ public class IntakePivot implements Lifecycle, Sendable {
     public void periodic() {
         if (pivotOpenLoop) {
             pivotDrive.setControl(pivotOpenLoopDriveRequest.withOutput(pivotOpenLoopSpeed));
-            SmartDashboard.putNumber("PivotSubsystem/Pivot/RotationV", this.pivotDrive.getVelocity().getValueAsDouble());
-            SmartDashboard.putNumber("PivotSubsystem/Pivot/RotationA", this.pivotDrive.getAcceleration().getValueAsDouble());
+            SmartDashboard.putNumber(Intake.SUBSYSTEM_NAME + "/Pivot/RotationV", this.pivotDrive.getVelocity().getValueAsDouble());
+            SmartDashboard.putNumber(Intake.SUBSYSTEM_NAME + "/Pivot/RotationA", this.pivotDrive.getAcceleration().getValueAsDouble());
         } else {
 //            if (pidHelper.updateValuesFromDashboard()) {
 //                pidHelper.updateConfiguration(pivotConfiguration.Slot0);
@@ -130,7 +132,8 @@ public class IntakePivot implements Lifecycle, Sendable {
     public void updatePIDFromDashboard() {
         pidHelper.updateConfiguration(pivotConfiguration.Slot0);
         motionMagicConfig.updateMotionMagicConfig(pivotConfiguration.MotionMagic);
-        pivotDrive.getConfigurator().apply(pivotConfiguration.Slot0);
+        StatusCode result = pivotDrive.getConfigurator().apply(pivotConfiguration);
+        DataLogManager.log("[IntakePivot] update PID info from dash: " + pivotConfiguration + ": result = " + result);
     }
 
     public Command updatePIDFromDashbboardCommand() {
@@ -166,7 +169,7 @@ public class IntakePivot implements Lifecycle, Sendable {
         Pickup(-20), // TODO: WILD GUESS
         AMP(-7);     // TODO: WILD GUESS
 
-        private final int setpoint; // enum contructer lest us assign values (enums are technically classes)
+        private final int setpoint;
 
         IntakePosition(int setpoint) {
             this.setpoint = setpoint;
@@ -200,8 +203,8 @@ public class IntakePivot implements Lifecycle, Sendable {
     static class MotionMagicConfig {
         private double kA = 0.01;
         private double kV = 0.25;
-        private double acceleration = 300;
         private double velocity = 150;
+        private double acceleration = 300;
         private double jerk = 2000;
 
         public double getkA() {
@@ -245,11 +248,11 @@ public class IntakePivot implements Lifecycle, Sendable {
         }
 
         public void updateMotionMagicConfig(MotionMagicConfigs config) {
-            config.withMotionMagicExpo_kA(this.kA)
-                    .withMotionMagicExpo_kV(this.kV)
-                    .withMotionMagicAcceleration(this.acceleration)
+            config.withMotionMagicAcceleration(this.acceleration)
                     .withMotionMagicCruiseVelocity(this.velocity)
                     .withMotionMagicJerk(this.jerk);
+//                    .withMotionMagicExpo_kA(this.kA)
+//                    .withMotionMagicExpo_kV(this.kV);
         }
 
 

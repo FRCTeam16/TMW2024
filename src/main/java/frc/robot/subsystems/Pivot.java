@@ -19,6 +19,7 @@ import frc.robot.subsystems.util.PIDHelper;
 
 public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
 
+    public static final String SUBSYSTEM_NAME = "Pivot";
     private final TalonFX motor = new TalonFX(33);
     private final DutyCycleEncoder encoder = new DutyCycleEncoder(1);
 
@@ -32,7 +33,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     private final DutyCycleOut openLoopOut = new DutyCycleOut(0);
     private final PositionVoltage positionVoltageOut = new PositionVoltage(0);
 
-    private final PIDHelper pidHelper = new PIDHelper("Pivot");
+    private final PIDHelper pidHelper = new PIDHelper(SUBSYSTEM_NAME);
 
     private PIDController pid;
     private TrapezoidProfile.State goal = new TrapezoidProfile.State(0,0);
@@ -75,7 +76,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
 
         this.holdPosition();
         speed = 0.0;
-        SmartDashboard.setDefaultNumber("Pivot/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
+        SmartDashboard.setDefaultNumber(SUBSYSTEM_NAME + "/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
     }
 
     @Override
@@ -95,15 +96,15 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     public void openLoopUp() {
-        DataLogManager.log("[Pivot] openLoopUp");
+        DataLogManager.log("[" + SUBSYSTEM_NAME + "] openLoopUp");
         openLoop = true;
-        speed = SmartDashboard.getNumber("Pivot/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
+        speed = SmartDashboard.getNumber(SUBSYSTEM_NAME + "/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
     }
 
     public void openLoopDown() {
-        DataLogManager.log("[Pivot] openLoopDown");
+        DataLogManager.log("[" + SUBSYSTEM_NAME + "] openLoopDown");
         openLoop = true;
-        speed = -SmartDashboard.getNumber("Pivot/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
+        speed = -SmartDashboard.getNumber(SUBSYSTEM_NAME + "/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
     }
 
     public void holdPosition() {
@@ -119,9 +120,9 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     private void setPivotSetpoint(double setpoint) {
-        DataLogManager.log("[Pivot] Setting pivot setpoint to: " + setpoint);
+        DataLogManager.log("[" + SUBSYSTEM_NAME + "] Setting pivot setpoint to: " + setpoint);
         if (setpoint >= 80.0001 || setpoint <= -0.0001) {
-            DataLogManager.log("[Pivot] INVALID SETPOINT REQUESTED, IGNORING");
+            DataLogManager.log("[" + SUBSYSTEM_NAME + "] INVALID SETPOINT REQUESTED, IGNORING");
             return;
         }
         openLoop = false;
@@ -163,7 +164,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
 //        }
 
         if (this.getPivotAngleDegrees() > EncoderConstants.MAX_ANGLE || this.getPivotAngleDegrees() < EncoderConstants.MIN_ANGLE) {
-            DataLogManager.log("[Pivot] SOFT LIMIT BREAK");
+            DataLogManager.log("[" + SUBSYSTEM_NAME + "] SOFT LIMIT BREAK");
             motor.setControl(openLoopOut.withOutput(0));
             return;
         }
@@ -199,7 +200,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.setSmartDashboardType("Pivot");
+        builder.setSmartDashboardType(SUBSYSTEM_NAME);
 
         builder.addBooleanProperty("OpenLoop", this::isOpenLoop, null);
         builder.addDoubleProperty("Goal", this::getPivotSetpoint, this::setPivotSetpoint);
