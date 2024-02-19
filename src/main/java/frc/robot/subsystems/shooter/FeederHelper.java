@@ -20,6 +20,7 @@ public class FeederHelper implements Sendable {
     private double openLoopSetpoint = -0.50;
 
     private Timer shooterTimer;
+    private double feedShooterSpeed = .2;
 
     public FeederHelper(String parent, String name, TalonFX motor, DigitalInput noteStopSensor) {
         this.name = name;
@@ -60,8 +61,8 @@ public class FeederHelper implements Sendable {
         if(shooterTimer.get() < .125) {
             out = -1.0;
         }
-        else {
-            out = 0.0;
+        else if (enabled) {
+            out = openLoopSetpoint;
         }
         motor.setControl(openLoopOut.withOutput(out));
     }
@@ -70,9 +71,28 @@ public class FeederHelper implements Sendable {
         shooterTimer.reset();
     }
 
+    public double getFeedShooterSpeed() {
+        return this.feedShooterSpeed;
+    }
+
+    public void setFeedShooterSpeed(double feedShooterSpeed) {
+        this.feedShooterSpeed = feedShooterSpeed;
+    }
+
+    public void receiveFromIntake() {
+        if(!noteStopSensor.get()) {
+            this.openLoopSetpoint = this.feedShooterSpeed;
+            this.enabled = true;
+        }
+        else {
+            this.enabled = false;
+        }
+    }
+
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addBooleanProperty(name + "/Enabled", this::isEnabled, this::setEnabled);
         builder.addDoubleProperty(name + "/Open Loop Setpoint", this::getOpenLoopSetpoint, this::setOpenLoopSetpoint);
+        builder.addDoubleProperty(name + "/Feed Shooter Speed", this::getFeedShooterSpeed, this::setFeedShooterSpeed);
     }
 }
