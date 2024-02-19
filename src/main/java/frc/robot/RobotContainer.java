@@ -113,8 +113,9 @@ public class RobotContainer {
         //
         // Intake Subsystem
         //
-        intake.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeFast()))
-                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));
+        intake.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup))
+                .onFalse(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
+
         slowIntake.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeSlow()))
                 .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));
         eject.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeEject()))
@@ -167,6 +168,10 @@ public class RobotContainer {
 
         SmartDashboard.putData("Update IntakeRotate PID", Subsystems.intake.getIntakePivot().updatePIDFromDashbboardCommand().ignoringDisable(true));
         SmartDashboard.putData("Set IntakeRotater Offset", Subsystems.intake.getIntakePivot().getSetPivotEncoderOffestCmd().ignoringDisable(true));
+
+        SmartDashboard.putData("Pose: Pickup", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup));
+        SmartDashboard.putData("Pose: Handoff", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Handoff));
+        SmartDashboard.putData("Pose: Drive", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
 
 
         SmartDashboard.putData("Play Lowrida", music.getPlayCommand());

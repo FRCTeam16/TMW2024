@@ -22,8 +22,7 @@ class PoseCommands {
     static Command moveToPickupPose() {
         return new ParallelCommandGroup(
                 Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
-                Subsystems.intake.moveToStateCmd(Intake.IntakeState.IntakeFromFloor),
-                Subsystems.intake.getIntakePivot().getIntakePivotPositionCmd(IntakePivot.IntakePosition.Pickup)
+                Subsystems.intake.moveToStateCmd(Intake.IntakeState.IntakeFromFloor)
         );
     }
 
@@ -37,7 +36,7 @@ class PoseCommands {
     static Command moveToDrivePose() {
         return new ParallelCommandGroup(
                 Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
-                Subsystems.intake.getIntakePivot().getIntakePivotPositionCmd(IntakePivot.IntakePosition.Vertical)
+                Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote)
         );
     }
 
@@ -56,4 +55,9 @@ class PoseCommands {
         return Commands.none();
     }
 
+    public static Command moveToNotePickedUpPose() {
+        return new ParallelCommandGroup(
+                Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote)
+        );
+    }
 }

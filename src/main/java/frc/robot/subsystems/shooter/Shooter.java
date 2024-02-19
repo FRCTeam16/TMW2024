@@ -17,7 +17,7 @@ import frc.robot.subsystems.Pivot;
  * and the aim position of the shooter.
  */
 public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
-    private final DigitalInput noteFeedStop = new DigitalInput(0);
+    private final DigitalInput noteFeedStop = new DigitalInput(3);
     private final ShooterHelper upper = new ShooterHelper("ShooterSubsystem", "Upper",  new TalonFX(40));
     private final ShooterHelper lower =  new ShooterHelper("ShooterSubsystem", "Lower", new TalonFX(41));
     private final FeederHelper feeder = new FeederHelper("ShooterSubsystem", "Feeder", new TalonFX(42), noteFeedStop);
