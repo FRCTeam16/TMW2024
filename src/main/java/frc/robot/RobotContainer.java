@@ -58,6 +58,8 @@ public class RobotContainer {
     //
     private final Trigger feed = new Trigger(right::getTrigger);
     private final JoystickButton runVisionAlignAngle = new JoystickButton(right, 2);
+    private final JoystickButton feedNote = new JoystickButton(right, 3);
+    private final JoystickButton ampAim = new JoystickButton(right, 4);
 
     //
     // Controller
@@ -122,7 +124,7 @@ public class RobotContainer {
                 .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));
 
         xboxController.x().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup));
-        xboxController.a().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Handoff));
+        xboxController.a().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.NotePickedUp));
         xboxController.y().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
 
 
@@ -145,6 +147,9 @@ public class RobotContainer {
         SmartDashboard.putData("Stop Shooter", Commands.runOnce(Subsystems.shooter::stopShooter));
         feed.onTrue(Commands.runOnce(Subsystems.shooter::shoot))
                 .onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
+
+        feedNote.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter));
+        ampAim.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PositionForAmp));
 
         xboxController.povLeft().onTrue(Commands.runOnce(Subsystems.shooter::runShooter));
         xboxController.povDown().onTrue(Commands.runOnce(Subsystems.shooter::stopShooter));
@@ -170,8 +175,7 @@ public class RobotContainer {
         SmartDashboard.putData("Set IntakeRotater Offset", Subsystems.intake.getIntakePivot().getSetPivotEncoderOffestCmd().ignoringDisable(true));
 
         SmartDashboard.putData("Pose: Pickup", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup));
-        SmartDashboard.putData("Pose: Handoff", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Handoff));
-        SmartDashboard.putData("Pose: Drive", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
+        SmartDashboard.putData("Pose: Handoff", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.NotePickedUp));
 
 
         SmartDashboard.putData("Play Lowrida", music.getPlayCommand());

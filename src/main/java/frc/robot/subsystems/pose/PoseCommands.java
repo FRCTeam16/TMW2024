@@ -1,17 +1,13 @@
 package frc.robot.subsystems.pose;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakePivot;
 
 class PoseCommands {
 
-     static Command moveToStartingConfigPose() {
+    static Command moveToStartingConfigPose() {
         return new SequentialCommandGroup(
                 Commands.parallel(
                         Subsystems.intake.moveToStateCmd(Intake.IntakeState.StartingPosition),
@@ -22,14 +18,27 @@ class PoseCommands {
     static Command moveToPickupPose() {
         return new ParallelCommandGroup(
                 Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
-                Subsystems.intake.moveToStateCmd(Intake.IntakeState.IntakeFromFloor)
+                Subsystems.intake.moveToStateCmd(Intake.IntakeState.IntakeFromFloor),
+                Commands.runOnce(Subsystems.shooter::stopFeeder)    // TODO: make command factory on Shooter
         );
     }
 
-    static Command moveToHandoffPose() {
-        return new ParallelCommandGroup(
-                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
-                Subsystems.intake.getIntakePivot().getIntakePivotPositionCmd(IntakePivot.IntakePosition.Zero)
+    static Command feedNoteToShooterPose() {
+        return new SequentialCommandGroup(
+                // TODO: Need to update movement commands to have true end state positions
+                Commands.parallel(
+                        Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
+                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote)
+                ),
+                new FeedNoteToShooterCommand(),
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ReadyToShoot)
+        );
+    }
+
+    static Command readyToShootPose() {
+        return Commands.parallel(
+                Commands.runOnce(Subsystems.shooter::stopFeeder),
+                Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote)
         );
     }
 
@@ -41,23 +50,15 @@ class PoseCommands {
     }
 
 
-
-
-    static Command moveToFeedShooterPose() {
-         return Commands.none();
-    }
-
-    static Command moveToFeedTrapPose() {
-         return Commands.none();
-    }
-
-    static Command moveToClimbPose() {
-        return Commands.none();
-    }
-
     public static Command moveToNotePickedUpPose() {
         return new ParallelCommandGroup(
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote)
+        );
+    }
+
+    public static Command positionForAmpPose() {
+        return new SequentialCommandGroup(
+                Subsystems.intake.moveToStateCmd(Intake.IntakeState.AmpAim)
         );
     }
 }

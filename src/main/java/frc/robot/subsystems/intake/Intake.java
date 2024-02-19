@@ -32,8 +32,10 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         StartingPosition,
         IntakeFromFloor,
         HoldNote,
+        FeedNote,
+
         AmpAim,
-        Trap
+        RotateUpWhileFeedingNote, Trap
     }
 
     private IntakeState intakeState = IntakeState.StartingPosition;
@@ -77,9 +79,18 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
                 intakeSpeed.runIntakeFast();
                 intakePivot.setIntakePosition(IntakePivot.IntakePosition.Pickup);
             }
+            case RotateUpWhileFeedingNote -> {
+                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Zero);
+            }
             case HoldNote -> {
                 intakeSpeed.stopIntake();
-                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Vertical);
+                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Zero);
+            }
+            case FeedNote -> {
+                intakeSpeed.runIntakeSlow();
+            }
+            case AmpAim -> {
+                intakePivot.setIntakePosition(IntakePivot.IntakePosition.AMPShot);
             }
             default -> {
                 DataLogManager.log("[Intake] Unhandled IntakeState: " + state.name());
@@ -92,16 +103,17 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
     @Override
     public void periodic() {
         if (IntakeState.IntakeFromFloor == intakeState && isNoteDetected()) {
-            Subsystems.poseManager.schedulePose(PoseManager.Pose.NotePickedUp);
             postNoteDetectedTimer = Optional.of(new Timer());
             postNoteDetectedTimer.get().start();
+            this.setIntakeState(IntakeState.RotateUpWhileFeedingNote);     // do we need
         }
 
         // Check if we should override intake speed
-        if (postNoteDetectedTimer.isPresent() &&  postNoteDetectedTimer.get().hasElapsed(0.5)) {
+        if (postNoteDetectedTimer.isPresent() &&  postNoteDetectedTimer.get().hasElapsed(1.0)) {
             intakeSpeed.stopIntake();
             postNoteDetectedTimer.get().stop();
             postNoteDetectedTimer = Optional.empty();   // todo cleanup?
+            Subsystems.poseManager.schedulePose(PoseManager.Pose.NotePickedUp);
         }
 
         intakeSpeed.periodic();

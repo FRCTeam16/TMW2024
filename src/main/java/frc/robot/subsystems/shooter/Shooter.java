@@ -17,7 +17,7 @@ import frc.robot.subsystems.Pivot;
  * and the aim position of the shooter.
  */
 public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
-    private final DigitalInput noteFeedStop = new DigitalInput(3);
+    private final DigitalInput noteFeedStop = new DigitalInput(2);
     private final ShooterHelper upper = new ShooterHelper("ShooterSubsystem", "Upper",  new TalonFX(40));
     private final ShooterHelper lower =  new ShooterHelper("ShooterSubsystem", "Lower", new TalonFX(41));
     private final FeederHelper feeder = new FeederHelper("ShooterSubsystem", "Feeder", new TalonFX(42), noteFeedStop);
@@ -34,13 +34,29 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
         return this.feeder;
     }
 
+    public boolean isNoteDetected() {
+        return getFeeder().isNoteDetected();
+    }
+
+
+    /**
+     * @Deprecated testing
+     */
     public void runFeeder(){
         feeder.setOpenLoopSetpoint(-0.50);
-        feeder.setEnabled(true);
+//        feeder.setEnabled(true);
     }
 
     public void stopFeeder(){
-        feeder.setEnabled(false);
+        feeder.setOpenLoopSetpoint(0.0);
+//        feeder.setEnabled(false);
+    }
+
+    /**
+     * Runs the feeder until a note is detected
+     */
+    public void feedNote() {
+        feeder.receiveFromIntake();
     }
 
     public void shoot() {

@@ -11,16 +11,20 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 
 public class FeederHelper implements Sendable {
-    private boolean enabled = false;
+    private boolean enabled = true;
     private final String name;
     private final TalonFX motor;
     private final DigitalInput noteStopSensor;
 
     private final DutyCycleOut openLoopOut = new DutyCycleOut(0.0);
-    private double openLoopSetpoint = -0.50;
+    private double openLoopSetpoint = 0.0;
+    private static final double SHOOTING_SPEED = -0.50;
 
     private Timer shooterTimer;
-    private double feedShooterSpeed = .2;
+    private double feedShooterSpeed = -0.1; // WARNING: Must change Intake feed
+
+    boolean shooting = false;   // whether we are shooting
+
 
     public FeederHelper(String parent, String name, TalonFX motor, DigitalInput noteStopSensor) {
         this.name = name;
@@ -58,8 +62,13 @@ public class FeederHelper implements Sendable {
 
     public void periodic() {
         double out = 0;
-        if(shooterTimer.get() < .125) {
-            out = -1.0;
+        if (shooting) {
+            if( shooterTimer.get() < .125) {
+                out = -1.0;
+            } else {
+                openLoopSetpoint = 0.0;
+                shooting = false;
+            }
         }
         else if (enabled) {
             out = openLoopSetpoint;
@@ -68,6 +77,8 @@ public class FeederHelper implements Sendable {
     }
 
     public void shoot() {
+        shooting = true;
+        openLoopSetpoint = SHOOTING_SPEED;
         shooterTimer.reset();
     }
 
@@ -80,7 +91,8 @@ public class FeederHelper implements Sendable {
     }
 
     public void receiveFromIntake() {
-        if(!noteStopSensor.get()) {
+        shooting = false;
+        if(!isNoteDetected()) {
             this.openLoopSetpoint = this.feedShooterSpeed;
             this.enabled = true;
         }
@@ -89,10 +101,15 @@ public class FeederHelper implements Sendable {
         }
     }
 
+    public boolean isNoteDetected() {
+        return !noteStopSensor.get();
+    }
+
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addBooleanProperty(name + "/Enabled", this::isEnabled, this::setEnabled);
         builder.addDoubleProperty(name + "/Open Loop Setpoint", this::getOpenLoopSetpoint, this::setOpenLoopSetpoint);
         builder.addDoubleProperty(name + "/Feed Shooter Speed", this::getFeedShooterSpeed, this::setFeedShooterSpeed);
+        builder.addBooleanProperty(name + "/Note Detected", this::isNoteDetected, null);
     }
 }
