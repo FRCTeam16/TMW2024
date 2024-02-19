@@ -7,6 +7,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Timer;
 
 public class FeederHelper implements Sendable {
     private boolean enabled = false;
@@ -15,6 +16,8 @@ public class FeederHelper implements Sendable {
 
     private final DutyCycleOut openLoopOut = new DutyCycleOut(0.0);
     private double openLoopSetpoint = -0.50;
+
+    private Timer shooterTimer;
 
     public FeederHelper(String parent, String name, TalonFX motor) {
         this.name = name;
@@ -27,6 +30,10 @@ public class FeederHelper implements Sendable {
                         new CurrentLimitsConfigs().withSupplyCurrentLimit(40)
                                 .withSupplyCurrentLimitEnable(true));
         this.motor.getConfigurator().apply(config);
+
+        shooterTimer = new Timer();
+        shooterTimer.start();
+        shooterTimer.reset();
     }
 
     public void setOpenLoopSetpoint(double openLoopSetpoint) {
@@ -46,8 +53,18 @@ public class FeederHelper implements Sendable {
     }
 
     public void periodic() {
-        double out = enabled ? openLoopSetpoint : 0.0;
+        double out = 0;
+        if(shooterTimer.get() < .125) {
+            out = -1.0;
+        }
+        else {
+            out = 0.0;
+        }
         motor.setControl(openLoopOut.withOutput(out));
+    }
+
+    public void shoot() {
+        shooterTimer.reset();
     }
 
     @Override

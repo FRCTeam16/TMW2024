@@ -41,6 +41,10 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
         feeder.setEnabled(false);
     }
 
+    public void shoot() {
+        feeder.shoot();
+    }
+
     public void runShooterOpenLoop(){
         upper.setOpenLoop(true);
         lower.setOpenLoop(true);

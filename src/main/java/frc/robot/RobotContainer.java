@@ -142,7 +142,7 @@ public class RobotContainer {
         //
         SmartDashboard.putData("Start Shooter", Commands.runOnce(Subsystems.shooter::runShooter));
         SmartDashboard.putData("Stop Shooter", Commands.runOnce(Subsystems.shooter::stopShooter));
-        feed.onTrue(Commands.runOnce(Subsystems.shooter::runFeeder))
+        feed.onTrue(Commands.runOnce(Subsystems.shooter::shoot))
                 .onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
 
         xboxController.povLeft().onTrue(Commands.runOnce(Subsystems.shooter::runShooter));
