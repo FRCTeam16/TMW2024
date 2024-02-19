@@ -7,21 +7,24 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 
 public class FeederHelper implements Sendable {
     private boolean enabled = false;
     private final String name;
     private final TalonFX motor;
+    private final DigitalInput noteStopSensor;
 
     private final DutyCycleOut openLoopOut = new DutyCycleOut(0.0);
     private double openLoopSetpoint = -0.50;
 
     private Timer shooterTimer;
 
-    public FeederHelper(String parent, String name, TalonFX motor) {
+    public FeederHelper(String parent, String name, TalonFX motor, DigitalInput noteStopSensor) {
         this.name = name;
         this.motor = motor;
+        this.noteStopSensor = noteStopSensor;
 
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.withOpenLoopRamps(
