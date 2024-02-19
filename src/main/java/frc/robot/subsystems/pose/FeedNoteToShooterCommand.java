@@ -1,10 +1,10 @@
 package frc.robot.subsystems.pose;
 
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.intake.Intake;
 
-// FIXME: Need to add a timeout
 public class FeedNoteToShooterCommand extends Command {
 
     @Override
@@ -25,5 +25,8 @@ public class FeedNoteToShooterCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        if (interrupted) {
+            DataLogManager.log("[FeedNoteToShooterCommand] STOPPED DUE TO INTERRUPT");
+        }
     }
 }

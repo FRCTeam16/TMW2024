@@ -20,7 +20,6 @@ public class IntakeSpeed implements Lifecycle, Sendable {
     private final IntakeSpeeds intakeSpeeds = new IntakeSpeeds();
     private final Telemetry telemetry;
     private double intakeOpenLoopSpeed = 0;
-    private double feedShooterIntakeSpeed = 0.1;        // TODO Move to speeds class
 
 
     public IntakeSpeed(TalonFX intakeDrive) {
@@ -70,30 +69,21 @@ public class IntakeSpeed implements Lifecycle, Sendable {
         intakeDrive.setControl(intakeDrive_Request.withOutput(intakeOpenLoopSpeed));
     }
 
-    double getFeedShooterIntakeSpeed() {
-        return this.feedShooterIntakeSpeed;
-    }
 
-    void setFeedShooterIntakeSpeed(double feedShooterIntakeSpeed) {
-        this.feedShooterIntakeSpeed = feedShooterIntakeSpeed;
-    }
-
-    void feedShooter() {
-        this.intakeOpenLoopSpeed = this.feedShooterIntakeSpeed;
-    }
 
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Intake/FastSpeed", this.intakeSpeeds::getFastSpeed, this.intakeSpeeds::setFastSpeed);
         builder.addDoubleProperty("Intake/SlowSpeed", this.intakeSpeeds::getSlowSpeed, this.intakeSpeeds::setSlowSpeed);
         builder.addDoubleProperty("Intake/EjectSpeed", this.intakeSpeeds::getEjectSpeed, this.intakeSpeeds::setEjectSpeed);   
-        builder.addDoubleProperty("Intake/FeedShooterIntakeSpeed", this::getFeedShooterIntakeSpeed, this::setFeedShooterIntakeSpeed);
+//        builder.addDoubleProperty("Intake/FeedShooterIntakeSpeed", this.intakeSpeeds::getFeedShooterIntakeSpeed, this.intakeSpeeds::setFeedShooterIntakeSpeed);
     }
 
     static class IntakeSpeeds {
         private double fastSpeed = 0.50;
-        private double slowSpeed = -0.15;
+        private double slowSpeed = 0.1;
         private double ejectSpeed = -1;
+        private double feedShooterIntakeSpeed = 0.1;
 
         public double getFastSpeed() {
             return fastSpeed;
@@ -117,6 +107,15 @@ public class IntakeSpeed implements Lifecycle, Sendable {
 
         public void setEjectSpeed(double ejectSpeed) {
             this.ejectSpeed = ejectSpeed;
+        }
+
+        @Deprecated double getFeedShooterIntakeSpeed() {
+            return this.feedShooterIntakeSpeed;
+        }
+
+
+        @Deprecated  void setFeedShooterIntakeSpeed(double feedShooterIntakeSpeed) {
+            this.feedShooterIntakeSpeed = feedShooterIntakeSpeed;
         }
     }
 

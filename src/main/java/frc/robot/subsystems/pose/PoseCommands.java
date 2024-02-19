@@ -19,7 +19,7 @@ class PoseCommands {
         return new ParallelCommandGroup(
                 Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.IntakeFromFloor),
-                Commands.runOnce(Subsystems.shooter::stopFeeder)    // TODO: make command factory on Shooter
+                Commands.runOnce(Subsystems.shooter::stopFeeder)
         );
     }
 
@@ -30,7 +30,7 @@ class PoseCommands {
                         Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
                         Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote)
                 ),
-                new FeedNoteToShooterCommand(),
+                new FeedNoteToShooterCommand().withTimeout(2.0),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ReadyToShoot)
         );
     }
@@ -43,10 +43,14 @@ class PoseCommands {
     }
 
     static Command moveToDrivePose() {
-        return new ParallelCommandGroup(
-                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
-                Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote)
-        );
+        return new ConditionalCommand(
+                new ParallelCommandGroup(
+                        Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
+                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote)
+                ),
+                new PrintCommand("Ignoring drive request since we in transition with note"),
+                () -> !(Intake.IntakeState.RotateUpWhileFeedingNote.equals(Subsystems.intake.getIntakeState())));
+
     }
 
 

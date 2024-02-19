@@ -44,6 +44,9 @@ public class IntakePivot implements Lifecycle, Sendable {
 
     private double zeroPivotEncoderOffset = 24;
 
+    private static final double MAXIMUM_LIMIT = 1;
+    private static final double MINIMUM_LIMIT = -25;
+
     public IntakePivot(TalonFX pivotDrive) {
         this.pivotDrive = pivotDrive;
         telemetry = new Telemetry();
@@ -58,8 +61,8 @@ public class IntakePivot implements Lifecycle, Sendable {
         motionMagicConfig.setJerk(500);
 
         pivotConfiguration.SoftwareLimitSwitch
-                .withForwardSoftLimitThreshold(-1)
-                .withReverseSoftLimitThreshold(-25);
+                .withForwardSoftLimitThreshold(MAXIMUM_LIMIT)
+                .withReverseSoftLimitThreshold(MINIMUM_LIMIT);
 
         pidHelper.updateConfiguration(pivotConfiguration.Slot0);
         pivotConfiguration.Slot0.withGravityType(GravityTypeValue.Arm_Cosine);
@@ -96,6 +99,10 @@ public class IntakePivot implements Lifecycle, Sendable {
     }
 
     public void setPivotSetpoint(double pivotSetpoint) {
+        if (pivotSetpoint < MINIMUM_LIMIT || pivotSetpoint > MAXIMUM_LIMIT) {
+            DataLogManager.log("[IntakePivot] Ignoring pivot setpoint request due to range violation, asked for: " + pivotSetpoint);
+            return;
+        }
         setPivotOpenLoop(false);
         this.pivotSetpoint = pivotSetpoint;
     }

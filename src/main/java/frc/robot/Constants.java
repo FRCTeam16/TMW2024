@@ -8,7 +8,6 @@ public final class Constants {
         public static final double stickDeadband = 0.05;
     }
 
-    // TODO: speeds need tuning
     public static final class Swerve {
         public static final double kMaxSpeedMetersPerSecond = TunerConstants.kSpeedAt12VoltsMps;
         public static final double kMaxAngularVelocity = 4 * Math.PI;

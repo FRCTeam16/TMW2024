@@ -10,17 +10,15 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auto.AutoManager;
 import frc.robot.commands.RunWithDisabledInstantCommand;
-import frc.robot.commands.vision.VisionAlign;
 import frc.robot.commands.ZeroAndSetOffsetCommand;
+import frc.robot.commands.vision.VisionAlign;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Lifecycle;
-import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.pose.PoseManager;
 
 import java.util.Objects;
@@ -93,9 +91,6 @@ public class RobotContainer {
 
         xboxController.rightBumper().onTrue(Commands.runOnce(Subsystems.pivot::openLoopUp)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
         xboxController.leftBumper().onTrue(Commands.runOnce(Subsystems.pivot::openLoopDown)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
-//        xboxController.y().onTrue(Commands.runOnce(() -> Subsystems.pivot.setPivotPosition(Pivot.PivotPosition.StartingPosition)));
-//        xboxController.x().onTrue(Commands.runOnce(() -> Subsystems.pivot.setPivotPosition(Pivot.PivotPosition.FeedPosition)));
-//        xboxController.a().onTrue(Commands.runOnce(() -> Subsystems.pivot.setPivotPosition(Pivot.PivotPosition.Up)));
 
 
         xboxController.leftTrigger()
@@ -151,8 +146,6 @@ public class RobotContainer {
         feedNote.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter));
         ampAim.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PositionForAmp));
 
-        xboxController.povLeft().onTrue(Commands.runOnce(Subsystems.shooter::runShooter));
-        xboxController.povDown().onTrue(Commands.runOnce(Subsystems.shooter::stopShooter));
         xboxController.start().onTrue(Commands.runOnce(Subsystems.shooter::runShooter));
         xboxController.back().onTrue(Commands.runOnce(Subsystems.shooter::stopShooter));
 

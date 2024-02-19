@@ -113,7 +113,6 @@ public class ShooterHelper implements Sendable {
                 this.motor.setControl(openLoopOut.withOutput(direction() * openLoopSetpoint));
             } else {
                 if (pid.updateValuesFromDashboard()) {
-                    // TODO test this doesn't interfere pid.updateConfiguration(config);
                     // this.setMotorPID();
                 }
                 this.motor.setControl(velocityOut.withVelocity(direction() * velocitySetpoint).withFeedForward(pid.kF).withEnableFOC(true));

@@ -1,14 +1,12 @@
 package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Subsystems;
@@ -51,7 +49,6 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
     public void teleopInit() {
         intakeSpeed.teleopInit();
         intakePivot.teleopInit();
-        ;
     }
 
     @Override
@@ -75,15 +72,15 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
     public void setIntakeState(IntakeState state) {
         DataLogManager.log("[Intake] setting intake state: " + state);
         switch (state) {
+            case StartingPosition, HoldNote -> {
+                intakeSpeed.stopIntake();
+                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Zero);
+            }
             case IntakeFromFloor -> {
                 intakeSpeed.runIntakeFast();
                 intakePivot.setIntakePosition(IntakePivot.IntakePosition.Pickup);
             }
             case RotateUpWhileFeedingNote -> {
-                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Zero);
-            }
-            case HoldNote -> {
-                intakeSpeed.stopIntake();
                 intakePivot.setIntakePosition(IntakePivot.IntakePosition.Zero);
             }
             case FeedNote -> {
@@ -100,19 +97,23 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         this.intakeState = state;
     }
 
+    public IntakeState getIntakeState() {
+        return intakeState;
+    }
+
     @Override
     public void periodic() {
         if (IntakeState.IntakeFromFloor == intakeState && isNoteDetected()) {
             postNoteDetectedTimer = Optional.of(new Timer());
             postNoteDetectedTimer.get().start();
-            this.setIntakeState(IntakeState.RotateUpWhileFeedingNote);     // do we need
+            this.setIntakeState(IntakeState.RotateUpWhileFeedingNote);
         }
 
         // Check if we should override intake speed
         if (postNoteDetectedTimer.isPresent() &&  postNoteDetectedTimer.get().hasElapsed(1.0)) {
             intakeSpeed.stopIntake();
             postNoteDetectedTimer.get().stop();
-            postNoteDetectedTimer = Optional.empty();   // todo cleanup?
+            postNoteDetectedTimer = Optional.empty();   // todo determine if optional<> approach is clearest
             Subsystems.poseManager.schedulePose(PoseManager.Pose.NotePickedUp);
         }
 

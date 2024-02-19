@@ -15,12 +15,19 @@ public class PoseManager {
 
 
     public enum Pose {
+        // Default starting configuration
         StartingConfig,
+        // General purpose pose for driving around
         Drive,
+        // Pose for actively picking up notes from the ground
         Pickup,
+        // Transitional pose for handling state transitions between pickup and decision point
         NotePickedUp,
+        // Transitional pose for feeding the note from the intake into the shooter
         FeedNoteToShooter,
+        // Pose for when the robot is loaded and ready to shoot
         ReadyToShoot,
+        // Robot pose used in preparation for scoring on the amp
         PositionForAmp
     }
 
@@ -33,6 +40,7 @@ public class PoseManager {
     public PoseManager() {
         poseLog = new StringLogEntry(DataLogManager.getLog(), "/posemanager");
 
+        registry.put(Pose.StartingConfig, PoseCommands::moveToStartingConfigPose);
         registry.put(Pose.Pickup, PoseCommands::moveToPickupPose);
         registry.put(Pose.Drive, PoseCommands::moveToDrivePose);
         registry.put(Pose.NotePickedUp, PoseCommands::moveToNotePickedUpPose);

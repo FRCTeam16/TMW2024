@@ -37,7 +37,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
 
     private final PIDHelper pidHelper = new PIDHelper(SUBSYSTEM_NAME);
 
-    private PIDController pid;
+    private final PIDController pid;
     private TrapezoidProfile.State goal = new TrapezoidProfile.State(0,0);
 
     private final DoubleLogEntry setpointLog;
@@ -52,7 +52,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
 
         public final double setpoint;
 
-        private PivotPosition(double setpoint) {
+        PivotPosition(double setpoint) {
             this.setpoint = setpoint;
         }
     }
@@ -161,16 +161,12 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void periodic() {
-//        if (this.goal.position > EncoderCounts.MAX_ANGLE || this.goal.position < EncoderCounts.MIN_ANGLE) {
-//
-//        }
 
         if (this.getPivotAngleDegrees() > EncoderConstants.MAX_ANGLE || this.getPivotAngleDegrees() < EncoderConstants.MIN_ANGLE) {
-            DataLogManager.log("[" + SUBSYSTEM_NAME + "] SOFT LIMIT BREAK");
+            DataLogManager.log("[" + SUBSYSTEM_NAME + "] SOFT LIMIT BREAK, setting output to 0");
             motor.setControl(openLoopOut.withOutput(0));
             return;
         }
-
 
         if (openLoop) {
             motor.setControl(openLoopOut.withOutput(speed));
