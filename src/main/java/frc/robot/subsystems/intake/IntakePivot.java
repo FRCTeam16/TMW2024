@@ -61,8 +61,12 @@ public class IntakePivot implements Lifecycle, Sendable {
         motionMagicConfig.setJerk(500);
 
         pivotConfiguration.SoftwareLimitSwitch
-                .withForwardSoftLimitThreshold(MAXIMUM_LIMIT)
-                .withReverseSoftLimitThreshold(MINIMUM_LIMIT);
+                .withForwardSoftLimitThreshold(MAXIMUM_LIMIT).withForwardSoftLimitEnable(softLimitsEnabled)
+                .withReverseSoftLimitThreshold(MINIMUM_LIMIT).withReverseSoftLimitEnable(softLimitsEnabled);
+
+        pivotConfiguration.HardwareLimitSwitch
+                .withForwardLimitEnable(false)
+                .withReverseLimitEnable(false);
 
         pidHelper.updateConfiguration(pivotConfiguration.Slot0);
         pivotConfiguration.Slot0.withGravityType(GravityTypeValue.Arm_Cosine);
@@ -208,7 +212,7 @@ public class IntakePivot implements Lifecycle, Sendable {
         Zero(0),
         Vertical(-7),
         Pickup(-23.0),
-        AMPShot(-10);
+        AMPShot(-9.0);
 
         private final double setpoint;
 
