@@ -14,7 +14,7 @@ import frc.robot.subsystems.util.PIDHelper;
 public class Climber extends SubsystemBase implements Lifecycle, Sendable {
   public static final String SUBSYSTEM_NAME = "ClimberSubsystem";
   // motor configuration
-  private final TalonFX climberDrive = new TalonFX(60);// set to 125:1
+  private final TalonFX climberDrive = new TalonFX(35);// set to 125:1
   private final DutyCycleOut openLoopOut = new DutyCycleOut(0).withEnableFOC(true);
   private final MotionMagicVoltage motionMagicOut = new MotionMagicVoltage(0);
 

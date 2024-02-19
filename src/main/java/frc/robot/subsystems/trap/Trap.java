@@ -9,8 +9,8 @@ import frc.robot.subsystems.Lifecycle;
 
 public class Trap extends SubsystemBase implements Lifecycle, Sendable {
     public static final String SUBSYSTEM_NAME = "TrapSubsystem";
-    private TrapExtender extender = new TrapExtender(new TalonFX(62));
-    private TrapPivot pivot = new TrapPivot(new TalonFX(63));
+    private TrapExtender extender = new TrapExtender(new TalonFX(21));
+    private TrapPivot pivot = new TrapPivot(new TalonFX(22));
     private Servo finger1 = new Servo(1); // I dont know what 1 means but yea
     private Servo finger2 = new Servo(2);
     private Servo wristRotate = new Servo(3);
