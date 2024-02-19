@@ -19,7 +19,8 @@ public class IntakeSpeed implements Lifecycle, Sendable {
     private final DutyCycleOut intakeDrive_Request = new DutyCycleOut(0.0); // CTRE pheonix 6 API
     private final IntakeSpeeds intakeSpeeds = new IntakeSpeeds();
     private final Telemetry telemetry;
-    private double intakeOpenLoopSeed = 0;
+    private double intakeOpenLoopSpeed = 0;
+    private double feedShooterIntakeSpeed = .2;
 
 
     public IntakeSpeed(TalonFX intakeDrive) {
@@ -32,48 +33,61 @@ public class IntakeSpeed implements Lifecycle, Sendable {
 
     @Override
     public void teleopInit() {
-        intakeOpenLoopSeed = 0.0;
+        intakeOpenLoopSpeed = 0.0;
     }
 
     @Override
     public void autoInit() {
-        intakeOpenLoopSeed = 0.0;
+        intakeOpenLoopSpeed = 0.0;
     }
 
     public void runIntakeFast() {
-        intakeOpenLoopSeed = this.intakeSpeeds.getFastSpeed();
-        telemetry.logIntakeSpeed(intakeOpenLoopSeed);
+        intakeOpenLoopSpeed = this.intakeSpeeds.getFastSpeed();
+        telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
     }
 
     public void runIntakeSlow() {
-        intakeOpenLoopSeed = this.intakeSpeeds.getSlowSpeed();
-        telemetry.logIntakeSpeed(intakeOpenLoopSeed);
+        intakeOpenLoopSpeed = this.intakeSpeeds.getSlowSpeed();
+        telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
     }
 
     public void runIntakeEject() {
-        intakeOpenLoopSeed = this.intakeSpeeds.getEjectSpeed();
-        telemetry.logIntakeSpeed(intakeOpenLoopSeed);
+        intakeOpenLoopSpeed = this.intakeSpeeds.getEjectSpeed();
+        telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
     }
 
     public void stopIntake() {
-        intakeOpenLoopSeed = 0.0;
-        telemetry.logIntakeSpeed(intakeOpenLoopSeed);
+        intakeOpenLoopSpeed = 0.0;
+        telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
     }
 
     public void runIntakeDebug(double value) {
-        intakeOpenLoopSeed = value;
+        intakeOpenLoopSpeed = value;
         telemetry.logIntakeSpeed(value);
     }
 
     void periodic() {
-        intakeDrive.setControl(intakeDrive_Request.withOutput(intakeOpenLoopSeed));
+        intakeDrive.setControl(intakeDrive_Request.withOutput(intakeOpenLoopSpeed));
+    }
+
+    double getFeedShooterIntakeSpeed() {
+        return this.feedShooterIntakeSpeed;
+    }
+
+    void setFeedShooterIntakeSpeed(double feedShooterIntakeSpeed) {
+        this.feedShooterIntakeSpeed = feedShooterIntakeSpeed;
+    }
+
+    void feedShooter() {
+        this.intakeOpenLoopSpeed = this.feedShooterIntakeSpeed;
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Intake/FastSpeed", this.intakeSpeeds::getFastSpeed, this.intakeSpeeds::setFastSpeed);
         builder.addDoubleProperty("Intake/SlowSpeed", this.intakeSpeeds::getSlowSpeed, this.intakeSpeeds::setSlowSpeed);
-        builder.addDoubleProperty("Intake/EjectSpeed", this.intakeSpeeds::getEjectSpeed, this.intakeSpeeds::setEjectSpeed);
+        builder.addDoubleProperty("Intake/EjectSpeed", this.intakeSpeeds::getEjectSpeed, this.intakeSpeeds::setEjectSpeed);   
+        builder.addDoubleProperty("Intake/FeedShooterIntakeSpeed", this::getFeedShooterIntakeSpeed, this::setFeedShooterIntakeSpeed);
     }
 
     static class IntakeSpeeds {
@@ -109,7 +123,7 @@ public class IntakeSpeed implements Lifecycle, Sendable {
 
     class Telemetry {
         private final DoubleLogEntry intakeSpeedLog;
-        CachedValue<Double> intakeSpeedCache = new CachedValue<>(intakeOpenLoopSeed, DoubleChanger::areDifferent);
+        CachedValue<Double> intakeSpeedCache = new CachedValue<>(intakeOpenLoopSpeed, DoubleChanger::areDifferent);
 
         Telemetry() {
             DataLog log = DataLogManager.getLog();
