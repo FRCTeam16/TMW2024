@@ -2,6 +2,7 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.util.datalog.DataLog;
@@ -16,8 +17,12 @@ import frc.robot.subsystems.util.DoubleChanger;
 public class IntakeSpeed implements Lifecycle, Sendable {
     private final TalonFX intakeDrive;
 
-    private final DutyCycleOut intakeDrive_Request = new DutyCycleOut(0.0); // CTRE pheonix 6 API
-    private final IntakeSpeeds intakeSpeeds = new IntakeSpeeds();
+    //    private final DutyCycleOut intakeDrive_Request = new DutyCycleOut(0.0); // CTRE pheonix 6 API
+//    private final IntakeSpeeds intakeSpeeds = new IntakeSpeeds();
+    private final VoltageOut intakeDrive_Request = new VoltageOut(0.0);
+
+    private final IntakeSpeedVolts intakeSpeedVolts = new IntakeSpeedVolts();
+
     private final Telemetry telemetry;
     private double intakeOpenLoopSpeed = 0;
 
@@ -41,17 +46,22 @@ public class IntakeSpeed implements Lifecycle, Sendable {
     }
 
     public void runIntakeFast() {
-        intakeOpenLoopSpeed = this.intakeSpeeds.getFastSpeed();
+        intakeOpenLoopSpeed = this.intakeSpeedVolts.getFastSpeed();
         telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
     }
 
     public void runIntakeSlow() {
-        intakeOpenLoopSpeed = this.intakeSpeeds.getSlowSpeed();
+        intakeOpenLoopSpeed = this.intakeSpeedVolts.getSlowSpeed();
         telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
     }
 
     public void runIntakeEject() {
-        intakeOpenLoopSpeed = this.intakeSpeeds.getEjectSpeed();
+        intakeOpenLoopSpeed = this.intakeSpeedVolts.getEjectSpeed();
+        telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
+    }
+
+    public void runAmpShot() {
+        intakeOpenLoopSpeed = this.intakeSpeedVolts.getAmpShotSpeed();
         telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
     }
 
@@ -66,6 +76,7 @@ public class IntakeSpeed implements Lifecycle, Sendable {
     }
 
     void periodic() {
+//        intakeDrive.setControl(intakeDrive_Request.withOutput(intakeOpenLoopSpeed));
         intakeDrive.setControl(intakeDrive_Request.withOutput(intakeOpenLoopSpeed));
     }
 
@@ -73,51 +84,111 @@ public class IntakeSpeed implements Lifecycle, Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.addDoubleProperty("Intake/FastSpeed", this.intakeSpeeds::getFastSpeed, this.intakeSpeeds::setFastSpeed);
-        builder.addDoubleProperty("Intake/SlowSpeed", this.intakeSpeeds::getSlowSpeed, this.intakeSpeeds::setSlowSpeed);
-        builder.addDoubleProperty("Intake/EjectSpeed", this.intakeSpeeds::getEjectSpeed, this.intakeSpeeds::setEjectSpeed);   
+        builder.addDoubleProperty("Intake/FastSpeed", this.intakeSpeedVolts::getFastSpeed, this.intakeSpeedVolts::setFastSpeed);
+        builder.addDoubleProperty("Intake/SlowSpeed", this.intakeSpeedVolts::getSlowSpeed, this.intakeSpeedVolts::setSlowSpeed);
+        builder.addDoubleProperty("Intake/EjectSpeed", this.intakeSpeedVolts::getEjectSpeed, this.intakeSpeedVolts::setEjectSpeed);
+        builder.addDoubleProperty("Intake/AmpShootSpeed", this.intakeSpeedVolts::getAmpShotSpeed, this.intakeSpeedVolts::setAmpShotSpeed);
 //        builder.addDoubleProperty("Intake/FeedShooterIntakeSpeed", this.intakeSpeeds::getFeedShooterIntakeSpeed, this.intakeSpeeds::setFeedShooterIntakeSpeed);
     }
 
-    static class IntakeSpeeds {
-        private double fastSpeed = 0.50;
-        private double slowSpeed = 0.1;
-        private double ejectSpeed = -1;
-        private double feedShooterIntakeSpeed = -0.1;
+    static class IntakeSpeedVolts {
+        private double fastSpeed = 6.0;
+        private double slowSpeed = -2;
+        private double ejectSpeed = -6;
+        private double feedShooterIntakeSpeed = -2; // FIXME feed is using slowSpeed
+        private double ampShotSpeed = -4.8;
 
+        // Getter for fastSpeed
         public double getFastSpeed() {
             return fastSpeed;
         }
 
+        // Setter for fastSpeed
         public void setFastSpeed(double fastSpeed) {
             this.fastSpeed = fastSpeed;
         }
 
+        // Getter for slowSpeed
         public double getSlowSpeed() {
             return slowSpeed;
         }
 
+        // Setter for slowSpeed
         public void setSlowSpeed(double slowSpeed) {
             this.slowSpeed = slowSpeed;
         }
 
+        // Getter for ejectSpeed
         public double getEjectSpeed() {
             return ejectSpeed;
         }
 
+        // Setter for ejectSpeed
         public void setEjectSpeed(double ejectSpeed) {
             this.ejectSpeed = ejectSpeed;
         }
 
-        @Deprecated double getFeedShooterIntakeSpeed() {
-            return this.feedShooterIntakeSpeed;
+        // Getter for feedShooterIntakeSpeed
+        public double getFeedShooterIntakeSpeed() {
+            return feedShooterIntakeSpeed;
         }
 
-
-        @Deprecated  void setFeedShooterIntakeSpeed(double feedShooterIntakeSpeed) {
+        // Setter for feedShooterIntakeSpeed
+        public void setFeedShooterIntakeSpeed(double feedShooterIntakeSpeed) {
             this.feedShooterIntakeSpeed = feedShooterIntakeSpeed;
         }
+
+        // Getter for ampShotSpeed
+        public double getAmpShotSpeed() {
+            return ampShotSpeed;
+        }
+
+        // Setter for ampShotSpeed
+        public void setAmpShotSpeed(double ampShotSpeed) {
+            this.ampShotSpeed = ampShotSpeed;
+        }
     }
+
+
+//    static class IntakeSpeeds {
+//        private double fastSpeed = 0.50;
+//        private double slowSpeed = 0.1;
+//        private double ejectSpeed = -1;
+//        private double feedShooterIntakeSpeed = -0.1;
+//
+//        public double getFastSpeed() {
+//            return fastSpeed;
+//        }
+//
+//        public void setFastSpeed(double fastSpeed) {
+//            this.fastSpeed = fastSpeed;
+//        }
+//
+//        public double getSlowSpeed() {
+//            return slowSpeed;
+//        }
+//
+//        public void setSlowSpeed(double slowSpeed) {
+//            this.slowSpeed = slowSpeed;
+//        }
+//
+//        public double getEjectSpeed() {
+//            return ejectSpeed;
+//        }
+//
+//        public void setEjectSpeed(double ejectSpeed) {
+//            this.ejectSpeed = ejectSpeed;
+//        }
+//
+//        @Deprecated double getFeedShooterIntakeSpeed() {
+//            return this.feedShooterIntakeSpeed;
+//        }
+//
+//
+//        @Deprecated  void setFeedShooterIntakeSpeed(double feedShooterIntakeSpeed) {
+//            this.feedShooterIntakeSpeed = feedShooterIntakeSpeed;
+//        }
+//    }
 
 
     class Telemetry {

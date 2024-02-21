@@ -19,6 +19,7 @@ import frc.robot.commands.ZeroAndSetOffsetCommand;
 import frc.robot.commands.vision.VisionAlign;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.trap.TrapExtender;
 
@@ -150,6 +151,9 @@ public class RobotContainer {
         xboxController.a().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.NotePickedUp));
         xboxController.y().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
 
+        xboxController.b().onTrue(Commands.runOnce(() ->
+                Subsystems.intake.setIntakeState(Intake.IntakeState.TryShootAmp)));
+
 
         // Testing
 //        xboxController.povUp().onTrue(Commands.runOnce(() -> {
@@ -168,6 +172,14 @@ public class RobotContainer {
         //
         SmartDashboard.putData("Start Shooter", Commands.runOnce(Subsystems.shooter::runShooter));
         SmartDashboard.putData("Stop Shooter", Commands.runOnce(Subsystems.shooter::stopShooter));
+
+        feed.onTrue(
+                Commands.either(
+                        Commands.runOnce(Subsystems.shooter::shoot),
+                        Commands.runOnce(() -> Subsystems.intake.setIntakeState(Intake.IntakeState.TryShootAmp)),
+                        () -> !Subsystems.intake.isNoteDetected())
+        ).onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
+
         feed.onTrue(Commands.runOnce(Subsystems.shooter::shoot))
                 .onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
 

@@ -2,6 +2,7 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -81,6 +82,14 @@ public class IntakePivot implements Lifecycle, Sendable {
         motionMagicConfig.updateSlot0Config(pivotConfiguration.Slot0);
         motionMagicConfig.updateMotionMagicConfig(pivotConfiguration.MotionMagic);
 
+//        pivotConfiguration.Slot1
+//                .withKP(pivotConfiguration.Slot0.kP)
+//                .withKI(pivotConfiguration.Slot0.kI)
+//                .withKD(pivotConfiguration.Slot0.kD)
+//                .withKV(pivotConfiguration.Slot0.kV)
+//                .withKA(pivotConfiguration.Slot0.kA);
+
+
         DataLogManager.log("[Pivot:IntakePivot config: " + pivotConfiguration);
         pivotDrive.getConfigurator().apply(pivotConfiguration);
     }
@@ -121,6 +130,10 @@ public class IntakePivot implements Lifecycle, Sendable {
     public void holdPosition() {
         double pivotSetpoint = pivotDrive.getPosition().getValue();
         setPivotSetpoint(pivotSetpoint);
+    }
+
+    public double getCurrentPosition() {
+        return pivotDrive.getPosition().getValue();
     }
 
     public void pivotOpenLoopUp() {
@@ -175,6 +188,19 @@ public class IntakePivot implements Lifecycle, Sendable {
                     .withLimitReverseMotion(softLimitsEnabled));
         }
     }
+
+    // FIXME: Hack
+    public TalonFX getPivotDrive() {
+        return pivotDrive;
+    }
+
+   public MotionMagicConfigs getMotionMagicConfigs() {
+       return pivotConfiguration.MotionMagic;
+   }
+
+   public void applyConfigs(MotionMagicConfigs cfg) {
+        pivotDrive.getConfigurator().apply(cfg);
+   }
 
     public void updatePIDFromDashboard() {
         pidHelper.updateConfiguration(pivotConfiguration.Slot0);
