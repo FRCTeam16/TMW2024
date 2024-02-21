@@ -35,7 +35,7 @@ public class VisionAlign extends VisionCommand {
         DataLog log = DataLogManager.getLog();
         pidLog = new DoubleLogEntry(log, "VisionAlign/PID");
         velocityLog = new DoubleLogEntry(log, "VisionAlign/Velocity");
-        twistLog = new DoubleLogEntry(log, "Visionlign/Twist");
+        twistLog = new DoubleLogEntry(log, "VisionAlign/Twist");
     }
 
     public VisionAlign() {

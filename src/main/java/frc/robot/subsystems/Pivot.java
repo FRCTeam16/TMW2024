@@ -35,7 +35,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     private final DutyCycleOut openLoopOut = new DutyCycleOut(0);
     private final PositionVoltage positionVoltageOut = new PositionVoltage(0);
 
-    private final PIDHelper pidHelper = new PIDHelper(SUBSYSTEM_NAME);
+    private final PIDHelper pidHelper = new PIDHelper(SUBSYSTEM_NAME + "Subsystem/PID");
 
     private final PIDController pid;
     private TrapezoidProfile.State goal = new TrapezoidProfile.State(0,0);
