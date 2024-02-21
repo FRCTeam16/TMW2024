@@ -18,7 +18,7 @@ public class FeederHelper implements Sendable {
 
     private final DutyCycleOut openLoopOut = new DutyCycleOut(0.0);
     private double openLoopSetpoint = 0.0;
-    private static final double SHOOTING_SPEED = -0.50;
+    private double shootingSpeed = -0.50;
 
     private Timer shooterTimer;
     private double feedShooterSpeed = -0.1; // WARNING: Must change Intake feed
@@ -78,7 +78,7 @@ public class FeederHelper implements Sendable {
 
     public void shoot() {
         shooting = true;
-        openLoopSetpoint = SHOOTING_SPEED;
+        openLoopSetpoint = shootingSpeed;
         shooterTimer.reset();
     }
 
@@ -88,6 +88,14 @@ public class FeederHelper implements Sendable {
 
     public void setFeedShooterSpeed(double feedShooterSpeed) {
         this.feedShooterSpeed = feedShooterSpeed;
+    }
+
+    public double getShootingSpeed() {
+        return shootingSpeed;
+    }
+
+    public void setShootingSpeed(double shootingSpeed) {
+        this.shootingSpeed = shootingSpeed;
     }
 
     public void receiveFromIntake() {
@@ -109,7 +117,8 @@ public class FeederHelper implements Sendable {
     public void initSendable(SendableBuilder builder) {
         builder.addBooleanProperty(name + "/Enabled", this::isEnabled, this::setEnabled);
         builder.addDoubleProperty(name + "/Open Loop Setpoint", this::getOpenLoopSetpoint, this::setOpenLoopSetpoint);
-        builder.addDoubleProperty(name + "/Feed Shooter Speed", this::getFeedShooterSpeed, this::setFeedShooterSpeed);
+        builder.addDoubleProperty(name + "/Feed Note Speed", this::getFeedShooterSpeed, this::setFeedShooterSpeed);
+        builder.addDoubleProperty(name + "/Shoot Speed", this::getShootingSpeed, this::setShootingSpeed);
         builder.addBooleanProperty(name + "/Note Detected", this::isNoteDetected, null);
     }
 }

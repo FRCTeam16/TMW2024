@@ -1,6 +1,7 @@
 package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -59,6 +60,12 @@ public class IntakePivot implements Lifecycle, Sendable {
         motionMagicConfig.setVelocity(60);
         motionMagicConfig.setAcceleration(220);
         motionMagicConfig.setJerk(2000);
+
+        pivotConfiguration.withCurrentLimits(
+                new CurrentLimitsConfigs()
+                        .withSupplyCurrentLimit(30)
+                        .withSupplyCurrentLimitEnable(true)
+        );
 
         pivotConfiguration.SoftwareLimitSwitch
                 .withForwardSoftLimitThreshold(MAXIMUM_LIMIT).withForwardSoftLimitEnable(softLimitsEnabled)
@@ -212,7 +219,7 @@ public class IntakePivot implements Lifecycle, Sendable {
         Zero(0),
         Vertical(-7),
         Pickup(-23.0),
-        AMPShot(-9.0);
+        AMPShot(-8.5);
 
         private final double setpoint;
 

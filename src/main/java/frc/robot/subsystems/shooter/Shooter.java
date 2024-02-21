@@ -24,6 +24,24 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
         upper.setInvert(true);
     }
 
+    @Override
+    public void teleopInit() {
+        upper.setOpenLoop(true);
+        lower.setOpenLoop(true);
+        upper.setEnabled(false);
+        lower.setEnabled(false);
+        feeder.setEnabled(false);
+    }
+
+    @Override
+    public void autoInit() {
+        upper.setOpenLoop(true);
+        lower.setOpenLoop(true);
+        upper.setEnabled(false);
+        lower.setEnabled(false);
+        feeder.setEnabled(false);
+    }
+
     /**
      * FIXME DEBUG
      */

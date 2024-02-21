@@ -110,7 +110,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         }
 
         // Check if we should override intake speed
-        if (postNoteDetectedTimer.isPresent() &&  postNoteDetectedTimer.get().hasElapsed(1.0)) {
+        if (postNoteDetectedTimer.isPresent() &&  postNoteDetectedTimer.get().hasElapsed(0.00000001)) {
             intakeSpeed.stopIntake();
             postNoteDetectedTimer.get().stop();
             postNoteDetectedTimer = Optional.empty();   // todo determine if optional<> approach is clearest

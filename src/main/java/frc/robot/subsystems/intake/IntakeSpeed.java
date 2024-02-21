@@ -83,7 +83,7 @@ public class IntakeSpeed implements Lifecycle, Sendable {
         private double fastSpeed = 0.50;
         private double slowSpeed = 0.1;
         private double ejectSpeed = -1;
-        private double feedShooterIntakeSpeed = 0.1;
+        private double feedShooterIntakeSpeed = -0.1;
 
         public double getFastSpeed() {
             return fastSpeed;
