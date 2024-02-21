@@ -52,7 +52,7 @@ public class Subsystems {
         intake = new Intake();
         shooter = new Shooter();
         pivot = new Pivot();
-//        climber = new Climber();
+        climber = new Climber();
 
         poseManager = new PoseManager();
 
@@ -62,12 +62,12 @@ public class Subsystems {
         lifecycleSubsystems.add(intake);
         lifecycleSubsystems.add(shooter);
         lifecycleSubsystems.add(pivot);
-//        lifecycleSubsystems.add(climber);
+        lifecycleSubsystems.add(climber);
 
         SmartDashboard.putData("ShooterSubsystem", shooter);
         SmartDashboard.putData("PivotSubsystem", pivot);
         SmartDashboard.putData("IntakeSubsystem", intake);
-//        SmartDashboard.putData("ClimberSubsystem", climber);
+        SmartDashboard.putData("ClimberSubsystem", climber);
     }
 
 

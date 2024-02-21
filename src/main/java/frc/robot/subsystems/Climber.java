@@ -73,7 +73,7 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
 
   public void openLoopUp() {
     openLoop = true;
-    openLoopSpeed = climberOpenLoopSpeeds.getDownSpeed();
+    openLoopSpeed = climberOpenLoopSpeeds.getUpSpeed();
   }
 
   public void openLoopDown() {
@@ -118,8 +118,8 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
   }
 
   static class ClimberOpenLoopSpeeds {
-    private double upSpeed = 0.1;
-    private double downSpeed = -0.1;
+    private double upSpeed = 0.5;
+    private double downSpeed = -0.5;
 
     public double getUpSpeed() {
       return upSpeed;

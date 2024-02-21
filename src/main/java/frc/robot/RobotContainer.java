@@ -93,13 +93,21 @@ public class RobotContainer {
         xboxController.leftBumper().onTrue(Commands.runOnce(Subsystems.pivot::openLoopDown)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
 
 
-        xboxController.leftTrigger()
+        /*xboxController.leftTrigger()
                 .onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().pivotOpenLoopDown()))
-                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().holdPosition())); /* pivotOpenLoopStop */
+                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().holdPosition())); *//* pivotOpenLoopStop *//*
         xboxController.rightTrigger()
                 .onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().pivotOpenLoopUp()))
-                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().holdPosition())); /* pivotOpenLoopStop */
+                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().holdPosition())); *//* pivotOpenLoopStop */
 
+
+        xboxController.leftTrigger()
+                .onTrue(Commands.runOnce(() -> Subsystems.climber.openLoopUp()))
+                .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop())); /* pivotOpenLoopStop */
+
+        xboxController.rightTrigger()
+                .onTrue(Commands.runOnce(() -> Subsystems.climber.openLoopDown()))
+                .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop())); /* pivotOpenLoopStop */
 
         runVisionAlignAngle.whileTrue(new VisionAlign().withRobotAngle(90.0));
         //        lockAngle1.onTrue(new RotateToAngle(-60));
