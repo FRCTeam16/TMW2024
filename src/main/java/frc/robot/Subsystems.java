@@ -10,6 +10,7 @@ import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.RotationController;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.trap.Trap;
 import frc.robot.subsystems.vision.Limelight;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.subsystems.vision.VisionTypes;
@@ -33,6 +34,8 @@ public class Subsystems {
     public static Shooter shooter;
     public static Pivot pivot;
     public static Climber climber;
+    public static Trap trap;
+
     // Utility
     public static PoseManager poseManager;
 
@@ -53,6 +56,7 @@ public class Subsystems {
         shooter = new Shooter();
         pivot = new Pivot();
         climber = new Climber();
+        trap = new Trap();
 
         poseManager = new PoseManager();
 
@@ -63,11 +67,13 @@ public class Subsystems {
         lifecycleSubsystems.add(shooter);
         lifecycleSubsystems.add(pivot);
         lifecycleSubsystems.add(climber);
+        lifecycleSubsystems.add(trap);
 
         SmartDashboard.putData("ShooterSubsystem", shooter);
         SmartDashboard.putData("PivotSubsystem", pivot);
         SmartDashboard.putData("IntakeSubsystem", intake);
         SmartDashboard.putData("ClimberSubsystem", climber);
+        SmartDashboard.putData("TrapSubsystem", trap);
     }
 
 

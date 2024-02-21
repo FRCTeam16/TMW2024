@@ -18,7 +18,7 @@ import frc.robot.subsystems.util.PIDHelper;
 public class TrapPivot implements Lifecycle, Sendable {
     private final TalonFX motor;
     private final TalonFXConfiguration configuration = new TalonFXConfiguration();
-    private final OpenLoopSpeedsConfig openLoopSpeeds = new OpenLoopSpeedsConfig();
+    private final OpenLoopSpeedsConfig openLoopSpeeds = new OpenLoopSpeedsConfig(0.1, -0.1);
     private final MotionMagicConfig motionMagicConfig = new MotionMagicConfig();
     private final DutyCycleOut openLoopOut = new DutyCycleOut(0);
     private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
@@ -40,6 +40,21 @@ public class TrapPivot implements Lifecycle, Sendable {
 
     public void setOpenLoop(boolean openLoop) {
         this.openLoop = openLoop;
+    }
+
+    public void openLoopUp() {
+        setOpenLoop(true);
+        setOpenLoopSetpoint(openLoopSpeeds.getUpSpeed());
+    }
+
+    public void openLoopDown() {
+        setOpenLoop(true);
+        setOpenLoopSetpoint(openLoopSpeeds.getDownSpeed());
+    }
+
+    public void stopOpenLoop() {
+        setOpenLoop(true);
+        setOpenLoopSetpoint(0.0);
     }
 
     public double getOpenLoopSetpoint() {

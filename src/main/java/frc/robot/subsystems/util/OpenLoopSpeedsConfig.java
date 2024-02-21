@@ -7,6 +7,14 @@ public class OpenLoopSpeedsConfig {
     private double upSpeed = .5;
     private double downSpeed = -.5;
 
+    public OpenLoopSpeedsConfig() {
+    }
+
+    public OpenLoopSpeedsConfig(double upSpeed, double downSpeed) {
+        this.upSpeed = upSpeed;
+        this.downSpeed = downSpeed;
+    }
+
     public double getUpSpeed() {
         return upSpeed;
     }

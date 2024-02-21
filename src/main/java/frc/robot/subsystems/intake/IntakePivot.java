@@ -58,7 +58,7 @@ public class IntakePivot implements Lifecycle, Sendable {
         motionMagicConfig.setkG(0.2);
         motionMagicConfig.setVelocity(60);
         motionMagicConfig.setAcceleration(220);
-        motionMagicConfig.setJerk(500);
+        motionMagicConfig.setJerk(2000);
 
         pivotConfiguration.SoftwareLimitSwitch
                 .withForwardSoftLimitThreshold(MAXIMUM_LIMIT).withForwardSoftLimitEnable(softLimitsEnabled)

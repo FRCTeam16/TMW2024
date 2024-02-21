@@ -6,9 +6,9 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 public class MotionMagicConfig {
     public double kS = 0.0;
     public double kG = 0.0;
-    private double velocity = 150;
-    private double acceleration = 300;
-    private double jerk = 2000;
+    private double velocity = 30;
+    private double acceleration = 250;
+    private double jerk = 0;
 
     public double getkS() {
         return kS;

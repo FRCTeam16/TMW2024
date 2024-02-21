@@ -20,6 +20,7 @@ import frc.robot.commands.vision.VisionAlign;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.pose.PoseManager;
+import frc.robot.subsystems.trap.TrapExtender;
 
 import java.util.Objects;
 
@@ -93,21 +94,40 @@ public class RobotContainer {
         xboxController.leftBumper().onTrue(Commands.runOnce(Subsystems.pivot::openLoopDown)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
 
 
-        /*xboxController.leftTrigger()
-                .onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().pivotOpenLoopDown()))
-                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().holdPosition())); *//* pivotOpenLoopStop *//*
-        xboxController.rightTrigger()
-                .onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().pivotOpenLoopUp()))
-                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().holdPosition())); *//* pivotOpenLoopStop */
-
-
+        // Test Intake
+        if (false) {
+            xboxController.leftTrigger()
+                    .onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().pivotOpenLoopDown()))
+                    .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().holdPosition()));
+            xboxController.rightTrigger()
+                    .onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().pivotOpenLoopUp()))
+                    .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().holdPosition()));
+        }
+        // Test Climber
+        if (false) {
         xboxController.leftTrigger()
                 .onTrue(Commands.runOnce(() -> Subsystems.climber.openLoopUp()))
-                .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop())); /* pivotOpenLoopStop */
+                .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
 
         xboxController.rightTrigger()
                 .onTrue(Commands.runOnce(() -> Subsystems.climber.openLoopDown()))
-                .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop())); /* pivotOpenLoopStop */
+                .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
+        }
+
+        // Test Trap
+        if (true) {
+        xboxController.leftTrigger()
+                .onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().openLoopDown()))
+                .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
+
+        xboxController.rightTrigger()
+                .onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().openLoopUp()))
+                .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
+        }
+        xboxController.povUp().onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().setTrapPosition(TrapExtender.TrapPosition.Up)));
+        xboxController.povDown().onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero)));
+
+
 
         runVisionAlignAngle.whileTrue(new VisionAlign().withRobotAngle(90.0));
         //        lockAngle1.onTrue(new RotateToAngle(-60));
@@ -132,16 +152,16 @@ public class RobotContainer {
 
 
         // Testing
-        xboxController.povUp().onTrue(Commands.runOnce(() -> {
-            double value = SmartDashboard.getNumber("DebugFeederSpeeds", -0.3);
-                    Subsystems.shooter.getFeeder().setOpenLoopSetpoint(value);
-                    Subsystems.intake.getIntakeSpeed().runIntakeDebug(value);
-                    Subsystems.shooter.runFeeder();
-                }))
-                .onFalse(Commands.runOnce(() -> {
-                    Subsystems.shooter.getFeeder().setOpenLoopSetpoint(0.0);
-                    Subsystems.intake.getIntakeSpeed().runIntakeDebug(0.0);
-                }));
+//        xboxController.povUp().onTrue(Commands.runOnce(() -> {
+//            double value = SmartDashboard.getNumber("DebugFeederSpeeds", -0.3);
+//                    Subsystems.shooter.getFeeder().setOpenLoopSetpoint(value);
+//                    Subsystems.intake.getIntakeSpeed().runIntakeDebug(value);
+//                    Subsystems.shooter.runFeeder();
+//                }))
+//                .onFalse(Commands.runOnce(() -> {
+//                    Subsystems.shooter.getFeeder().setOpenLoopSetpoint(0.0);
+//                    Subsystems.intake.getIntakeSpeed().runIntakeDebug(0.0);
+//                }));
 
         //
         // Shooter

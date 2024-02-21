@@ -16,6 +16,26 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
     private Servo wristRotate = new Servo(3);
 
     @Override
+    public void teleopInit() {
+        this.getExtender().teleopInit();
+        this.getPivot().teleopInit();
+    }
+
+    @Override
+    public void autoInit() {
+        this.getExtender().autoInit();
+        this.getPivot().autoInit();
+    }
+
+    public TrapExtender getExtender() {
+        return extender;
+    }
+
+    public TrapPivot getPivot() {
+        return pivot;
+    }
+
+    @Override
     public void periodic() {
         extender.periodic();
         pivot.periodic();
