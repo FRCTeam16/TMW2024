@@ -28,7 +28,9 @@ public class PoseManager {
         // Pose for when the robot is loaded and ready to shoot
         ReadyToShoot,
         // Robot pose used in preparation for scoring on the amp
-        PositionForAmp
+        PositionForAmp,
+        // Pose for automatically adjusting shooter pivot based on vision
+        ShooterAimVision
     }
 
     private Pose currentPose = Pose.StartingConfig;
@@ -47,6 +49,7 @@ public class PoseManager {
         registry.put(Pose.FeedNoteToShooter, PoseCommands::feedNoteToShooterPose);
         registry.put(Pose.ReadyToShoot, PoseCommands::readyToShootPose);
         registry.put(Pose.PositionForAmp, PoseCommands::positionForAmpPose);
+        registry.put(Pose.ShooterAimVision, PoseCommands::shooterAimVisionPose);
     }
 
     public Command getPoseCommand(Pose requestedPose) {

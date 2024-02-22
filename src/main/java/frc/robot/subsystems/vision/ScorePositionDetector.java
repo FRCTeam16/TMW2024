@@ -21,10 +21,7 @@ public class ScorePositionDetector {
 
 
         var currentX = Math.abs(targetInfo.xOffset());
-        var currentD = targetInfo.calculateDistance(
-                limelightInfo.heightToCamera(),
-                targetInfo.yOffset(),
-                limelightInfo.cameraAngle());
+        var currentD = targetInfo.calculateDistance();
 
         if ((currentX < xThreshold) && (Math.abs(currentD - targetDistance) < dThreshold)) {
             return true;

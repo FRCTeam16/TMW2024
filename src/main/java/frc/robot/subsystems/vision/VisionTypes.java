@@ -34,11 +34,18 @@ public class VisionTypes {
         }
     }
 
-    public record TargetInfo(boolean hasTarget, double xOffset, double yOffset, double latency) {
-        public double calculateDistance(double heightToCamera, double heightToTarget, double cameraAngle) {
+    public record CameraDistanceValues(double heightToCamera, double heightToTarget, double cameraAngle) {}
+
+    public record TargetInfo(boolean hasTarget, double xOffset, double yOffset, double latency, VisionTypes.CameraDistanceValues cameraDistanceValues) {
+
+        public double calculateDistance() {
+            return calculateDistance(this.cameraDistanceValues.heightToTarget);
+        }
+
+        public double calculateDistance(double heightToTarget) {
             if (this.hasTarget) {
-                double goalRadians = Units.degreesToRadians(cameraAngle + this.yOffset);
-                return (heightToTarget - heightToCamera) / Math.tan(goalRadians);
+                double goalRadians = Units.degreesToRadians(this.cameraDistanceValues.cameraAngle + this.yOffset);
+                return (heightToTarget - this.cameraDistanceValues.heightToCamera) / Math.tan(goalRadians);
             } else {
                 return -1;
             }

@@ -17,62 +17,41 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Subsystems;
 import frc.robot.subsystems.util.PIDHelper;
+
+import java.util.Optional;
 
 public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
 
     public static final String SUBSYSTEM_NAME = "Pivot";
+    private static final double DEFAULT_OPENLOOP_SPEED = 0.05;
     private final TalonFX motor = new TalonFX(33);
     private final DutyCycleEncoder encoder = new DutyCycleEncoder(1);
-
-    private boolean softLimitsEnabled = true;
-
-    private static final double DEFAULT_OPENLOOP_SPEED = 0.05;
-
-    private boolean openLoop = true;
-    private double speed = 0.0;
-
     private final DutyCycleOut openLoopOut = new DutyCycleOut(0);
     private final PositionVoltage positionVoltageOut = new PositionVoltage(0);
-
     private final PIDHelper pidHelper = new PIDHelper(SUBSYSTEM_NAME + "Subsystem/PID");
-
     private final PIDController pid;
-    private TrapezoidProfile.State goal = new TrapezoidProfile.State(0,0);
-
+    private final VisionAimManager visionAimManager;
     private final DoubleLogEntry setpointLog;
+    private boolean softLimitsEnabled = true;
+    private boolean openLoop = true;
+    private double speed = 0.0;
+    private TrapezoidProfile.State goal = new TrapezoidProfile.State(0, 0);
+    private PivotPosition currentPosition = PivotPosition.Up;
 
-
-    public enum PivotPosition {
-        StartingPosition(0),
-        Horizontal(0),
-        FeedPosition(21.0),
-        ScoringAngle(30),
-        Up(70);
-
-        public final double setpoint;
-
-        PivotPosition(double setpoint) {
-            this.setpoint = setpoint;
-        }
-    }
-
-
-    private static class EncoderConstants {
-        static final double ZERO_OFFSET = 0.3285406832135171;
-        static final double MIN_ANGLE = -1.0;
-        static final double MAX_ANGLE = 81.75;      // 0.12004950300123758
-    }
 
     public Pivot() {
         TalonFXConfiguration config = new TalonFXConfiguration();
         motor.setNeutralMode(NeutralModeValue.Coast);
 
         pidHelper.initialize(0.02, 0, 0, 0, 0, 0);
-        pid = new PIDController(0,0,0);
+        pid = new PIDController(0, 0, 0);
         pidHelper.updatePIDController(pid);
 
         encoder.setPositionOffset(EncoderConstants.ZERO_OFFSET);
+
+        this.visionAimManager = new VisionAimManager(Subsystems.visionSubsystem.getDefaultLimelight());
 
         setpointLog = new DoubleLogEntry(DataLogManager.getLog(), "PivotSetpoint");
 
@@ -114,7 +93,12 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     public void setPivotPosition(PivotPosition position) {
-        this.setPivotSetpoint(position.setpoint);
+        if (PivotPosition.VisionAim == position) {
+            this.holdPosition();
+        } else {
+            this.setPivotSetpoint(position.setpoint);
+        }
+        this.currentPosition = position;
     }
 
     private double getPivotSetpoint() {
@@ -130,6 +114,10 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         openLoop = false;
         setpointLog.append(setpoint);
         this.goal = new TrapezoidProfile.State(setpoint, 0);
+    }
+
+    private boolean isVisionAiming() {
+        return (PivotPosition.VisionAim == this.currentPosition);
     }
 
     double getSpeed() {
@@ -171,10 +159,17 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         if (openLoop) {
             motor.setControl(openLoopOut.withOutput(speed));
         } else {
-                if (pidHelper.updateValuesFromDashboard()) {
+            if (pidHelper.updateValuesFromDashboard()) {
                 pidHelper.updatePIDController(pid);
             }
-            double output = pid.calculate(this.getPivotAngleDegrees(), goal.position);
+            final double output;
+
+            if (isVisionAiming()) {
+                Optional<VisionAimManager.VisionAimResult> result = visionAimManager.calculate();
+            }
+            {
+                output = pid.calculate(this.getPivotAngleDegrees(), goal.position);
+            }
             motor.setControl(openLoopOut.withOutput(output));
         }
     }
@@ -194,7 +189,6 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     public Double getMotorSupplyCurrent() {
         return this.motor.getStatorCurrent().getValue();
     }
-
 
     @Override
     public void initSendable(SendableBuilder builder) {
@@ -217,6 +211,28 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
 
     public Command moveToPositionCmd(PivotPosition position) {
         return Commands.runOnce(() -> this.setPivotPosition(position));
+    }
+
+
+    public enum PivotPosition {
+        StartingPosition(0),
+        Horizontal(0),
+        FeedPosition(21.0),
+        ScoringAngle(30),
+        Up(70),
+        VisionAim(0);
+
+        public final double setpoint;
+
+        PivotPosition(double setpoint) {
+            this.setpoint = setpoint;
+        }
+    }
+
+    private static class EncoderConstants {
+        static final double ZERO_OFFSET = 0.3285406832135171;
+        static final double MIN_ANGLE = -1.0;
+        static final double MAX_ANGLE = 81.75;      // 0.12004950300123758
     }
 
 }

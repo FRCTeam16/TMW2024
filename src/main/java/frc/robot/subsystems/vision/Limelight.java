@@ -10,14 +10,19 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class Limelight {
+    public static final double DEFAULT_HEIGHT_TO_TARGET = 57.0;
     private final String name;
     private final VisionTypes.LimelightInfo info;
+
+    private final VisionTypes.CameraDistanceValues cameraDistanceValues;
 
     public Limelight(VisionTypes.LimelightInfo info) {
         this.name = LimelightHelpers.sanitizeName(info.name());
         this.info = info;
         this.setLEDMode(VisionTypes.LEDMode.CurrentPipeline);
         this.setCameraMode(VisionTypes.CameraMode.ImageProcessing);
+        this.cameraDistanceValues = new VisionTypes.CameraDistanceValues(
+                this.info.heightToCamera(), DEFAULT_HEIGHT_TO_TARGET, this.info.cameraAngle());
     }
 
     public String getName() {
@@ -45,7 +50,8 @@ public class Limelight {
                 LimelightHelpers.getTV(this.name),
                 LimelightHelpers.getTX(this.name),
                 LimelightHelpers.getTY(this.name),
-                LimelightHelpers.getTX(this.name)
+                LimelightHelpers.getTX(this.name),
+                this.cameraDistanceValues
         );
     }
 

@@ -65,4 +65,10 @@ class PoseCommands {
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.AmpAim)
         );
     }
+
+    public static Command shooterAimVisionPose() {
+        return new SequentialCommandGroup(
+                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.VisionAim)
+        );
+    }
 }

@@ -214,6 +214,8 @@ public class RobotContainer {
         SmartDashboard.putData("Play Lowrida", music.getPlayCommand());
         SmartDashboard.putData("Stop Music", music.getPauseommand());
 
+        SmartDashboard.putData("Set VisionAim State", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShooterAimVision));
+
         // Debug
         SmartDashboard.putNumber("DebugFeederSpeeds", -0.3);
     }
