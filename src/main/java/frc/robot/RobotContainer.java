@@ -6,9 +6,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -42,7 +40,7 @@ public class RobotContainer {
     private final AutoManager autoManager = new AutoManager();
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(0.01 * MaxSpeed).withRotationalDeadband(0) // Add a 10% deadband
+            .withDeadband(MaxSpeed * 0.01).withRotationalDeadband(MaxAngularRate * 0.01) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -67,12 +65,10 @@ public class RobotContainer {
     //
     // Controller
     //
-
+    private final RotationController alignController = new RotationController(0.02, 0, 0);
     //
     MusicController music = new MusicController();
-
     private boolean useVisionAlignment = false;
-
 
     public RobotContainer() {
         configureBindings();
@@ -82,16 +78,18 @@ public class RobotContainer {
 
     }
 
-    private final RotationController alignController = new RotationController(0.01, 0, 0);
-
     private double supplySwerveRotate() {
+        final double DEADBAND = 0.05;
         if (!useVisionAlignment) {
-            return -left.getX() * (MaxAngularRate * 0.8);
+//            return OIUtil.deadband(-left.getX(), DEADBAND) * (MaxAngularRate * 0.8);
+            return OIUtil.deadband(-left.getX(), DEADBAND) * (MaxAngularRate * 0.8);
         } else {
             VisionTypes.TargetInfo targetInfo = Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo();
-            // If no target give control back to human
+            // If no target give control bapivotck to human
             if (!targetInfo.hasTarget()) {
-                return -left.getX() * (MaxAngularRate * 0.8);
+//                return OIUtil.deadband(-left.getX(), DEADBAND) * (MaxAngularRate * 0.8);
+                return OIUtil.deadband(-left.getX(), DEADBAND) * (MaxAngularRate * 0.8);
+
             }
 //            SmartDashboard.putNumber("TargetXOff", targetInfo.xOffset());
             double horizontalComponent = alignController.calculate(targetInfo.xOffset(), 0);
@@ -105,8 +103,11 @@ public class RobotContainer {
     private void configureBindings() {
         drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
                 drivetrain.applyRequest(() -> drive
-                        .withVelocityX(-right.getY() * MaxSpeed)
-                        .withVelocityY(-right.getX() * MaxSpeed)
+                        .withDeadband(0.02 * MaxSpeed)
+//                        .withVelocityX(-right.getY() * MaxSpeed)
+//                        .withVelocityY(-right.getX() * MaxSpeed)
+                        .withVelocityX(OIUtil.deadband(-right.getY(),0.05) * MaxSpeed)
+                        .withVelocityY(OIUtil.deadband(-right.getX(), 0.05) * MaxSpeed)
                         .withRotationalRate(supplySwerveRotate())));
 
 
@@ -134,36 +135,43 @@ public class RobotContainer {
         }
         // Test Climber
         if (false) {
-        xboxController.leftTrigger()
-                .onTrue(Commands.runOnce(() -> Subsystems.climber.openLoopUp()))
-                .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
+            xboxController.leftTrigger()
+                    .onTrue(Commands.runOnce(() -> Subsystems.climber.openLoopUp()))
+                    .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
 
-        xboxController.rightTrigger()
-                .onTrue(Commands.runOnce(() -> Subsystems.climber.openLoopDown()))
-                .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
+            xboxController.rightTrigger()
+                    .onTrue(Commands.runOnce(() -> Subsystems.climber.openLoopDown()))
+                    .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
         }
 
         // Test Trap
         if (true) {
-        xboxController.leftTrigger()
-                .onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().openLoopDown()))
-                .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
+            xboxController.leftTrigger()
+                    .onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().openLoopDown()))
+                    .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
 
-        xboxController.rightTrigger()
-                .onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().openLoopUp()))
-                .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
+            xboxController.rightTrigger()
+                    .onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().openLoopUp()))
+                    .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
         }
         xboxController.povUp().onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().setTrapPosition(TrapExtender.TrapPosition.Up)));
         xboxController.povDown().onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero)));
 
 
 
-//        runVisionAlignAngle.whileTrue(new VisionAlign().withRobotAngle(90.0));
-        runVisionAlignAngle.onTrue(Commands.runOnce(() -> this.useVisionAlignment = true))
-                .onFalse(Commands.runOnce(() -> this.useVisionAlignment = false));
-
-
-
+        //
+        // Vision Alignment
+        //
+        runVisionAlignAngle.onTrue(
+                        Commands.parallel(
+                                Commands.runOnce(() -> this.useVisionAlignment = true),
+                                Commands.runOnce(Subsystems.shooter::runShooter),
+                                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShooterAimVision)))
+                .onFalse(
+                        Commands.parallel(
+                                Commands.runOnce(() -> this.useVisionAlignment = false),
+                                Commands.runOnce(Subsystems.shooter::runShooter),
+                                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive)));
 
 
         //
@@ -220,10 +228,8 @@ public class RobotContainer {
         xboxController.back().onTrue(Commands.runOnce(Subsystems.shooter::stopShooter));
 
 
-
-
         if (Utils.isSimulation()) {
-            drivetrain.seedFieldRelative(new Pose2d(new Translation2d(3,3), Rotation2d.fromDegrees(0)));
+            drivetrain.seedFieldRelative(new Pose2d(new Translation2d(3, 3), Rotation2d.fromDegrees(0)));
         }
         drivetrain.registerTelemetry(swerveStateTelemetry::telemeterize);
 

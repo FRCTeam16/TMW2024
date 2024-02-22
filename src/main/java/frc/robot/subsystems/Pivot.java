@@ -107,7 +107,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     private void setPivotSetpoint(double setpoint) {
-        DataLogManager.log("[" + SUBSYSTEM_NAME + "] Setting pivot setpoint to: " + setpoint);
+//        DataLogManager.log("[" + SUBSYSTEM_NAME + "] Setting pivot setpoint to: " + setpoint);
         if (setpoint >= 80.0001 || setpoint <= -0.0001) {
             DataLogManager.log("[" + SUBSYSTEM_NAME + "] INVALID SETPOINT REQUESTED, IGNORING");
             return;
@@ -163,15 +163,17 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
             if (pidHelper.updateValuesFromDashboard()) {
                 pidHelper.updatePIDController(pid);
             }
-            final double output;
 
+            // Handle calculating output for vision alignment
             if (isVisionAiming()) {
                 Optional<VisionAimManager.VisionAimResult> result = visionAimManager.calculate();
-//                output = result.get().
+                if (result.isPresent()) {
+                    VisionAimManager.ShootingProfile shootingProfile = result.get().shootingProfile();
+                    this.setPivotSetpoint(shootingProfile.pivotAngle());
+                    Subsystems.shooter.applyShootingProfile(shootingProfile);   // FIXME: Investigate better integration?
+                }
             }
-            {
-                output = pid.calculate(this.getPivotAngleDegrees(), goal.position);
-            }
+            final double output = pid.calculate(this.getPivotAngleDegrees(), goal.position);
             motor.setControl(openLoopOut.withOutput(output));
         }
     }

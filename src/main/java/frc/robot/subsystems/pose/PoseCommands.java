@@ -67,7 +67,8 @@ class PoseCommands {
     }
 
     public static Command shooterAimVisionPose() {
-        return new SequentialCommandGroup(
+        return Commands.parallel(
+                Commands.runOnce(Subsystems.shooter::runShooter),
                 Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.VisionAim)
         );
     }

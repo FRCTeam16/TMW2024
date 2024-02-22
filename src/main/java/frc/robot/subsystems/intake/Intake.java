@@ -48,6 +48,8 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
      * Initializes the Intake subsystem.
      */
     public Intake() {
+        var cfg = intakePivot.getMotionMagicConfigs();
+        this.original_velocity = cfg.MotionMagicCruiseVelocity;
     }
 
     @Override
@@ -139,7 +141,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
             } else {
                 final double position = intakePivot.getCurrentPosition();
                 final double elapsed = tryShootAmp.get().get();
-                final double END = 2.0;
+                final double END = 1.0;
                 if (position < shotPosition && elapsed < END) {
                     intakeSpeed.runAmpShot();
                 } else if (elapsed > END) {
@@ -152,6 +154,8 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
                     this.setIntakeState(IntakeState.HoldNote);
                 }
             }
+        } else {
+
         }
 
         intakeSpeed.periodic();

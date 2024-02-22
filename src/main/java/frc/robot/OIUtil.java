@@ -2,9 +2,7 @@ package frc.robot;
 
 /** 
  * Operator Input Utilities 
- * @deprecated
 */
-@Deprecated
 public class OIUtil {
     
   public static double deadband(double value, double deadband) {

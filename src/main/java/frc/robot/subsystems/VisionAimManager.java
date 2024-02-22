@@ -10,8 +10,6 @@ import java.util.Optional;
 
 public class VisionAimManager {
     private final Limelight limelight;
-    private final PIDController pid;
-    private final PIDHelper pidHelper = new PIDHelper("ShooterSubsystem/VisionAimManager/PID");
 
     private Counter missingTargetCounter = new Counter().withThreshold(50);
     private VisionAimResult lastTarget = null;
@@ -19,24 +17,24 @@ public class VisionAimManager {
 
     public VisionAimManager(Limelight limelight) {
         this.limelight = limelight;
-        this.pidHelper.initialize(0, 0, 0, 0, 0, 0);
-        this.pid = new PIDController(0, 0, 0);
-        this.pid.setSetpoint(0);
-
-        pidHelper.updatePIDController(pid);
     }
 
-    public VisionAimManager withTolerance(double degrees) {
-        this.pid.setTolerance(degrees);
-        return this;
-    }
 
     public Optional<VisionAimResult> calculate() {
         VisionTypes.TargetInfo targetInfo = limelight.getTargetInfo();
         if (targetInfo.hasTarget()) {
-            double output = pid.calculate(targetInfo.yOffset());
-            VisionAimResult value = new VisionAimResult(targetInfo, output);
+            // TODO: Add less than 75" shoot profile
+            final double distance = targetInfo.calculateDistance();
+            final double angle = 78.3 - (0.711 * distance) + (0.0022 * distance * distance);
+            final double bottomSpeed = (0.241 * distance) + 7.71;
+            final double topSpeed = (0.554 * distance) - 12.2;
+
+            VisionAimResult value = new VisionAimResult(targetInfo, new ShootingProfile(angle, topSpeed, bottomSpeed));
             SmartDashboard.putNumber("VisionAimManager/Distance", value.targetInfo.calculateDistance());
+            SmartDashboard.putNumber("VisionAimManager/Xoffset", targetInfo.xOffset());
+            SmartDashboard.putNumber("VisionAimManager/bottomSpeed", bottomSpeed);
+            SmartDashboard.putNumber("VisionAimManager/topSpeed", topSpeed);
+            SmartDashboard.putNumber("VisionAimManager/angle", angle);
             return Optional.of(value);
         } else {
             if (missingTargetCounter.increment()) {
@@ -46,7 +44,7 @@ public class VisionAimManager {
         }
     }
 
-    public record VisionAimResult(VisionTypes.TargetInfo targetInfo, double output) {
+    public record VisionAimResult(VisionTypes.TargetInfo targetInfo, ShootingProfile shootingProfile) {
     }
 
     public record ShootingProfile(double pivotAngle, double upperSpeed, double lowerSpeed) {}
