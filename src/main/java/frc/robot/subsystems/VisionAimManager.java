@@ -13,7 +13,7 @@ public class VisionAimManager {
     private final PIDController pid;
     private final PIDHelper pidHelper = new PIDHelper("ShooterSubsystem/VisionAimManager/PID");
 
-    private Counter missingTargetCounter = new Counter();
+    private Counter missingTargetCounter = new Counter().withThreshold(50);
     private VisionAimResult lastTarget = null;
 
 
@@ -48,6 +48,8 @@ public class VisionAimManager {
 
     public record VisionAimResult(VisionTypes.TargetInfo targetInfo, double output) {
     }
+
+    public record ShootingProfile(double pivotAngle, double upperSpeed, double lowerSpeed) {}
 
     static class Counter {
         private int count = 0;

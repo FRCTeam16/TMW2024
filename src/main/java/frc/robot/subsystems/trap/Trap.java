@@ -5,6 +5,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Lifecycle;
 
 public class Trap extends SubsystemBase implements Lifecycle, Sendable {
@@ -43,9 +44,11 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.setSmartDashboardType(SUBSYSTEM_NAME);
-        // TODO: expose finger values
-        pivot.initSendable(builder);
-        extender.initSendable(builder);
+        if (Constants.UseSendables) {
+            builder.setSmartDashboardType(SUBSYSTEM_NAME);
+            // TODO: expose finger values
+            pivot.initSendable(builder);
+            extender.initSendable(builder);
+        }
     }
 }

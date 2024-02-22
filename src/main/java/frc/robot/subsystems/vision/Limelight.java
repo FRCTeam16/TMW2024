@@ -25,6 +25,10 @@ public class Limelight {
                 this.info.heightToCamera(), DEFAULT_HEIGHT_TO_TARGET, this.info.cameraAngle());
     }
 
+    public VisionTypes.LimelightInfo getInfo() {
+        return this.info;
+    }
+
     public String getName() {
         return this.name;
     }

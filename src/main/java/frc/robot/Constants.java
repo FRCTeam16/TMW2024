@@ -4,6 +4,8 @@ import frc.robot.generated.TunerConstants;
 
 public final class Constants {
 
+    public static final boolean UseSendables = true;
+
     public static final class OI {
         public static final double stickDeadband = 0.05;
     }

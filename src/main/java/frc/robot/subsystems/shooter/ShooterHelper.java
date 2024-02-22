@@ -1,6 +1,8 @@
 package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -46,6 +48,18 @@ public class ShooterHelper implements Sendable {
         this.pid.initialize(0.04,0,0,0,kraken_kv,kraken_kA);
 
         config = new TalonFXConfiguration();
+//                .withSoftwareLimitSwitch(
+//                        new SoftwareLimitSwitchConfigs()
+//                                .withForwardSoftLimitThreshold(100)
+//                                .withForwardSoftLimitEnable(true)
+//                                .withReverseSoftLimitThreshold(-100)
+//                                .withReverseSoftLimitEnable(true))
+//                .withHardwareLimitSwitch(
+//                        new HardwareLimitSwitchConfigs()
+//                                .withForwardLimitEnable(false)
+//                                .withReverseLimitEnable(false));
+
+
         config.Slot0.withKS(kraken_kS);   // overcome static friction
 
         pid.updateConfiguration(config.Slot0);
@@ -100,6 +114,9 @@ public class ShooterHelper implements Sendable {
     }
 
     public void setVelocitySetpoint(double velocitySetpoint) {
+        if (Math.abs(velocitySetpoint) >= 100) {
+            DataLogManager.log("[ShooterHelper] IGNORING BIG VELOCITY REQUEST: " + velocitySetpoint);
+        }
         this.velocitySetpoint = velocitySetpoint;
     }
 

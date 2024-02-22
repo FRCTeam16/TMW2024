@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.pose.PoseManager;
@@ -116,7 +117,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         }
 
         // Check if we should override intake speed
-        if (postNoteDetectedTimer.isPresent() &&  postNoteDetectedTimer.get().hasElapsed(0.1)) {
+        if (postNoteDetectedTimer.isPresent() &&  postNoteDetectedTimer.get().hasElapsed(0.07)) {
             intakeSpeed.stopIntake();
             postNoteDetectedTimer.get().stop();
             postNoteDetectedTimer = Optional.empty();   // todo determine if optional<> approach is clearest
@@ -185,16 +186,18 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.setSmartDashboardType(SUBSYSTEM_NAME);
-        builder.addStringProperty("IntakeState", () -> this.intakeState.name(), null);
-        builder.addBooleanProperty("NoteDetected", this::isNoteDetected, null);
-        builder.addDoubleProperty("AmpShotWait", this::getAmpShotTime, this::setAmpShotTime);
-        builder.addDoubleProperty("AmoShotPosition", this::getShotPosition, this::setShotPosition);
+        if (Constants.UseSendables) {
+            builder.setSmartDashboardType(SUBSYSTEM_NAME);
+            builder.addStringProperty("IntakeState", () -> this.intakeState.name(), null);
+            builder.addBooleanProperty("NoteDetected", this::isNoteDetected, null);
+            builder.addDoubleProperty("AmpShotWait", this::getAmpShotTime, this::setAmpShotTime);
+            builder.addDoubleProperty("AmoShotPosition", this::getShotPosition, this::setShotPosition);
 
-        builder.addDoubleProperty("MM_V", () -> this.MM_Velocity, (v) -> this.MM_Velocity = v);
+            builder.addDoubleProperty("MM_V", () -> this.MM_Velocity, (v) -> this.MM_Velocity = v);
 
-        intakeSpeed.initSendable(builder);
-        intakePivot.initSendable(builder);
+            intakeSpeed.initSendable(builder);
+            intakePivot.initSendable(builder);
+        }
     }
 
     public Command moveToStateCmd(IntakeState state) {

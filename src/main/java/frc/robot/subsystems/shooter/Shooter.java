@@ -6,7 +6,9 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.VisionAimManager;
 
 /**
  * The Shooter class represents the shooter subsystem of the robot.
@@ -14,6 +16,7 @@ import frc.robot.subsystems.Lifecycle;
  * and the aim position of the shooter.
  */
 public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
+    public static final int DEFAULT_VELOCITY_SETPOINT = 25;
     private final DigitalInput noteFeedStop = new DigitalInput(2);
     private final ShooterHelper upper = new ShooterHelper("ShooterSubsystem", "Upper",  new TalonFX(40));
     private final ShooterHelper lower =  new ShooterHelper("ShooterSubsystem", "Lower", new TalonFX(41));
@@ -22,6 +25,12 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
 
     public Shooter(){
         upper.setInvert(true);
+    }
+
+
+    public void applyShootingProfile(VisionAimManager.ShootingProfile shootingProfile) {
+        upper.setVelocitySetpoint(shootingProfile.upperSpeed());
+        lower.setVelocitySetpoint(shootingProfile.lowerSpeed());
     }
 
     @Override
@@ -89,8 +98,8 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
         DataLogManager.log("[Shooter] runShooter");
         upper.setOpenLoop(false);
         lower.setOpenLoop(false);
-        lower.setVelocitySetpoint(50);
-        upper.setVelocitySetpoint(50);
+        lower.setVelocitySetpoint(DEFAULT_VELOCITY_SETPOINT);
+        upper.setVelocitySetpoint(DEFAULT_VELOCITY_SETPOINT);
         upper.setEnabled(true);
         lower.setEnabled(true);
     }
@@ -113,10 +122,12 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.setSmartDashboardType("ShooterSubsystem");
-        builder.setActuator(true);
-        upper.initSendable(builder);
-        lower.initSendable(builder);
-        feeder.initSendable(builder);
+        if (Constants.UseSendables) {
+            builder.setSmartDashboardType("ShooterSubsystem");
+            builder.setActuator(true);
+            upper.initSendable(builder);
+            lower.initSendable(builder);
+            feeder.initSendable(builder);
+        }
     }
 }

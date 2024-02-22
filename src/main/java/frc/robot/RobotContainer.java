@@ -6,7 +6,9 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -16,12 +18,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auto.AutoManager;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.ZeroAndSetOffsetCommand;
-import frc.robot.commands.vision.VisionAlign;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.RotationController;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.trap.TrapExtender;
+import frc.robot.subsystems.vision.VisionTypes;
 
 import java.util.Objects;
 
@@ -39,7 +42,7 @@ public class RobotContainer {
     private final AutoManager autoManager = new AutoManager();
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDeadband(0.01 * MaxSpeed).withRotationalDeadband(0) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -68,18 +71,43 @@ public class RobotContainer {
     //
     MusicController music = new MusicController();
 
+    private boolean useVisionAlignment = false;
+
 
     public RobotContainer() {
         configureBindings();
         configureDashboardButtons();
+        alignController.setTolerance(0.05);
+        SmartDashboard.putData("AlignPID", alignController);
+
     }
+
+    private final RotationController alignController = new RotationController(0.01, 0, 0);
+
+    private double supplySwerveRotate() {
+        if (!useVisionAlignment) {
+            return -left.getX() * (MaxAngularRate * 0.8);
+        } else {
+            VisionTypes.TargetInfo targetInfo = Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo();
+            // If no target give control back to human
+            if (!targetInfo.hasTarget()) {
+                return -left.getX() * (MaxAngularRate * 0.8);
+            }
+//            SmartDashboard.putNumber("TargetXOff", targetInfo.xOffset());
+            double horizontalComponent = alignController.calculate(targetInfo.xOffset(), 0);
+            double twist = horizontalComponent * Constants.Swerve.kMaxAngularVelocity;
+//            DataLogManager.log(("[VISION ALIGNMENT] Running at: " + Timer.getFPGATimestamp() + " | Twist: " + twist));
+            return twist;
+        }
+    }
+
 
     private void configureBindings() {
         drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
                 drivetrain.applyRequest(() -> drive
                         .withVelocityX(-right.getY() * MaxSpeed)
                         .withVelocityY(-right.getX() * MaxSpeed)
-                        .withRotationalRate(-left.getX() * MaxAngularRate)));
+                        .withRotationalRate(supplySwerveRotate())));
 
 
         //
@@ -130,9 +158,11 @@ public class RobotContainer {
 
 
 
-        runVisionAlignAngle.whileTrue(new VisionAlign().withRobotAngle(90.0));
-        //        lockAngle1.onTrue(new RotateToAngle(-60));
-        //        lockAngle2.onTrue(new RotateToAngle(0));
+//        runVisionAlignAngle.whileTrue(new VisionAlign().withRobotAngle(90.0));
+        runVisionAlignAngle.onTrue(Commands.runOnce(() -> this.useVisionAlignment = true))
+                .onFalse(Commands.runOnce(() -> this.useVisionAlignment = false));
+
+
 
 
 

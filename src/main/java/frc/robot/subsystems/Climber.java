@@ -8,6 +8,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.util.PIDHelper;
 
 public class Climber extends SubsystemBase implements Lifecycle, Sendable {
@@ -107,16 +108,18 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.setSmartDashboardType(SUBSYSTEM_NAME);
-        builder.addDoubleProperty("OpenLoop/UpSpeed", this.climberOpenLoopSpeeds::getUpSpeed, this.climberOpenLoopSpeeds::setUpSpeed);
-        builder.addDoubleProperty("OpenLoop/DownSpeed", this.climberOpenLoopSpeeds::getDownSpeed, this.climberOpenLoopSpeeds::setDownSpeed);
-        builder.addDoubleProperty("OpenLoop/Speed", () -> this.openLoopSpeed, null);
+        if (Constants.UseSendables) {
+            builder.setSmartDashboardType(SUBSYSTEM_NAME);
+            builder.addDoubleProperty("OpenLoop/UpSpeed", this.climberOpenLoopSpeeds::getUpSpeed, this.climberOpenLoopSpeeds::setUpSpeed);
+            builder.addDoubleProperty("OpenLoop/DownSpeed", this.climberOpenLoopSpeeds::getDownSpeed, this.climberOpenLoopSpeeds::setDownSpeed);
+            builder.addDoubleProperty("OpenLoop/Speed", () -> this.openLoopSpeed, null);
 
-        builder.addDoubleProperty("Setpoint", this::getSetpoint, this::setSetpoint);
-        builder.addStringProperty("ClimberPosition", () -> this.getClimberPosition().name(), null);
-        builder.addDoubleProperty("Encoder", () -> this.climberDrive.getPosition().getValue(), null);
-        builder.addDoubleProperty("Velocity", () -> this.climberDrive.getVelocity().getValue(), null);
-        builder.addDoubleProperty("Acceleration", () -> this.climberDrive.getAcceleration().getValue(), null);
+            builder.addDoubleProperty("Setpoint", this::getSetpoint, this::setSetpoint);
+            builder.addStringProperty("ClimberPosition", () -> this.getClimberPosition().name(), null);
+            builder.addDoubleProperty("Encoder", () -> this.climberDrive.getPosition().getValue(), null);
+            builder.addDoubleProperty("Velocity", () -> this.climberDrive.getVelocity().getValue(), null);
+            builder.addDoubleProperty("Acceleration", () -> this.climberDrive.getAcceleration().getValue(), null);
+        }
     }
 
     public enum ClimberPosition {

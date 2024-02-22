@@ -59,6 +59,9 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     robotContainer.robotPeriodic();
+
+    VisionTypes.TargetInfo info = Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo();
+    SmartDashboard.putNumber("VisionTestTarget/Distance", info.calculateDistance());
   }
 
   @Override
@@ -66,8 +69,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    VisionTypes.TargetInfo info = Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo();
-    SmartDashboard.putNumber("VisionTestTarget/Distance", info.calculateDistance());
   }
 
   @Override

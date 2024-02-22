@@ -47,8 +47,12 @@ public class Subsystems {
         swerveSubsystem = TunerConstants.DriveTrain;
         visionSubsystem = new VisionSubsystem(
                 Stream.of(
-                        new VisionTypes.LimelightInfo("limelight", 10, 0),
-                        new VisionTypes.LimelightInfo("notelight", 10, 0))
+                        // was 12.92 degrees
+//                        new VisionTypes.LimelightInfo("limelight", (11.57625659 - (24.84 * 2)) , 24.84)),
+//                            new VisionTypes.LimelightInfo("limelight", 12.92 , 25.71    ))
+                                new VisionTypes.LimelightInfo("limelight", 13.1 , 25.71    ))
+
+//                        new VisionTypes.LimelightInfo("notelight", 10, 0))
                         .map(Limelight::new).collect(Collectors.toSet()));
         ledSubsystem = new LEDSubsystem();
         //TODO add if to prevent comp bot subsystem calls on practice bot
@@ -69,11 +73,11 @@ public class Subsystems {
         lifecycleSubsystems.add(climber);
         lifecycleSubsystems.add(trap);
 
-        SmartDashboard.putData("ShooterSubsystem", shooter);
-        SmartDashboard.putData("PivotSubsystem", pivot);
-        SmartDashboard.putData("IntakeSubsystem", intake);
-        SmartDashboard.putData("ClimberSubsystem", climber);
-        SmartDashboard.putData("TrapSubsystem", trap);
+//        SmartDashboard.putData("ShooterSubsystem", shooter);
+//        SmartDashboard.putData("PivotSubsystem", pivot);
+//        SmartDashboard.putData("IntakeSubsystem", intake);
+//        SmartDashboard.putData("ClimberSubsystem", climber);
+//        SmartDashboard.putData("TrapSubsystem", trap);
     }
 
 
