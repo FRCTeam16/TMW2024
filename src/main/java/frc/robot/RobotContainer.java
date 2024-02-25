@@ -59,7 +59,7 @@ public class RobotContainer {
     //
     private final Trigger feed = new Trigger(right::getTrigger);
     private final JoystickButton runVisionAlignAngle = new JoystickButton(right, 2);
-    private final JoystickButton feedNote = new JoystickButton(right, 3);
+    //private final JoystickButton feedNote = new JoystickButton(right, 3);
     private final JoystickButton ampAim = new JoystickButton(right, 4);
 
     //
@@ -123,7 +123,6 @@ public class RobotContainer {
         xboxController.rightBumper().onTrue(Commands.runOnce(Subsystems.pivot::openLoopUp)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
         xboxController.leftBumper().onTrue(Commands.runOnce(Subsystems.pivot::openLoopDown)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
 
-
         // Test Intake
         if (false) {
             xboxController.leftTrigger()
@@ -134,7 +133,7 @@ public class RobotContainer {
                     .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().holdPosition()));
         }
         // Test Climber
-        if (false) {
+        if (true) {
             xboxController.leftTrigger()
                     .onTrue(Commands.runOnce(() -> Subsystems.climber.openLoopUp()))
                     .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
@@ -145,7 +144,7 @@ public class RobotContainer {
         }
 
         // Test Trap
-        if (true) {
+        if (false) {
             xboxController.leftTrigger()
                     .onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().openLoopDown()))
                     .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
@@ -189,15 +188,15 @@ public class RobotContainer {
         xboxController.a().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.NotePickedUp));
         xboxController.y().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
 
-        xboxController.b().onTrue(Commands.runOnce(() ->
-                Subsystems.intake.setIntakeState(Intake.IntakeState.TryShootAmp)));
+        //xboxController.b().onTrue(Commands.runOnce(() ->
+        //        Subsystems.intake.setIntakeState(Intake.IntakeState.TryShootAmp)));
 
 
         // Testing
 //        xboxController.povUp().onTrue(Commands.runOnce(() -> {
 //            double value = SmartDashboard.getNumber("DebugFeederSpeeds", -0.3);
 //                    Subsystems.shooter.getFeeder().setOpenLoopSetpoint(value);
-//                    Subsystems.intake.getIntakeSpeed().runIntakeDebug(value);
+//                    Subsystems.intake.getIntakeSpeed().runIntakeDebug(value);[]\
 //                    Subsystems.shooter.runFeeder();
 //                }))
 //                .onFalse(Commands.runOnce(() -> {
@@ -221,7 +220,8 @@ public class RobotContainer {
         feed.onTrue(Commands.runOnce(Subsystems.shooter::shoot))
                 .onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
 
-        feedNote.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter));
+//        feedNote.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter));
+        xboxController.b().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter));
         ampAim.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PositionForAmp));
 
         xboxController.start().onTrue(Commands.runOnce(Subsystems.shooter::runShooter));
