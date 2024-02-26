@@ -13,9 +13,7 @@ import frc.robot.Constants;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.pose.PoseManager;
-import frc.robot.subsystems.util.MotionMagicConfig;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 
@@ -109,6 +107,9 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         return intakeState;
     }
 
+    public boolean isInPosition(IntakePivot.IntakePosition position) {
+        return intakePivot.isInPosition(position);
+    }
 
     @Override
     public void periodic() {

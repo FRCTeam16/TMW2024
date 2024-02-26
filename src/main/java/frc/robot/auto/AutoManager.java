@@ -13,6 +13,9 @@ import frc.robot.auto.strategies.DebugPathAuto;
 import frc.robot.auto.strategies.UnderTheBridge;
 import frc.robot.commands.auto.EnableShooterCommand;
 import frc.robot.commands.auto.RotateToAngle;
+import frc.robot.commands.auto.WaitIntakeInPosition;
+import frc.robot.commands.auto.WaitShooterHasNote;
+import frc.robot.subsystems.intake.IntakePivot;
 import frc.robot.subsystems.pose.PoseManager;
 
 import java.util.HashMap;
@@ -52,6 +55,11 @@ public class AutoManager {
         NamedCommands.registerCommand("StartDrive", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
         NamedCommands.registerCommand("FeedNote", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter));
         NamedCommands.registerCommand("ShootNote", Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.5)));
+
+
+        NamedCommands.registerCommand("WaitIntakeInPosition", new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero).withTimeout(1.0));
+
+        NamedCommands.registerCommand("WaitForNote", new WaitShooterHasNote().withTimeout(1.0));
 
         NamedCommands.registerCommand("WaitNoteThenAutoAim",
                 Commands.waitUntil(Subsystems.shooter::isNoteDetected).withTimeout(1.0)

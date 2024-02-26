@@ -1,6 +1,6 @@
 {
-  "robotWidth": 0.578,
-  "robotLength": 0.578,
+  "robotWidth": 0.71,
+  "robotLength": 0.71,
   "holonomicMode": true,
   "pathFolders": [
     "DCL_BCL",

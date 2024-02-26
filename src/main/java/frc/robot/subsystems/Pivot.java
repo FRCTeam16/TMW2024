@@ -229,6 +229,12 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     }
 
 
+    public void applyShootingProfile(VisionAimManager.ShootingProfile profile) {
+        this.setPivotPosition(PivotPosition.Custom);
+        this.setPivotSetpoint(profile.pivotAngle());
+    }
+
+
     public enum PivotPosition {
         StartingPosition(0),
         Horizontal(0),

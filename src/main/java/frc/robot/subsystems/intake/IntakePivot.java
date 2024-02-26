@@ -207,7 +207,6 @@ public class IntakePivot implements Lifecycle, Sendable {
         motionMagicConfig.updateSlot0Config(pivotConfiguration.Slot0);
         motionMagicConfig.updateMotionMagicConfig(pivotConfiguration.MotionMagic);
         StatusCode result = pivotDrive.getConfigurator().apply(pivotConfiguration);
-        DataLogManager.log("[IntakePivot] update PID info from dash: " + pivotConfiguration + ": result = " + result);
     }
 
     public Command updatePIDFromDashbboardCommand() {
@@ -238,6 +237,10 @@ public class IntakePivot implements Lifecycle, Sendable {
 
         builder.addDoubleProperty("Pivot/Encoder", () -> this.pivotDrive.getPosition().getValue(), null);
         builder.addDoubleProperty("Pivot/ZeroEncoderOffset", this::getZeroPivotEncoderOffset, this::setZeroPivotEncoderOffset);
+    }
+
+    public boolean isInPosition(IntakePosition position) {
+        return (Math.abs(getCurrentPosition() - position.setpoint) <= 0.25);
     }
 
 
