@@ -84,7 +84,7 @@
     },
     {
       "name": "Start Shooter",
-      "waypointRelativePos": 0.0,
+      "waypointRelativePos": 0.65,
       "command": {
         "type": "sequential",
         "data": {
@@ -106,7 +106,7 @@
       }
     },
     {
-      "name": "Shoot",
+      "name": "Set Position",
       "waypointRelativePos": 1.55,
       "command": {
         "type": "sequential",
