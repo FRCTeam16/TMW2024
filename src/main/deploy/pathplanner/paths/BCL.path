@@ -20,24 +20,24 @@
         "y": 4.503780533465965
       },
       "prevControl": {
-        "x": 5.903943245495943,
-        "y": 4.181386575834998
+        "x": 6.0121537101991676,
+        "y": 3.9771746624238595
       },
       "nextControl": {
-        "x": 4.627670990342254,
-        "y": 4.819522703411843
+        "x": 4.609292875156628,
+        "y": 4.958258781120921
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.886,
+        "x": 3.95,
         "y": 5.594556573728532
       },
       "prevControl": {
-        "x": 4.537218225513374,
-        "y": 5.584689630917723
+        "x": 4.635439403975525,
+        "y": 5.08437346954552
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,18 +46,18 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.15,
-      "rotationDegrees": -13.120684151519319,
+      "waypointRelativePos": 1.65,
+      "rotationDegrees": 0.0,
       "rotateFast": false
     }
   ],
   "constraintZones": [
     {
       "name": "New Constraints Zone",
-      "minWaypointRelativePos": 0,
+      "minWaypointRelativePos": 1.9,
       "maxWaypointRelativePos": 2.0,
       "constraints": {
-        "maxVelocity": 3.0,
+        "maxVelocity": 1.0,
         "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0
@@ -104,6 +104,40 @@
           ]
         }
       }
+    },
+    {
+      "name": "Shoot",
+      "waypointRelativePos": 1.55,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "UTBSetThirdShotPivot"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Shoot",
+      "waypointRelativePos": 1.95,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "ShootNote"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "globalConstraints": {
@@ -113,7 +147,7 @@
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 1.0,
     "rotation": 0.0,
     "rotateFast": false
   },

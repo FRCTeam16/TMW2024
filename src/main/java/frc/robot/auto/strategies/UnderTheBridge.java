@@ -47,9 +47,10 @@ public class UnderTheBridge extends SequentialCommandGroup {
                 //
                 // Do Second Shot
                 //
-                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Custom),
-                new WaitCommand(0.25),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2)),
+//                handled in drive
+//                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Custom),
+//                new WaitCommand(0.25),
+//                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2)),
                 new EnableShooterCommand(false),
 
                 //

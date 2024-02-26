@@ -15,6 +15,7 @@ import frc.robot.commands.auto.EnableShooterCommand;
 import frc.robot.commands.auto.RotateToAngle;
 import frc.robot.commands.auto.WaitIntakeInPosition;
 import frc.robot.commands.auto.WaitShooterHasNote;
+import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.intake.IntakePivot;
 import frc.robot.subsystems.pose.PoseManager;
 
@@ -67,6 +68,7 @@ public class AutoManager {
         );
 
         // UTB
+        NamedCommands.registerCommand("UTBSetThirdShotPivot", Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Custom));
         NamedCommands.registerCommand("UTBSetSecondShotSpeed", Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(UnderTheBridge.SecondShotProfile)));
         NamedCommands.registerCommand("UTBSetThirdShotSpeed", Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(UnderTheBridge.ThirdShotProfile)));
     }
