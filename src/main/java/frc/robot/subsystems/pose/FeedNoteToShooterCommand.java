@@ -4,8 +4,10 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.util.Counter;
 
 public class FeedNoteToShooterCommand extends Command {
+    Counter holdCount = new Counter().withThreshold(10);
 
     @Override
     public void initialize() {
@@ -15,12 +17,14 @@ public class FeedNoteToShooterCommand extends Command {
 
     @Override
     public void execute() {
-        super.execute();
+        if (Subsystems.shooter.isNoteDetected()) {
+            holdCount.increment();
+        }
     }
 
     @Override
     public boolean isFinished() {
-        return Subsystems.shooter.isNoteDetected();
+        return holdCount.isThresholdMet();
     }
 
     @Override

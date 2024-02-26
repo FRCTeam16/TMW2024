@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -76,6 +77,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    for (int i=0;i<4;i++) {
+      Subsystems.swerveSubsystem.getModule(i).getDriveMotor().setNeutralMode(NeutralModeValue.Brake);
+    }
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     if (autonomousCommand != null) {
@@ -88,7 +92,11 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {}
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+    for (int i=0;i<4;i++) {
+      Subsystems.swerveSubsystem.getModule(i).getDriveMotor().setNeutralMode(NeutralModeValue.Coast);
+    }
+  }
 
   @Override
   public void teleopInit() {

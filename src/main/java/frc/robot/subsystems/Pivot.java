@@ -94,7 +94,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     public void setPivotPosition(PivotPosition position) {
-        if (PivotPosition.VisionAim == position) {
+        if (PivotPosition.VisionAim == position || PivotPosition.Custom == position) {
             this.holdPosition();
         } else {
             this.setPivotSetpoint(position.setpoint);
@@ -119,6 +119,10 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
 
     private boolean isVisionAiming() {
         return (PivotPosition.VisionAim == this.currentPosition);
+    }
+
+    private boolean iSShortShot() {
+        return (PivotPosition.ShortShot == this.currentPosition);
     }
 
     double getSpeed() {
@@ -164,8 +168,13 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
                 pidHelper.updatePIDController(pid);
             }
 
-            // Handle calculating output for vision alignment
-            if (isVisionAiming()) {
+            if (iSShortShot()) {
+                VisionAimManager.ShootingProfile result = visionAimManager.getShortShot();
+                this.setPivotSetpoint(result.pivotAngle());
+                Subsystems.shooter.applyShootingProfile(result);
+            }
+            else if (isVisionAiming()) {
+                // Handle calculating output for vision alignment
                 Optional<VisionAimManager.VisionAimResult> result = visionAimManager.calculate();
                 if (result.isPresent()) {
                     VisionAimManager.ShootingProfile shootingProfile = result.get().shootingProfile();
@@ -226,7 +235,11 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         FeedPosition(21.0),
         ScoringAngle(30),
         Up(70),
-        VisionAim(0);
+        ShortShot(55),
+        VisionAim(0),
+
+        Custom(20);
+
 
         public final double setpoint;
 

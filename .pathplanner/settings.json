@@ -2,8 +2,14 @@
   "robotWidth": 0.578,
   "robotLength": 0.578,
   "holonomicMode": true,
-  "pathFolders": [],
-  "autoFolders": [],
+  "pathFolders": [
+    "DCL_BCL",
+    "Test"
+  ],
+  "autoFolders": [
+    "DCL_BCL",
+    "Test"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,

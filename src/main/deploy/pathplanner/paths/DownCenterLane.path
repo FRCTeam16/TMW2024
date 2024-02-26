@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 7.964381313378012,
-        "y": 4.134249037728845
+        "x": 7.6,
+        "y": 4.13
       },
       "prevControl": {
-        "x": 6.62247709110803,
-        "y": 4.341454836755828
+        "x": 6.258095777730018,
+        "y": 4.337205799026982
       },
       "nextControl": null,
       "isLocked": false,
@@ -65,7 +65,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "DCL_BCL",
   "previewStartingState": null,
   "useDefaultConstraints": false
 }

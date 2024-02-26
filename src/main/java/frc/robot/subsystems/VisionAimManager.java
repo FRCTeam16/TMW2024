@@ -1,8 +1,7 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.subsystems.util.PIDHelper;
+import frc.robot.subsystems.util.Counter;
 import frc.robot.subsystems.vision.Limelight;
 import frc.robot.subsystems.vision.VisionTypes;
 
@@ -19,6 +18,10 @@ public class VisionAimManager {
         this.limelight = limelight;
     }
 
+
+    public ShootingProfile getShortShot() {
+        return new ShootingProfile(55, 25, 25);
+    }
 
     public Optional<VisionAimResult> calculate() {
         VisionTypes.TargetInfo targetInfo = limelight.getTargetInfo();
@@ -49,21 +52,4 @@ public class VisionAimManager {
 
     public record ShootingProfile(double pivotAngle, double upperSpeed, double lowerSpeed) {}
 
-    static class Counter {
-        private int count = 0;
-        private int threshold = 5;
-
-        Counter withThreshold(int threshold) {
-            this.threshold = threshold;
-            return this;
-        }
-
-        void reset() {
-            count = 0;
-        }
-
-        boolean increment() {
-           return (count++) >= threshold;
-        }
-    }
 }

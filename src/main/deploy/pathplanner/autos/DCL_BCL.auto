@@ -20,12 +20,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BackCenterLane"
+            "pathName": "BCL"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "DCL_BCL",
   "choreoAuto": false
 }

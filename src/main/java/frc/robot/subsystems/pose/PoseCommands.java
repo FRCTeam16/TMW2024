@@ -28,7 +28,7 @@ class PoseCommands {
                 // TODO: Need to update movement commands to have true end state positions
                 Commands.parallel(
                         Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
-                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote)
+                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.FeedNote)
                 ),
                 new FeedNoteToShooterCommand().withTimeout(2.0),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ReadyToShoot)
@@ -70,6 +70,13 @@ class PoseCommands {
         return Commands.parallel(
                 Commands.runOnce(Subsystems.shooter::runShooter),
                 Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.VisionAim)
+        );
+    }
+
+    public static Command shortShotPose() {
+        return Commands.parallel(
+                Commands.runOnce(Subsystems.shooter::runShooter),
+                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.ShortShot)
         );
     }
 }

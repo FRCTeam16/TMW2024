@@ -220,7 +220,6 @@ public class RobotContainer {
         feed.onTrue(Commands.runOnce(Subsystems.shooter::shoot))
                 .onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
 
-//        feedNote.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter));
         xboxController.b().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter));
         ampAim.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PositionForAmp));
 
