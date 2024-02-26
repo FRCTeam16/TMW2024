@@ -51,7 +51,7 @@ public class RobotContainer {
     //
     private final JoystickButton intake = new JoystickButton(left, 1);
     private final JoystickButton eject = new JoystickButton(left, 2);
-    private final JoystickButton slowIntake = new JoystickButton(left, 4);
+    private final JoystickButton feedIntake = new JoystickButton(left, 4);  // debug feed intake speeds
 
 
     //
@@ -179,7 +179,7 @@ public class RobotContainer {
         intake.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup))
                 .onFalse(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
 
-        slowIntake.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeSlow()))
+        feedIntake.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeFeedShooter()))
                 .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));
         eject.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeEject()))
                 .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));

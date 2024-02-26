@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.config.RobotConfiguration;
 import frc.robot.config.BuildConstants;
+import frc.robot.subsystems.PowerTelemetry;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.subsystems.vision.VisionTypes;
 
@@ -21,6 +22,8 @@ public class Robot extends TimedRobot {
   private Command autonomousCommand;
 
   private RobotContainer robotContainer;
+
+  private PowerTelemetry powerTelemetry = new PowerTelemetry();
 
   @Override
   public void robotInit() {
@@ -68,6 +71,8 @@ public class Robot extends TimedRobot {
 
     VisionTypes.TargetInfo info = Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo();
     SmartDashboard.putNumber("VisionTestTarget/Distance", info.calculateDistance());
+
+    powerTelemetry.periodic();
   }
 
   @Override

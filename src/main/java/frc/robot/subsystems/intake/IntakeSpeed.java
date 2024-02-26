@@ -50,10 +50,15 @@ public class IntakeSpeed implements Lifecycle, Sendable {
         telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
     }
 
-    public void runIntakeSlow() {
-        intakeOpenLoopSpeed = this.intakeSpeedVolts.getSlowSpeed();
+    public void runIntakeFeedShooter() {
+        intakeOpenLoopSpeed = this.intakeSpeedVolts.getFeedShooterIntakeSpeed();
         telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
     }
+
+//    public void runIntakeSlow() {
+//        intakeOpenLoopSpeed = this.intakeSpeedVolts.getSlowSpeed();
+//        telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
+//    }
 
     public void runIntakeEject() {
         intakeOpenLoopSpeed = this.intakeSpeedVolts.getEjectSpeed();
@@ -85,7 +90,7 @@ public class IntakeSpeed implements Lifecycle, Sendable {
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Intake/FastSpeed", this.intakeSpeedVolts::getFastSpeed, this.intakeSpeedVolts::setFastSpeed);
-        builder.addDoubleProperty("Intake/SlowSpeed", this.intakeSpeedVolts::getSlowSpeed, this.intakeSpeedVolts::setSlowSpeed);
+        builder.addDoubleProperty("Intake/FeedNote", this.intakeSpeedVolts::getFeedShooterIntakeSpeed, this.intakeSpeedVolts::setFeedShooterIntakeSpeed);
         builder.addDoubleProperty("Intake/EjectSpeed", this.intakeSpeedVolts::getEjectSpeed, this.intakeSpeedVolts::setEjectSpeed);
         builder.addDoubleProperty("Intake/AmpShootSpeed", this.intakeSpeedVolts::getAmpShotSpeed, this.intakeSpeedVolts::setAmpShotSpeed);
 //        builder.addDoubleProperty("Intake/FeedShooterIntakeSpeed", this.intakeSpeeds::getFeedShooterIntakeSpeed, this.intakeSpeeds::setFeedShooterIntakeSpeed);
@@ -93,7 +98,7 @@ public class IntakeSpeed implements Lifecycle, Sendable {
 
     static class IntakeSpeedVolts {
         private double fastSpeed = 6.0;
-        private double slowSpeed = -2;
+//        private double slowSpeed = -2;
         private double ejectSpeed = -6;
         private double feedShooterIntakeSpeed = -2; // FIXME feed is using slowSpeed
         private double ampShotSpeed = -4.8;
@@ -109,14 +114,14 @@ public class IntakeSpeed implements Lifecycle, Sendable {
         }
 
         // Getter for slowSpeed
-        public double getSlowSpeed() {
-            return slowSpeed;
-        }
+//        public double getSlowSpeed() {
+//            return slowSpeed;
+//        }
 
         // Setter for slowSpeed
-        public void setSlowSpeed(double slowSpeed) {
-            this.slowSpeed = slowSpeed;
-        }
+//        public void setSlowSpeed(double slowSpeed) {
+//            this.slowSpeed = slowSpeed;
+//        }
 
         // Getter for ejectSpeed
         public double getEjectSpeed() {
@@ -149,46 +154,6 @@ public class IntakeSpeed implements Lifecycle, Sendable {
         }
     }
 
-
-//    static class IntakeSpeeds {
-//        private double fastSpeed = 0.50;
-//        private double slowSpeed = 0.1;
-//        private double ejectSpeed = -1;
-//        private double feedShooterIntakeSpeed = -0.1;
-//
-//        public double getFastSpeed() {
-//            return fastSpeed;
-//        }
-//
-//        public void setFastSpeed(double fastSpeed) {
-//            this.fastSpeed = fastSpeed;
-//        }
-//
-//        public double getSlowSpeed() {
-//            return slowSpeed;
-//        }
-//
-//        public void setSlowSpeed(double slowSpeed) {
-//            this.slowSpeed = slowSpeed;
-//        }
-//
-//        public double getEjectSpeed() {
-//            return ejectSpeed;
-//        }
-//
-//        public void setEjectSpeed(double ejectSpeed) {
-//            this.ejectSpeed = ejectSpeed;
-//        }
-//
-//        @Deprecated double getFeedShooterIntakeSpeed() {
-//            return this.feedShooterIntakeSpeed;
-//        }
-//
-//
-//        @Deprecated  void setFeedShooterIntakeSpeed(double feedShooterIntakeSpeed) {
-//            this.feedShooterIntakeSpeed = feedShooterIntakeSpeed;
-//        }
-//    }
 
 
     class Telemetry {

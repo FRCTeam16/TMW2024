@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -16,12 +17,12 @@ public class FeederHelper implements Sendable {
     private final TalonFX motor;
     private final DigitalInput noteStopSensor;
 
-    private final DutyCycleOut openLoopOut = new DutyCycleOut(0.0);
+    private final VoltageOut openLoopOut = new VoltageOut(0.0);
     private double openLoopSetpoint = 0.0;
-    private double shootingSpeed = -0.50;
+    private double shootingSpeed = -6;
 
     private Timer shooterTimer;
-    private double feedShooterSpeed = -0.1; // WARNING: Must change Intake feed
+    private double feedShooterSpeed = -1.5; // WARNING: Must change Intake feed
 
     boolean shooting = false;   // whether we are shooting
 
@@ -64,7 +65,7 @@ public class FeederHelper implements Sendable {
         double out = 0;
         if (shooting) {
             if( shooterTimer.get() < .125) {
-                out = -1.0;
+                out = -12;
             } else {
                 openLoopSetpoint = 0.0;
                 shooting = false;

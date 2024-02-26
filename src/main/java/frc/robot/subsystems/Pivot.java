@@ -68,6 +68,11 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         this.goal = new TrapezoidProfile.State(this.getPivotAngleDegrees(), 0);
     }
 
+    @Override
+    public void autoInit() {
+        Lifecycle.super.autoInit();
+    }
+
     public boolean isOpenLoop() {
         return openLoop;
     }
