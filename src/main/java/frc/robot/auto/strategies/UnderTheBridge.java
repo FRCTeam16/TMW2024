@@ -2,16 +2,12 @@ package frc.robot.auto.strategies;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Subsystems;
 import frc.robot.commands.auto.*;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.VisionAimManager;
 import frc.robot.subsystems.intake.IntakePivot;
-import frc.robot.subsystems.pose.FeedNoteToShooterCommand;
 import frc.robot.subsystems.pose.PoseManager;
 
 public class UnderTheBridge extends SequentialCommandGroup {
@@ -22,10 +18,10 @@ public class UnderTheBridge extends SequentialCommandGroup {
 
 
     private SwerveRequest.PointWheelsAt pointWheels = new SwerveRequest.PointWheelsAt().withModuleDirection(Rotation2d.fromDegrees(0));
-
     public UnderTheBridge() {
         addCommands(
                 Commands.parallel(
+                        new PrintStartInfo("Under the Bridge"),
                         new PrintCommand("Under the Bridge"),
                         new InitializeAutoState(0),
                         new EnableShooterCommand()
@@ -36,9 +32,8 @@ public class UnderTheBridge extends SequentialCommandGroup {
                 // First Shot
                 //
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShortShot),
-                new WaitCommand(0.5),
-                Commands.runOnce(Subsystems.shooter::shoot),
-                new WaitCommand(0.5),
+                new WaitCommand(0.25),
+                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2)),
                 Commands.parallel(
                         new EnableShooterCommand(false),
                         Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive)
@@ -54,8 +49,7 @@ public class UnderTheBridge extends SequentialCommandGroup {
                 //
                 Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Custom),
                 new WaitCommand(0.25),
-                Commands.runOnce(Subsystems.shooter::shoot),
-                new WaitCommand(0.5),
+                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2)),
                 new EnableShooterCommand(false),
 
                 //
@@ -73,7 +67,7 @@ public class UnderTheBridge extends SequentialCommandGroup {
                     new EnableShooterCommand()
                 ),
                 new WaitCommand(0.5),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.5)),
+                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2)),
 
                 ///
                 // UTB 3
@@ -92,7 +86,7 @@ public class UnderTheBridge extends SequentialCommandGroup {
                         new EnableShooterCommand()
                 ),
                 new WaitCommand(0.5),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.5)),
+                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2)),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup),
 
 
@@ -114,8 +108,13 @@ public class UnderTheBridge extends SequentialCommandGroup {
                         new EnableShooterCommand()
                 ),
                 new WaitCommand(0.5),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.5))
+                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2))
         );
+    }
 
+    public Command waitForPositionThenShoot() {
+        return new SequentialCommandGroup(
+
+        );
     }
 }

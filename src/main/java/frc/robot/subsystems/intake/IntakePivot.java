@@ -89,8 +89,6 @@ public class IntakePivot implements Lifecycle, Sendable {
 //                .withKV(pivotConfiguration.Slot0.kV)
 //                .withKA(pivotConfiguration.Slot0.kA);
 
-
-        DataLogManager.log("[Pivot:IntakePivot config: " + pivotConfiguration);
         pivotDrive.getConfigurator().apply(pivotConfiguration);
     }
 

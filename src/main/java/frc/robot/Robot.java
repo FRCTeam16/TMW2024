@@ -46,9 +46,9 @@ public class Robot extends TimedRobot {
 
     Subsystems.swerveSubsystem.getPigeon2().setYaw(0);
 
-    for (int i=0;i<4;i++) {
-      Subsystems.swerveSubsystem.getModule(i).getDriveMotor().setNeutralMode(NeutralModeValue.Brake);
-    }
+//    for (int i=0;i<4;i++) {
+//      Subsystems.swerveSubsystem.getModule(i).getDriveMotor().setNeutralMode(NeutralModeValue.Brake);
+//    }
 
 
     // Forward LimeLight ports so they are available over USB
@@ -85,11 +85,14 @@ public class Robot extends TimedRobot {
     DataLogManager.log("[AUTO INIT] Started at:" + Timer.getFPGATimestamp());
     SmartDashboard.putNumber("Timing/AutoInit", Timer.getFPGATimestamp());
     autonomousCommand = robotContainer.getAutonomousCommand();
+    DataLogManager.log("[AUTO] autoInit:: got robotCommand: " + Timer.getFPGATimestamp());
+    robotContainer.autoInit();
+    DataLogManager.log("[AUTO] autoInit:: robot container autoInit finished: " + Timer.getFPGATimestamp());
 
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
-    robotContainer.autoInit();
+    DataLogManager.log("[AUTO] autoInit:: scheduled command: " + Timer.getFPGATimestamp());
   }
 
   @Override
