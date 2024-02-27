@@ -89,9 +89,14 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
-    public Command getAutoPath(String pathName) {
+    /**
+     * Get the path planner auto command for a named path. Deprecated, use Subsystems.autoManager.getAutoPath instead.
+     * @param pathName the name of the path to run
+     * @return a Command that will run the named path
+     */
+    @Deprecated public Command getAutoPath(String pathName) {
         try {
-            return new PathPlannerAuto(pathName);
+            return Subsystems.autoManager.getAutoPath(pathName);
         } catch (Exception e) {
             DataLogManager.log("!!! Error attempting to locate auto path %s: %s".formatted(pathName, e));
             return new PrintCommand("Cannot Locate path" + pathName);

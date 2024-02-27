@@ -37,7 +37,6 @@ public class RobotContainer {
 
     @SuppressWarnings("unused")
     private final Subsystems subsystems = Subsystems.getInstance();
-    private final AutoManager autoManager = new AutoManager();
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.01).withRotationalDeadband(MaxAngularRate * 0.01) // Add a 10% deadband
@@ -256,7 +255,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return autoManager.getSelectedCommand();
+        return Subsystems.autoManager.getSelectedAutoStrategy();
     }
 
     public void teleopInit() {
