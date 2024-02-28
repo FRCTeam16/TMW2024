@@ -7,7 +7,7 @@ import frc.robot.subsystems.util.BSLogger;
 import frc.robot.subsystems.util.Counter;
 
 public class FeedNoteToShooterCommand extends Command {
-    Counter holdCount = new Counter().withThreshold(5);
+    Counter holdCount = new Counter().withThreshold(2);
 
     @Override
     public void initialize() {
@@ -16,11 +16,11 @@ public class FeedNoteToShooterCommand extends Command {
         Subsystems.intake.setIntakeState(Intake.IntakeState.FeedNote);
     }
 
-
     @Override
     public boolean isFinished() {
         if (Subsystems.shooter.isNoteDetected()) {
             if (holdCount.increment()) {
+                Subsystems.shooter.stopFeeder();
                 BSLogger.log("FeedNoteToShooterCommand", "finished");
                 return true;
             }

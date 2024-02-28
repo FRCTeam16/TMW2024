@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.util.BSLogger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class PoseManager {
     }
 
     public Command getPoseCommand(Pose requestedPose) {
-        DataLogManager.log("[PoseManager] Requested pose: " + requestedPose + " (" + Timer.getFPGATimestamp() + ")");
+        BSLogger.log("PoseManager", "Requested Pose: " + requestedPose);
         SmartDashboard.putString("PoseManager/RequestedPose", requestedPose.name());
 
         if (registry.containsKey(requestedPose)) {
@@ -68,8 +69,7 @@ public class PoseManager {
             poseLog.append(requestedPose.name());
             return registry.get(requestedPose).get();
         } else {
-            String message = "[PoseManager] !!! Unhandled pose requested: " + requestedPose;
-            DataLogManager.log(message);
+            BSLogger.log("PoseManager", "!!! Unhandled pose requested: " + requestedPose);
             return Commands.none();
         }
     }

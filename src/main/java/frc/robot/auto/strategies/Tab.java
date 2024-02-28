@@ -38,7 +38,7 @@ public class Tab extends AutoPathStrategy {
                 Commands.runOnce(() -> BSLogger.log("Tab", "First Shot")),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShortShot),
                 new WaitCommand(0.25),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2)),
+                doShootCmd(),
                 Commands.parallel(
                         new EnableShooterCommand(false),
                         Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive)
@@ -70,10 +70,7 @@ public class Tab extends AutoPathStrategy {
                 //
                 Commands.runOnce(() -> BSLogger.log("Tab", "Running Tab4")),
                 this.runAutoPath("Tab4"),
-                Commands.parallel(
-                    new WaitIntakeHasNoteCommand().withTimeout(1.0),
-                    new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero).withTimeout(1.0)
-                ),
+                new WaitIntakeHasNoteCommand().withTimeout(1.0),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
                 DoShotCommand(FifthShot)
         );
@@ -86,16 +83,25 @@ public class Tab extends AutoPathStrategy {
                 new EnableShooterCommand(),
                 Commands.parallel(
                         Commands.runOnce(() -> Subsystems.intake.setIntakeState(Intake.IntakeState.IntakeFromFloor)),
+                        Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(profile)),
                         Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))
                 ),
                 new WaitPivotInPosition().withTimeout(0.5),
                 new WaitCommand(0.5),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2)),
+                doShootCmd(),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup)
         ).beforeStarting(() -> BSLogger.log("DoShotCommand", "starting"));
     }
 
+
     public static void registerAutoPaths(PathRegistry pathRegistry) {
         pathRegistry.registerPaths("Tab", "Tab2", "Tab3", "Tab4");
+    }
+
+    static Command doShootCmd() {
+        return Commands.parallel(
+                Commands.runOnce(() -> BSLogger.log("doShootCmd", "shooting")),
+                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2))
+        );
     }
 }

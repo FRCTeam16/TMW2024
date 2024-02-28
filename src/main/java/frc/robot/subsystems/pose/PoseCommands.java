@@ -83,7 +83,7 @@ class PoseCommands {
         return Commands.parallel(
                 Commands.runOnce(Subsystems.shooter::stopShooter),
                 Commands.runOnce(Subsystems.shooter::stopFeeder),
-                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.StartingPosition),
+                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Up),
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.Climb)
         );
     }

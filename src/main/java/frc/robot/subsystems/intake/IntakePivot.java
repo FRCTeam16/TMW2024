@@ -1,9 +1,7 @@
 package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.StatusCode;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -62,32 +60,27 @@ public class IntakePivot implements Lifecycle, Sendable {
         motionMagicConfig.setAcceleration(220);
         motionMagicConfig.setJerk(2000);
 
-        pivotConfiguration.withCurrentLimits(
-                new CurrentLimitsConfigs()
-                        .withSupplyCurrentLimit(30)
-                        .withSupplyCurrentLimitEnable(true)
-        );
-
-        pivotConfiguration.SoftwareLimitSwitch
-                .withForwardSoftLimitThreshold(MAXIMUM_LIMIT).withForwardSoftLimitEnable(softLimitsEnabled)
-                .withReverseSoftLimitThreshold(MINIMUM_LIMIT).withReverseSoftLimitEnable(softLimitsEnabled);
-
-        pivotConfiguration.HardwareLimitSwitch
-                .withForwardLimitEnable(false)
-                .withReverseLimitEnable(false);
-
         pidHelper.updateConfiguration(pivotConfiguration.Slot0);
         pivotConfiguration.Slot0.withGravityType(GravityTypeValue.Arm_Cosine);
 
         motionMagicConfig.updateSlot0Config(pivotConfiguration.Slot0);
         motionMagicConfig.updateMotionMagicConfig(pivotConfiguration.MotionMagic);
 
-//        pivotConfiguration.Slot1
-//                .withKP(pivotConfiguration.Slot0.kP)
-//                .withKI(pivotConfiguration.Slot0.kI)
-//                .withKD(pivotConfiguration.Slot0.kD)
-//                .withKV(pivotConfiguration.Slot0.kV)
-//                .withKA(pivotConfiguration.Slot0.kA);
+        pivotConfiguration
+                .withCurrentLimits(
+                        new CurrentLimitsConfigs()
+                                .withSupplyCurrentLimit(30)
+                                .withSupplyCurrentLimitEnable(true)
+                ).withSoftwareLimitSwitch(
+                        new SoftwareLimitSwitchConfigs()
+                                .withForwardSoftLimitThreshold(MAXIMUM_LIMIT).withForwardSoftLimitEnable(softLimitsEnabled)
+                                .withReverseSoftLimitThreshold(MINIMUM_LIMIT).withReverseSoftLimitEnable(softLimitsEnabled)
+                ).withHardwareLimitSwitch(
+                        new HardwareLimitSwitchConfigs()
+                                .withForwardLimitEnable(false)
+                                .withReverseLimitEnable(false)
+                );
+
 
         pivotDrive.getConfigurator().apply(pivotConfiguration);
     }
