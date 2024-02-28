@@ -8,12 +8,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "UTB4"
+            "pathName": "TabPath2"
           }
         }
       ]
     }
   },
-  "folder": "UTB",
+  "folder": null,
   "choreoAuto": false
 }

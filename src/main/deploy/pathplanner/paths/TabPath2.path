@@ -3,37 +3,53 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.7633993156185066,
-        "y": 5.64
+        "x": 1.9,
+        "y": 4.72
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.348199762947884,
-        "y": 5.1717839016867035
+        "x": 2.151749410922526,
+        "y": 4.556606870488404
       },
-      "isLocked": false,
-      "linkedName": "EndUTB3"
+      "isLocked": true,
+      "linkedName": "Tab1End"
     },
     {
       "anchor": {
-        "x": 1.9184318049203974,
-        "y": 4.72
+        "x": 2.5,
+        "y": 4.4
       },
       "prevControl": {
-        "x": 2.2972103441988603,
-        "y": 5.149767958027486
+        "x": 2.455039704533409,
+        "y": 4.425957838690482
+      },
+      "nextControl": {
+        "x": 2.544960295466591,
+        "y": 4.374042161309519
+      },
+      "isLocked": true,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.8,
+        "y": 5.519220122897308
+      },
+      "prevControl": {
+        "x": 1.7006635380197659,
+        "y": 5.564304726338339
       },
       "nextControl": null,
-      "isLocked": false,
-      "linkedName": "EndUTB3.2"
+      "isLocked": true,
+      "linkedName": "Tab2End"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "Feed Note",
-      "waypointRelativePos": 0,
+      "name": "New Event Marker",
+      "waypointRelativePos": 1.4,
       "command": {
         "type": "sequential",
         "data": {
@@ -41,19 +57,7 @@
             {
               "type": "named",
               "data": {
-                "name": "WaitIntakeInPosition"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
                 "name": "FeedNote"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "WaitForNote"
               }
             }
           ]
@@ -69,13 +73,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -30.0,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "UTB",
+  "folder": null,
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": -30.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

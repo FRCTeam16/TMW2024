@@ -238,7 +238,7 @@ public class IntakePivot implements Lifecycle, Sendable {
     }
 
     public boolean isInPosition(IntakePosition position) {
-        return (Math.abs(getCurrentPosition() - position.setpoint) <= 0.25);
+        return (Math.abs(getCurrentPosition() - position.setpoint) <= 0.15);
     }
 
 

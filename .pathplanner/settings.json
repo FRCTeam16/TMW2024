@@ -4,10 +4,12 @@
   "holonomicMode": true,
   "pathFolders": [
     "DCL_BCL",
+    "UTB",
     "Test"
   ],
   "autoFolders": [
     "DCL_BCL",
+    "UTB",
     "Test"
   ],
   "defaultMaxVel": 3.0,
