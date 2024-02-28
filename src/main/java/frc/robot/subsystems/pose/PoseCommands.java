@@ -25,7 +25,6 @@ class PoseCommands {
 
     static Command feedNoteToShooterPose() {
         return new SequentialCommandGroup(
-                // TODO: Need to update movement commands to have true end state positions
                 Commands.parallel(
                         Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
                         Subsystems.intake.moveToStateCmd(Intake.IntakeState.FeedNote)
@@ -77,6 +76,15 @@ class PoseCommands {
         return Commands.parallel(
                 Commands.runOnce(Subsystems.shooter::runShooter),
                 Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.ShortShot)
+        );
+    }
+
+    public static Command startClimbPose() {
+        return Commands.parallel(
+                Commands.runOnce(Subsystems.shooter::stopShooter),
+                Commands.runOnce(Subsystems.shooter::stopFeeder),
+                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.StartingPosition),
+                Subsystems.intake.moveToStateCmd(Intake.IntakeState.Climb)
         );
     }
 }

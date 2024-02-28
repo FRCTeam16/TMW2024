@@ -239,6 +239,10 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         this.setPivotSetpoint(profile.pivotAngle());
     }
 
+    public boolean isInPosition() {
+        return Math.abs(this.getPivotAngleDegrees() - this.getPivotSetpoint()) <= 2;
+    }
+
 
     public enum PivotPosition {
         StartingPosition(0),

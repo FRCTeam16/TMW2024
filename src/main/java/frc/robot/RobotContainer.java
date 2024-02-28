@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.auto.AutoManager;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.ZeroAndSetOffsetCommand;
 import frc.robot.generated.TunerConstants;
@@ -183,12 +182,8 @@ public class RobotContainer {
         eject.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeEject()))
                 .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));
 
-        xboxController.x().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup));
-        xboxController.a().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.NotePickedUp));
-        xboxController.y().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
+        xboxController.x().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.StartClimb));
 
-        //xboxController.b().onTrue(Commands.runOnce(() ->
-        //        Subsystems.intake.setIntakeState(Intake.IntakeState.TryShootAmp)));
 
 
         // Testing

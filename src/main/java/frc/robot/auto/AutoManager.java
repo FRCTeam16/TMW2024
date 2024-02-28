@@ -1,6 +1,8 @@
 package frc.robot.auto;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -94,6 +96,7 @@ public class AutoManager {
         NamedCommands.registerCommand("StartDrive", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
         NamedCommands.registerCommand("FeedNote",
                 Commands.sequence(
+                        Commands.runOnce(() -> DataLogManager.log("[FeedNote] " + Timer.getFPGATimestamp())),
                         new WaitIntakeHasNoteCommand().withTimeout(1.0),
                         new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero).withTimeout(1.0),
                         Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter))

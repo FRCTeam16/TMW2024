@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.8,
-        "y": 5.519220122897308
+        "x": 1.75,
+        "y": 5.55
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.25364306947162,
-        "y": 5.519220122897308
+        "x": 2.20364306947162,
+        "y": 5.55
       },
       "isLocked": true,
       "linkedName": "Tab2End"
@@ -32,11 +32,11 @@
     },
     {
       "anchor": {
-        "x": 1.8,
+        "x": 1.75,
         "y": 6.6
       },
       "prevControl": {
-        "x": 1.798221241657356,
+        "x": 1.748221241657356,
         "y": 6.599352584909324
       },
       "nextControl": null,
@@ -79,7 +79,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 20.0,
+    "rotation": 26.0,
     "rotateFast": false
   },
   "reversed": false,

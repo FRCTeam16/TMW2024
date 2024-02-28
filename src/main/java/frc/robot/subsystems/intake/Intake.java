@@ -13,6 +13,7 @@ import frc.robot.Constants;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.pose.PoseManager;
+import frc.robot.subsystems.util.BSLogger;
 
 import java.util.Optional;
 
@@ -36,7 +37,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         AmpAim,
         RotateUpWhileFeedingNote,
         Trap,
-        TryShootAmp
+        Climb, TryShootAmp
     }
 
     private IntakeState intakeState = IntakeState.StartingPosition;
@@ -75,7 +76,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     public void setIntakeState(IntakeState state) {
-        DataLogManager.log("[Intake] setting intake state: " + state);
+        BSLogger.log("Intake", "setting intake state: " + state);
         switch (state) {
             case StartingPosition, HoldNote -> {
                 intakeSpeed.stopIntake();
@@ -94,6 +95,10 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
             }
             case AmpAim, TryShootAmp -> {
                 intakePivot.setIntakePosition(IntakePivot.IntakePosition.AMPShot);
+            }
+            case Climb -> {
+                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Pickup);
+                intakeSpeed.stopIntake();
             }
             default -> {
                 DataLogManager.log("[Intake] Unhandled IntakeState: " + state.name());
@@ -120,7 +125,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         }
 
         // Check if we should override intake speed
-        if (postNoteDetectedTimer.isPresent() &&  postNoteDetectedTimer.get().hasElapsed(0.07)) {
+        if (postNoteDetectedTimer.isPresent() &&  postNoteDetectedTimer.get().hasElapsed(0.25)) {
             intakeSpeed.stopIntake();
             postNoteDetectedTimer.get().stop();
             postNoteDetectedTimer = Optional.empty();   // todo determine if optional<> approach is clearest

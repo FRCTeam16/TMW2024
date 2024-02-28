@@ -1,9 +1,9 @@
 package frc.robot.subsystems.pose;
 
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.util.BSLogger;
 import frc.robot.subsystems.util.Counter;
 
 public class FeedNoteToShooterCommand extends Command {
@@ -11,27 +11,29 @@ public class FeedNoteToShooterCommand extends Command {
 
     @Override
     public void initialize() {
+        BSLogger.log("FeedNoteToShooterCommand", "starting");
         Subsystems.shooter.feedNote();
         Subsystems.intake.setIntakeState(Intake.IntakeState.FeedNote);
     }
 
-    @Override
-    public void execute() {
-        if (Subsystems.shooter.isNoteDetected()) {
-            holdCount.increment();
-        }
-    }
 
     @Override
     public boolean isFinished() {
-//        return holdCount.isThresholdMet();
-        return Subsystems.shooter.isNoteDetected();
+        if (Subsystems.shooter.isNoteDetected()) {
+            if (holdCount.increment()) {
+                BSLogger.log("FeedNoteToShooterCommand", "finished");
+                return true;
+            }
+        } else {
+            holdCount.reset();
+        }
+        return false;
     }
 
     @Override
     public void end(boolean interrupted) {
         if (interrupted) {
-            DataLogManager.log("[FeedNoteToShooterCommand] STOPPED DUE TO INTERRUPT");
+            BSLogger.log("FeedNoteToShooterCommand", "STOPPED DUE TO INTERRUPT");
         }
     }
 }

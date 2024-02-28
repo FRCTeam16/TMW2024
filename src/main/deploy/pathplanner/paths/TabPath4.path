@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.8,
+        "x": 1.75,
         "y": 6.6
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8913545457642604,
+        "x": 1.8413545457642604,
         "y": 6.64067366430758
       },
       "isLocked": true,
@@ -30,25 +30,7 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.95,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "FeedNote"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -57,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 24.0,
+    "rotation": 25.0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 35.0,
+    "rotation": 28.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

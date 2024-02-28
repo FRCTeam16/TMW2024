@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -35,9 +36,11 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
         TalonFXConfiguration config = new TalonFXConfiguration()
                 .withSoftwareLimitSwitch(
                         new SoftwareLimitSwitchConfigs()
-                                .withReverseSoftLimitThreshold(0).withReverseSoftLimitEnable(true));
+                                .withForwardSoftLimitThreshold(0).withForwardSoftLimitEnable(true)
+                                .withReverseSoftLimitEnable(false));
         pidHelper.updateConfiguration(config.Slot0);
         climberDrive.getConfigurator().apply(config);
+        climberDrive.setNeutralMode(NeutralModeValue.Brake);
         setpoint = climberDrive.getPosition().getValue();
     }
 

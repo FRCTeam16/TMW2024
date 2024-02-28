@@ -2,6 +2,7 @@ package frc.robot.subsystems.pose;
 
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -31,7 +32,9 @@ public class PoseManager {
         PositionForAmp,
         // Pose for automatically adjusting shooter pivot based on vision
         ShooterAimVision,
-        ShortShot
+        ShortShot,
+        // Start climb
+        StartClimb
     }
 
     private Pose currentPose = Pose.StartingConfig;
@@ -52,10 +55,11 @@ public class PoseManager {
         registry.put(Pose.PositionForAmp, PoseCommands::positionForAmpPose);
         registry.put(Pose.ShooterAimVision, PoseCommands::shooterAimVisionPose);
         registry.put(Pose.ShortShot, PoseCommands::shortShotPose);
+        registry.put(Pose.StartClimb, PoseCommands::startClimbPose);
     }
 
     public Command getPoseCommand(Pose requestedPose) {
-        DataLogManager.log("[PoseManager] Requested pose: " + requestedPose);
+        DataLogManager.log("[PoseManager] Requested pose: " + requestedPose + " (" + Timer.getFPGATimestamp() + ")");
         SmartDashboard.putString("PoseManager/RequestedPose", requestedPose.name());
 
         if (registry.containsKey(requestedPose)) {
