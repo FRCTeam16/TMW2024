@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Subsystems;
+import frc.robot.subsystems.util.BSLogger;
 import frc.robot.subsystems.util.PIDHelper;
 
 import java.util.Optional;
@@ -112,7 +113,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     private void setPivotSetpoint(double setpoint) {
-//        DataLogManager.log("[" + SUBSYSTEM_NAME + "] Setting pivot setpoint to: " + setpoint);
+        BSLogger.log("Pivot", "Setting pivot setpoint to " + String.valueOf(setpoint));
         if (setpoint >= 80.0001 || setpoint <= -0.0001) {
             DataLogManager.log("[" + SUBSYSTEM_NAME + "] INVALID SETPOINT REQUESTED, IGNORING");
             return;
@@ -235,7 +236,8 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
 
 
     public void applyShootingProfile(VisionAimManager.ShootingProfile profile) {
-        this.setPivotPosition(PivotPosition.Custom);
+        this.openLoop = false;
+        this.currentPosition = PivotPosition.Custom;
         this.setPivotSetpoint(profile.pivotAngle());
     }
 

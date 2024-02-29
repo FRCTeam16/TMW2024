@@ -11,7 +11,7 @@
         "x": 2.35,
         "y": 5.015
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -27,7 +27,7 @@
         "x": 5.006637765455837,
         "y": 4.772587841958537
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -43,7 +43,7 @@
         "x": 7.672595418819669,
         "y": 4.143676582622273
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -52,27 +52,27 @@
         "y": 4.609433207510844
       },
       "prevControl": {
-        "x": 6.535971233674321,
-        "y": 4.418414454676492
+        "x": 6.528146272086398,
+        "y": 4.369044179261823
       },
       "nextControl": {
-        "x": 2.570881735092072,
-        "y": 4.97334797366543
+        "x": 2.630871592049069,
+        "y": 5.0594185511540735
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.9,
+        "x": 1.8,
         "y": 4.72
       },
       "prevControl": {
-        "x": 2.494577026059659,
-        "y": 4.891173671630523
+        "x": 2.0074008068527136,
+        "y": 4.715085881555724
       },
       "nextControl": null,
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "Tab1End"
     }
   ],
@@ -97,7 +97,7 @@
     },
     {
       "name": "Slow Down",
-      "minWaypointRelativePos": 3.45,
+      "minWaypointRelativePos": 3.25,
       "maxWaypointRelativePos": 4.0,
       "constraints": {
         "maxVelocity": 3.0,
@@ -141,23 +141,6 @@
           ]
         }
       }
-    },
-    {
-      "name": "Start Shooter",
-      "waypointRelativePos": 3.75,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "StartShooter"
-              }
-            }
-          ]
-        }
-      }
     }
   ],
   "globalConstraints": {
@@ -168,7 +151,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -37.0,
+    "rotation": 0.0,
     "rotateFast": false
   },
   "reversed": false,

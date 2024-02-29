@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.9,
+        "x": 1.8,
         "y": 4.72
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.151749410922526,
-        "y": 4.556606870488404
+        "x": 1.9001828187391112,
+        "y": 4.657398826982042
       },
       "isLocked": true,
       "linkedName": "Tab1End"
     },
     {
       "anchor": {
-        "x": 2.3,
-        "y": 4.35
+        "x": 2.13,
+        "y": 4.3
       },
       "prevControl": {
-        "x": 2.256449982075268,
-        "y": 4.37826010432889
+        "x": 2.0859730086364032,
+        "y": 4.327511117559888
       },
       "nextControl": {
-        "x": 2.3435500179247315,
-        "y": 4.32173989567111
+        "x": 2.1740269913635966,
+        "y": 4.272488882440111
       },
       "isLocked": true,
       "linkedName": null
@@ -44,7 +44,13 @@
       "linkedName": "Tab2End"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.2,
+      "rotationDegrees": -32.0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [
     {
@@ -79,7 +85,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -30.0,
+    "rotation": -32.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

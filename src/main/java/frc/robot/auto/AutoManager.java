@@ -94,13 +94,7 @@ public class AutoManager {
         NamedCommands.registerCommand("StartAutoAim",
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShooterAimVision));
         NamedCommands.registerCommand("StartDrive", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
-        NamedCommands.registerCommand("FeedNote",
-                Commands.sequence(
-                        Commands.runOnce(() -> DataLogManager.log("[FeedNote] " + Timer.getFPGATimestamp())),
-                        new WaitIntakeHasNoteCommand().withTimeout(1.0),
-                        new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero).withTimeout(1.0),
-                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter))
-        );
+        NamedCommands.registerCommand("FeedNote", new FeedNoteInAuto());
         NamedCommands.registerCommand("ShootNote",
                 Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.5)));
 

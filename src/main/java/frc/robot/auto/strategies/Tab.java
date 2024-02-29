@@ -9,18 +9,15 @@ import frc.robot.auto.PathRegistry;
 import frc.robot.commands.auto.*;
 import frc.robot.subsystems.VisionAimManager;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakePivot;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.util.BSLogger;
 
 public class Tab extends AutoPathStrategy {
 
-    public static final VisionAimManager.ShootingProfile SecondShot = new VisionAimManager.ShootingProfile(37, 30, 26); // 87"
-    public static final VisionAimManager.ShootingProfile ThirdShot = new VisionAimManager.ShootingProfile(42,22, 22); // 55"
-    public static final VisionAimManager.ShootingProfile ForthShot = new VisionAimManager.ShootingProfile(36, 31, 27); // 76.5"
-    public static final VisionAimManager.ShootingProfile FifthShot = new VisionAimManager.ShootingProfile(28.5, 45, 32); // 98.8"
-
-
+    public static final VisionAimManager.ShootingProfile SecondShot = new VisionAimManager.ShootingProfile(38, 30, 26); // 87"
+    public static final VisionAimManager.ShootingProfile ThirdShot = new VisionAimManager.ShootingProfile(43, 22, 22); // 55"
+    public static final VisionAimManager.ShootingProfile ForthShot = new VisionAimManager.ShootingProfile(37, 31, 27); // 76.5"
+    public static final VisionAimManager.ShootingProfile FifthShot = new VisionAimManager.ShootingProfile(26.5, 45, 32); // 98.8"
 
 
     public Tab() {
@@ -36,8 +33,10 @@ public class Tab extends AutoPathStrategy {
                 // First Shot
                 //
                 Commands.runOnce(() -> BSLogger.log("Tab", "First Shot")),
-                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShortShot),
-                new WaitCommand(0.25),
+                Commands.parallel(
+                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShortShot),
+                        new WaitCommand(0.25)
+                ),
                 doShootCmd(),
                 Commands.parallel(
                         new EnableShooterCommand(false),
@@ -47,28 +46,33 @@ public class Tab extends AutoPathStrategy {
                 //
                 // Run and pickup, second shot
                 //
-                Commands.runOnce(() -> BSLogger.log("Tab", "Running Tab")),
+                Commands.runOnce(() -> BSLogger.log("Tab", "****** Running Tab")),
                 this.runAutoPath("Tab"),
+                new RotateToAngle(-32).withTimeout(0.5),
                 DoShotCommand(SecondShot),
+
 
                 //
                 // Pickup, third shot
                 //
-                Commands.runOnce(() -> BSLogger.log("Tab", "Running Tab2")),
+                Commands.runOnce(() -> BSLogger.log("Tab", "****** Running Tab2")),
                 this.runAutoPath("Tab2"),
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),  // trying this to make sure we are in a good state, try to prevent feed through
                 DoShotCommand(ThirdShot),
 
                 //
                 // Pickup, forth shot
                 //
-                Commands.runOnce(() -> BSLogger.log("Tab", "Running Tab3")),
+                Commands.runOnce(() -> BSLogger.log("Tab", "****** Running Tab3")),
                 this.runAutoPath("Tab3"),
+                // May need to check state here, auto command is dropping out
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
                 DoShotCommand(ForthShot),
 
                 //
                 // Pickup, fifth shot
                 //
-                Commands.runOnce(() -> BSLogger.log("Tab", "Running Tab4")),
+                Commands.runOnce(() -> BSLogger.log("Tab", "****** Running Tab4")),
                 this.runAutoPath("Tab4"),
                 new WaitIntakeHasNoteCommand().withTimeout(1.0),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
@@ -78,7 +82,7 @@ public class Tab extends AutoPathStrategy {
 
     static Command DoShotCommand(VisionAimManager.ShootingProfile profile) {
         return new SequentialCommandGroup(
-                // Start point is waiting for feed action to be completed
+                // Start point is that we expect the shooter to have a note
                 new WaitShooterHasNote().withTimeout(1.5),
                 new EnableShooterCommand(),
                 Commands.parallel(
@@ -87,10 +91,12 @@ public class Tab extends AutoPathStrategy {
                         Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))
                 ),
                 new WaitPivotInPosition().withTimeout(0.5),
+                Commands.runOnce(() -> BSLogger.log("DoShotCommand", "******* WILL BE FIRING NEXT *******")),
                 new WaitCommand(0.5),
                 doShootCmd(),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup)
-        ).beforeStarting(() -> BSLogger.log("DoShotCommand", "starting"));
+        ).beforeStarting(() -> BSLogger.log("DoShotCommand", "starting"))
+                .finallyDo(() -> BSLogger.log("DoShotCommand", "ending"));
     }
 
 
