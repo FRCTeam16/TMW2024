@@ -9,10 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Subsystems;
-import frc.robot.auto.strategies.DebugAuto;
-import frc.robot.auto.strategies.DebugPathAuto;
-import frc.robot.auto.strategies.Tab;
-import frc.robot.auto.strategies.UnderTheBridge;
+import frc.robot.auto.strategies.*;
 import frc.robot.commands.auto.*;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.intake.IntakePivot;
@@ -81,6 +78,7 @@ public class AutoManager {
 
         registerStrategy("Under The Bridge", AutoStrategies.UnderTheBridge, UnderTheBridge::new);
         registerStrategy("Tab", AutoStrategies.Tab, Tab::new);
+        registerStrategy("DropShot", AutoStrategies.DropShot, DropShot::new);
     }
 
     /**
@@ -96,7 +94,7 @@ public class AutoManager {
         NamedCommands.registerCommand("StartDrive", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
         NamedCommands.registerCommand("FeedNote", new FeedNoteInAuto());
         NamedCommands.registerCommand("ShootNote",
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.5)));
+                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2)));
 
         NamedCommands.registerCommand("WaitIntakeInPosition",
                 new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero).withTimeout(1.0));
@@ -114,6 +112,9 @@ public class AutoManager {
                 Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(UnderTheBridge.SecondShotProfile)));
         NamedCommands.registerCommand("UTBSetThirdShotSpeed",
                 Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(UnderTheBridge.ThirdShotProfile)));
+
+        // DropShot
+        NamedCommands.registerCommand("BloopShot", new BloopShot());
     }
 
     /**
@@ -122,6 +123,7 @@ public class AutoManager {
     private void registerAutoPaths() {
         UnderTheBridge.registerAutoPaths(pathRegistry);
         Tab.registerAutoPaths(pathRegistry);
+        DropShot.registerAutoPaths(pathRegistry);
     }
 
     // Register the strategy with the chooser and the lookup map
@@ -171,7 +173,7 @@ public class AutoManager {
         DebugTests2,
         DCL_BCL,
         UnderTheBridge,
-        Tab
+        DropShot, Tab
     }
 
 }

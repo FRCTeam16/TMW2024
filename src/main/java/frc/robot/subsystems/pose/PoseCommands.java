@@ -88,4 +88,11 @@ class PoseCommands {
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.Climb)
         );
     }
+
+    public static Command prepareBloopShotPose() {
+        return Commands.parallel(
+                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.StartingPosition),
+                Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(Subsystems.shooter.BloopProfile))
+        );
+    }
 }

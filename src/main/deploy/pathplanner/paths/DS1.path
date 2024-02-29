@@ -1,0 +1,135 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.8371826097804076,
+        "y": 7.4385770347126225
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.9371826097804077,
+        "y": 7.4385770347126225
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.0401990173989217,
+        "y": 7.75
+      },
+      "prevControl": {
+        "x": 2.043941945996128,
+        "y": 7.740188571564284
+      },
+      "nextControl": {
+        "x": 4.184963292293213,
+        "y": 7.761273970425198
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.619369692962239,
+        "y": 7.620534417789915
+      },
+      "prevControl": {
+        "x": 3.78153576698546,
+        "y": 7.722578293389651
+      },
+      "nextControl": {
+        "x": 5.535026201351196,
+        "y": 7.509012150742542
+      },
+      "isLocked": false,
+      "linkedName": "DS1Bloop"
+    },
+    {
+      "anchor": {
+        "x": 8.1,
+        "y": 7.48
+      },
+      "prevControl": {
+        "x": 6.268725326662861,
+        "y": 7.409229069700156
+      },
+      "nextControl": {
+        "x": 8.149962704476216,
+        "y": 7.481930844743042
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.251116547655381,
+        "y": 6.681399537390985
+      },
+      "prevControl": {
+        "x": 7.072859568004445,
+        "y": 7.086401454563023
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "DS1End"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Start Intake",
+      "waypointRelativePos": 2.3,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "StartIntake"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Bloop",
+      "waypointRelativePos": 2.15,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "BloopShot"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.5,
+    "maxAcceleration": 6.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 3.0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "DropShot",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

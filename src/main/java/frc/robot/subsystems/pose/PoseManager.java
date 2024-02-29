@@ -35,7 +35,8 @@ public class PoseManager {
         ShooterAimVision,
         ShortShot,
         // Start climb
-        StartClimb
+        StartClimb,
+        PrepareBloopShot
     }
 
     private Pose currentPose = Pose.StartingConfig;
@@ -57,6 +58,7 @@ public class PoseManager {
         registry.put(Pose.ShooterAimVision, PoseCommands::shooterAimVisionPose);
         registry.put(Pose.ShortShot, PoseCommands::shortShotPose);
         registry.put(Pose.StartClimb, PoseCommands::startClimbPose);
+        registry.put(Pose.PrepareBloopShot, PoseCommands::prepareBloopShotPose);
     }
 
     public Command getPoseCommand(Pose requestedPose) {

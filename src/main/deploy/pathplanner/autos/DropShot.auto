@@ -1,0 +1,25 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.8371826097804076,
+      "y": 7.4385770347126225
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DS1"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "DropShot",
+  "choreoAuto": false
+}

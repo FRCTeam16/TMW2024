@@ -1,0 +1,70 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 6.251116547655381,
+        "y": 6.681399537390985
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.104376722593047,
+        "y": 6.657921165381011
+      },
+      "isLocked": false,
+      "linkedName": "DS1End"
+    },
+    {
+      "anchor": {
+        "x": 4.4080643448724794,
+        "y": 6.382050294263825
+      },
+      "prevControl": {
+        "x": 4.496108239909879,
+        "y": 6.411398259276293
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "DS2End"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Feed",
+      "waypointRelativePos": 0.05,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "FeedNote"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 10.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "DropShot",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 2.0
+  },
+  "useDefaultConstraints": true
+}

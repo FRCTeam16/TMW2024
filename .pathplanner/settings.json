@@ -4,12 +4,14 @@
   "holonomicMode": true,
   "pathFolders": [
     "DCL_BCL",
+    "DropShot",
     "Tab",
     "Test",
     "UTB"
   ],
   "autoFolders": [
     "DCL_BCL",
+    "DropShot",
     "Tab",
     "Test",
     "UTB"

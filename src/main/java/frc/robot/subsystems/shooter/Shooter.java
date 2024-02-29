@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.VisionAimManager;
 
 /**
@@ -21,6 +22,9 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
     private final ShooterHelper upper = new ShooterHelper("ShooterSubsystem", "Upper",  new TalonFX(40));
     private final ShooterHelper lower =  new ShooterHelper("ShooterSubsystem", "Lower", new TalonFX(41));
     private final FeederHelper feeder = new FeederHelper("ShooterSubsystem", "Feeder", new TalonFX(42), noteFeedStop);
+    public final VisionAimManager.ShootingProfile BloopProfile =
+            new VisionAimManager.ShootingProfile(Pivot.PivotPosition.Horizontal.setpoint, 10, 10);
+
 
 
     public Shooter(){
