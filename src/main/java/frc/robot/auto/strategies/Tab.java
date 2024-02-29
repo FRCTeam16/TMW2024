@@ -9,6 +9,7 @@ import frc.robot.auto.PathRegistry;
 import frc.robot.commands.auto.*;
 import frc.robot.subsystems.VisionAimManager;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakePivot;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.util.BSLogger;
 
@@ -32,6 +33,7 @@ public class Tab extends AutoPathStrategy {
                 //
                 // First Shot
                 //
+
                 Commands.runOnce(() -> BSLogger.log("Tab", "First Shot")),
                 Commands.parallel(
                         Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShortShot),
@@ -46,8 +48,12 @@ public class Tab extends AutoPathStrategy {
                 //
                 // Run and pickup, second shot
                 //
-                Commands.runOnce(() -> BSLogger.log("Tab", "****** Running Tab")),
+                Commands.parallel(
+                        Commands.runOnce(() -> BSLogger.log("Tab", "****** Running Tab")),
+                        Subsystems.pivot.setQueuedProfileCmd(SecondShot)
+                ),
                 this.runAutoPath("Tab"),
+                Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(SecondShot)),
                 new RotateToAngle(-32).withTimeout(0.5),
                 DoShotCommand(SecondShot),
 
@@ -55,7 +61,10 @@ public class Tab extends AutoPathStrategy {
                 //
                 // Pickup, third shot
                 //
-                Commands.runOnce(() -> BSLogger.log("Tab", "****** Running Tab2")),
+                Commands.parallel(
+                        Commands.runOnce(() -> BSLogger.log("Tab", "****** Running Tab2")),
+                        Subsystems.pivot.setQueuedProfileCmd(ThirdShot)
+                ),
                 this.runAutoPath("Tab2"),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),  // trying this to make sure we are in a good state, try to prevent feed through
                 DoShotCommand(ThirdShot),
@@ -63,7 +72,10 @@ public class Tab extends AutoPathStrategy {
                 //
                 // Pickup, forth shot
                 //
-                Commands.runOnce(() -> BSLogger.log("Tab", "****** Running Tab3")),
+                Commands.parallel(
+                        Commands.runOnce(() -> BSLogger.log("Tab", "****** Running Tab3")),
+                        Subsystems.pivot.setQueuedProfileCmd(ForthShot)
+                ),
                 this.runAutoPath("Tab3"),
                 // May need to check state here, auto command is dropping out
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
@@ -72,9 +84,16 @@ public class Tab extends AutoPathStrategy {
                 //
                 // Pickup, fifth shot
                 //
-                Commands.runOnce(() -> BSLogger.log("Tab", "****** Running Tab4")),
+                Commands.parallel(
+                        Commands.runOnce(() -> BSLogger.log("Tab", "****** Running Tab4")),
+                        Subsystems.pivot.setQueuedProfileCmd(FifthShot)
+                ),
                 this.runAutoPath("Tab4"),
-                new WaitIntakeHasNoteCommand().withTimeout(1.0),
+                Commands.parallel(
+                        Commands.runOnce(() -> BSLogger.log("FeedNoteInAuto", "starting")),
+                        new WaitIntakeHasNoteCommand(),
+                        new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero)
+                ).withTimeout(3.0),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
                 DoShotCommand(FifthShot)
         );
@@ -84,8 +103,8 @@ public class Tab extends AutoPathStrategy {
         return new SequentialCommandGroup(
                 // Start point is that we expect the shooter to have a note
                 new WaitShooterHasNote().withTimeout(1.5),
-                new EnableShooterCommand(),
                 Commands.parallel(
+                        new EnableShooterCommand(),
                         Commands.runOnce(() -> Subsystems.intake.setIntakeState(Intake.IntakeState.IntakeFromFloor)),
                         Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(profile)),
                         Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))

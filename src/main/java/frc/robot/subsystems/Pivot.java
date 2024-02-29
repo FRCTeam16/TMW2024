@@ -41,6 +41,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     private double speed = 0.0;
     private TrapezoidProfile.State goal = new TrapezoidProfile.State(0, 0);
     private PivotPosition currentPosition = PivotPosition.Up;
+    private VisionAimManager.ShootingProfile queuedProfile;
 
 
     public Pivot() {
@@ -67,11 +68,12 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         // Set our current position to be our current angle
         this.holdPosition();
         this.goal = new TrapezoidProfile.State(this.getPivotAngleDegrees(), 0);
+        this.queuedProfile = null;
     }
 
     @Override
     public void autoInit() {
-        Lifecycle.super.autoInit();
+        this.queuedProfile = null;
     }
 
     public boolean isOpenLoop() {
@@ -118,6 +120,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
             DataLogManager.log("[" + SUBSYSTEM_NAME + "] INVALID SETPOINT REQUESTED, IGNORING");
             return;
         }
+        queuedProfile = null;
         openLoop = false;
         setpointLog.append(setpoint);
         this.goal = new TrapezoidProfile.State(setpoint, 0);
@@ -234,6 +237,10 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         return Commands.runOnce(() -> this.setPivotPosition(position));
     }
 
+    public Command setQueuedProfileCmd(VisionAimManager.ShootingProfile profile) {
+        return Commands.runOnce(() -> this.setQueuedProfileCmd(profile));
+    }
+
 
     public void applyShootingProfile(VisionAimManager.ShootingProfile profile) {
         this.openLoop = false;
@@ -243,6 +250,19 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
 
     public boolean isInPosition() {
         return Math.abs(this.getPivotAngleDegrees() - this.getPivotSetpoint()) <= 2;
+    }
+
+    public void queueNextProfile(VisionAimManager.ShootingProfile profile) {
+        this.queuedProfile = profile;
+    }
+
+    public void moveToQueuedProfile() {
+        BSLogger.log("Pivot", "moveToQueuedProfile");
+        if (this.queuedProfile != null) {
+            BSLogger.log("Pivot", "queued position = " + this.queuedProfile.pivotAngle());
+            applyShootingProfile(this.queuedProfile);
+            this.queuedProfile = null;
+        }
     }
 
 
