@@ -3,6 +3,7 @@
   "robotLength": 0.71,
   "holonomicMode": true,
   "pathFolders": [
+    "CrossWingShot",
     "DCL_BCL",
     "DropShot",
     "Tab",
@@ -12,6 +13,7 @@
   "autoFolders": [
     "DCL_BCL",
     "DropShot",
+    "CrossWingShot",
     "Tab",
     "Test",
     "UTB"

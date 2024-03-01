@@ -1,0 +1,76 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.580019929270629,
+        "y": 6.117504542701393
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.4221488442976895,
+        "y": 3.581700240323558
+      },
+      "isLocked": false,
+      "linkedName": "leftWingShot"
+    },
+    {
+      "anchor": {
+        "x": 7.737441628729412,
+        "y": 4.124382094918037
+      },
+      "prevControl": {
+        "x": 6.356069635216194,
+        "y": 3.956644067134288
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "NCL3"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.25,
+      "rotationDegrees": 35.334794035900885,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake NCL3",
+      "waypointRelativePos": 1.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "StartIntake"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.5,
+    "maxAcceleration": 6.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "CrossWingShot",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

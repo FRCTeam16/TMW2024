@@ -1,0 +1,70 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.638772200621325,
+        "y": 7.419940993728142
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.533674605810751,
+        "y": 6.9364607959985145
+      },
+      "isLocked": false,
+      "linkedName": "NCL5"
+    },
+    {
+      "anchor": {
+        "x": 4.580019929270629,
+        "y": 6.117504542701393
+      },
+      "prevControl": {
+        "x": 5.379242296946134,
+        "y": 6.512182255133741
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "leftWingShot"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 1.0,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "BloopShot"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.5,
+    "maxAcceleration": 6.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "CrossWingShot",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

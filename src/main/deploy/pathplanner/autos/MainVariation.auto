@@ -1,0 +1,55 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.5114007151091242,
+      "y": 6.176706199566246
+    },
+    "rotation": 21.370622269343166
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "StartToNCL4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CL4ToWingShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "WingShotToNCL5"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NCL5ToWingShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "WingShotToNCL3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NCL3ToWingShot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "CrossWingShot",
+  "choreoAuto": false
+}
