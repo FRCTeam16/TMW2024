@@ -1,6 +1,5 @@
 package frc.robot.auto.strategies;
 
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.commands.auto.InitializeAutoState;
 
