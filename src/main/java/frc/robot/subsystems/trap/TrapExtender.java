@@ -12,6 +12,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.util.MotionMagicConfig;
 import frc.robot.subsystems.util.OpenLoopSpeedsConfig;
@@ -30,7 +31,6 @@ public class TrapExtender implements Lifecycle, Sendable {
     private double closedLoopSetpoint;
 
     private TrapPosition trapPosition = TrapPosition.Zero;
-
 
 
     public TrapExtender(TalonFX motor) {
@@ -133,23 +133,24 @@ public class TrapExtender implements Lifecycle, Sendable {
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addBooleanProperty("TrapExtender/OpenLoop", this::isOpenLoop, this::setOpenLoop);
-        builder.addDoubleProperty("TrapExtender/UpSpeed", openLoopSpeeds::getUpSpeed, openLoopSpeeds::setUpSpeed);
-        builder.addDoubleProperty("TrapExtender/DownSpeed", openLoopSpeeds::getDownSpeed, openLoopSpeeds::setDownSpeed);
-
         builder.addDoubleProperty("TrapExtender/ClosedLoopSetpoint", this::getClosedLoopSetpoint, this::setClosedLoopSetpoint);
-//        builder.addStringProperty("TrapExtender/Position", () -> this.getIntakePosition().name(), null);
+        builder.addStringProperty("TrapExtender/Position", () -> this.trapPosition.name(), null);
 
-        builder.addDoubleProperty("TrapExtender/MM/kS", motionMagicConfig::getkS, motionMagicConfig::setkS);
-        builder.addDoubleProperty("TrapExtender/MM/kG", motionMagicConfig::getkG, motionMagicConfig::setkG);
-        builder.addDoubleProperty("TrapExtender/MM/Acceleration", motionMagicConfig::getAcceleration, motionMagicConfig::setAcceleration);
-        builder.addDoubleProperty("TrapExtender/MM/Velocity", motionMagicConfig::getVelocity, motionMagicConfig::setVelocity);
-        builder.addDoubleProperty("TrapExtender/MM/Jerk", motionMagicConfig::getJerk, motionMagicConfig::setJerk);
+        if (Constants.Dashboard.ConfigurationMode) {
+            builder.addDoubleProperty("TrapExtender/UpSpeed", openLoopSpeeds::getUpSpeed, openLoopSpeeds::setUpSpeed);
+            builder.addDoubleProperty("TrapExtender/DownSpeed", openLoopSpeeds::getDownSpeed, openLoopSpeeds::setDownSpeed);
 
-        builder.addBooleanProperty("TrapExtender/FwdLimitHit", () -> this.motor.getFault_ForwardSoftLimit().getValue(), null);
-        builder.addBooleanProperty("TrapExtender/RevLimitHit", () -> this.motor.getFault_ReverseSoftLimit().getValue(), null);
+            builder.addDoubleProperty("TrapExtender/MM/kS", motionMagicConfig::getkS, motionMagicConfig::setkS);
+            builder.addDoubleProperty("TrapExtender/MM/kG", motionMagicConfig::getkG, motionMagicConfig::setkG);
+            builder.addDoubleProperty("TrapExtender/MM/Acceleration", motionMagicConfig::getAcceleration, motionMagicConfig::setAcceleration);
+            builder.addDoubleProperty("TrapExtender/MM/Velocity", motionMagicConfig::getVelocity, motionMagicConfig::setVelocity);
+            builder.addDoubleProperty("TrapExtender/MM/Jerk", motionMagicConfig::getJerk, motionMagicConfig::setJerk);
 
-        builder.addDoubleProperty("TrapExtender/Encoder", () -> this.motor.getPosition().getValue(), null);
-//        builder.addDoubleProperty("TrapExtender/ZeroEncoderOffset", this::getZeroPivotEncoderOffset, this::setZeroPivotEncoderOffset);
+            builder.addBooleanProperty("TrapExtender/FwdLimitHit", () -> this.motor.getFault_ForwardSoftLimit().getValue(), null);
+            builder.addBooleanProperty("TrapExtender/RevLimitHit", () -> this.motor.getFault_ReverseSoftLimit().getValue(), null);
+
+            builder.addDoubleProperty("TrapExtender/Encoder", () -> this.motor.getPosition().getValue(), null);
+        }
     }
 
     public enum TrapPosition {

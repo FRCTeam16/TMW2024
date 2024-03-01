@@ -4,7 +4,13 @@ import frc.robot.generated.TunerConstants;
 
 public final class Constants {
 
-    public static final boolean UseSendables = true;
+
+    public static final class Dashboard {
+        // Whether to use the sendable system for dashboard updates
+        public static final boolean UseSendables = true;
+        // Whether to use the sendable system for real-time tuning
+        public static final boolean ConfigurationMode = true;
+    }
 
     public static final class OI {
         public static final double stickDeadband = 0.05;

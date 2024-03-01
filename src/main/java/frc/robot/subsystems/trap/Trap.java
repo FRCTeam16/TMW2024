@@ -44,7 +44,7 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        if (Constants.UseSendables) {
+        if (Constants.Dashboard.UseSendables) {
             builder.setSmartDashboardType(SUBSYSTEM_NAME);
             // TODO: expose finger values
             pivot.initSendable(builder);

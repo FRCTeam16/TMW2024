@@ -126,7 +126,7 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        if (Constants.UseSendables) {
+        if (Constants.Dashboard.UseSendables) {
             builder.setSmartDashboardType("ShooterSubsystem");
             builder.setActuator(true);
             upper.initSendable(builder);

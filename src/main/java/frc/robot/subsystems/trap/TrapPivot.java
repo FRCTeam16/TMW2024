@@ -10,6 +10,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.util.MotionMagicConfig;
 import frc.robot.subsystems.util.OpenLoopSpeedsConfig;
@@ -96,23 +97,27 @@ public class TrapPivot implements Lifecycle, Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.addBooleanProperty("TrapPivot/OpenLoop", this::isOpenLoop, this::setOpenLoop);
-        builder.addDoubleProperty("TrapPivot/UpSpeed", openLoopSpeeds::getUpSpeed, openLoopSpeeds::setUpSpeed);
-        builder.addDoubleProperty("TrapPivot/DownSpeed", openLoopSpeeds::getDownSpeed, openLoopSpeeds::setDownSpeed);
-
-        builder.addDoubleProperty("TrapPivot/ClosedLoopSetpoint", this::getClosedLoopSetpoint, this::setClosedLoopSetpoint);
-//        builder.addStringProperty("TrapPivot/Position", () -> this.getIntakePosition().name(), null);
-
-        builder.addDoubleProperty("TrapPivot/MM/kS", motionMagicConfig::getkS, motionMagicConfig::setkS);
-        builder.addDoubleProperty("TrapPivot/MM/kG", motionMagicConfig::getkG, motionMagicConfig::setkG);
-        builder.addDoubleProperty("TrapPivot/MM/Acceleration", motionMagicConfig::getAcceleration, motionMagicConfig::setAcceleration);
-        builder.addDoubleProperty("TrapPivot/MM/Velocity", motionMagicConfig::getVelocity, motionMagicConfig::setVelocity);
-        builder.addDoubleProperty("TrapPivot/MM/Jerk", motionMagicConfig::getJerk, motionMagicConfig::setJerk);
-
-        builder.addBooleanProperty("TrapPivot/FwdLimitHit", () -> this.motor.getFault_ForwardSoftLimit().getValue(), null);
-        builder.addBooleanProperty("TrapPivot/RevLimitHit", () -> this.motor.getFault_ReverseSoftLimit().getValue(), null);
 
         builder.addDoubleProperty("TrapPivot/Encoder", () -> this.motor.getPosition().getValue(), null);
+
+        if (Constants.Dashboard.ConfigurationMode) {
+
+
+            builder.addBooleanProperty("TrapPivot/OpenLoop", this::isOpenLoop, this::setOpenLoop);
+            builder.addDoubleProperty("TrapPivot/UpSpeed", openLoopSpeeds::getUpSpeed, openLoopSpeeds::setUpSpeed);
+            builder.addDoubleProperty("TrapPivot/DownSpeed", openLoopSpeeds::getDownSpeed, openLoopSpeeds::setDownSpeed);
+
+            builder.addDoubleProperty("TrapPivot/ClosedLoopSetpoint", this::getClosedLoopSetpoint, this::setClosedLoopSetpoint);
+
+            builder.addDoubleProperty("TrapPivot/MM/kS", motionMagicConfig::getkS, motionMagicConfig::setkS);
+            builder.addDoubleProperty("TrapPivot/MM/kG", motionMagicConfig::getkG, motionMagicConfig::setkG);
+            builder.addDoubleProperty("TrapPivot/MM/Acceleration", motionMagicConfig::getAcceleration, motionMagicConfig::setAcceleration);
+            builder.addDoubleProperty("TrapPivot/MM/Velocity", motionMagicConfig::getVelocity, motionMagicConfig::setVelocity);
+            builder.addDoubleProperty("TrapPivot/MM/Jerk", motionMagicConfig::getJerk, motionMagicConfig::setJerk);
+
+            builder.addBooleanProperty("TrapPivot/FwdLimitHit", () -> this.motor.getFault_ForwardSoftLimit().getValue(), null);
+            builder.addBooleanProperty("TrapPivot/RevLimitHit", () -> this.motor.getFault_ReverseSoftLimit().getValue(), null);
+        }
 //        builder.addDoubleProperty("TrapPivot/ZeroEncoderOffset", this::getZeroPivotEncoderOffset, this::setZeroPivotEncoderOffset);
     }
 }

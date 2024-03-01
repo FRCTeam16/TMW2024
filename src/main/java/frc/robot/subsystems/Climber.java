@@ -111,17 +111,19 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        if (Constants.UseSendables) {
+        if (Constants.Dashboard.UseSendables) {
             builder.setSmartDashboardType(SUBSYSTEM_NAME);
-            builder.addDoubleProperty("OpenLoop/UpSpeed", this.climberOpenLoopSpeeds::getUpSpeed, this.climberOpenLoopSpeeds::setUpSpeed);
-            builder.addDoubleProperty("OpenLoop/DownSpeed", this.climberOpenLoopSpeeds::getDownSpeed, this.climberOpenLoopSpeeds::setDownSpeed);
-            builder.addDoubleProperty("OpenLoop/Speed", () -> this.openLoopSpeed, null);
 
-            builder.addDoubleProperty("Setpoint", this::getSetpoint, this::setSetpoint);
+            if (Constants.Dashboard.ConfigurationMode) {
+                builder.addDoubleProperty("OpenLoop/UpSpeed", this.climberOpenLoopSpeeds::getUpSpeed, this.climberOpenLoopSpeeds::setUpSpeed);
+                builder.addDoubleProperty("OpenLoop/DownSpeed", this.climberOpenLoopSpeeds::getDownSpeed, this.climberOpenLoopSpeeds::setDownSpeed);
+                builder.addDoubleProperty("Velocity", () -> this.climberDrive.getVelocity().getValue(), null);
+                builder.addDoubleProperty("Acceleration", () -> this.climberDrive.getAcceleration().getValue(), null);
+                builder.addDoubleProperty("OpenLoop/Speed", () -> this.openLoopSpeed, null);
+            }
             builder.addStringProperty("ClimberPosition", () -> this.getClimberPosition().name(), null);
+            builder.addDoubleProperty("Setpoint", this::getSetpoint, this::setSetpoint);
             builder.addDoubleProperty("Encoder", () -> this.climberDrive.getPosition().getValue(), null);
-            builder.addDoubleProperty("Velocity", () -> this.climberDrive.getVelocity().getValue(), null);
-            builder.addDoubleProperty("Acceleration", () -> this.climberDrive.getAcceleration().getValue(), null);
         }
     }
 
