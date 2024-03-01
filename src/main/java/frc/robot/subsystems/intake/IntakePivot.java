@@ -256,7 +256,7 @@ public class IntakePivot implements Lifecycle, Sendable {
 
         Telemetry() {
             DataLog log = DataLogManager.getLog();
-            pivotPositionLog = new StringLogEntry(log, "Intake/PivotPosition");
+            pivotPositionLog = new StringLogEntry(log, "datalog/Intake/PivotPosition");
         }
 
         void logPositionChange(IntakePosition position) {

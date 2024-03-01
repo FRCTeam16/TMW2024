@@ -38,14 +38,13 @@ public class PoseManager {
         PrepareBloopShot
     }
 
-    private Pose currentPose = Pose.StartingConfig;
     private Pose lastPose = Pose.StartingConfig;
     private final Map<Pose, Supplier<Command>> registry = new HashMap<>();
 
     private final StringLogEntry poseLog;
 
     public PoseManager() {
-        poseLog = new StringLogEntry(DataLogManager.getLog(), "/posemanager");
+        poseLog = new StringLogEntry(DataLogManager.getLog(), "datalog/posemanager");
 
         registry.put(Pose.StartingConfig, PoseCommands::moveToStartingConfigPose);
         registry.put(Pose.Pickup, PoseCommands::moveToPickupPose);
@@ -65,18 +64,13 @@ public class PoseManager {
         SmartDashboard.putString("PoseManager/RequestedPose", requestedPose.name());
 
         if (registry.containsKey(requestedPose)) {
-            lastPose = currentPose;
-            currentPose = requestedPose;
+            lastPose = requestedPose;
             poseLog.append(requestedPose.name());
             return registry.get(requestedPose).get();
         } else {
             BSLogger.log("PoseManager", "!!! Unhandled pose requested: " + requestedPose);
             return Commands.none();
         }
-    }
-
-    public Pose getCurrentPose() {
-        return currentPose;
     }
 
     public Pose getLastPose() {

@@ -6,6 +6,8 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,6 +27,8 @@ import frc.robot.subsystems.vision.VisionTypes;
 
 import java.util.Objects;
 
+import static edu.wpi.first.units.Units.Radians;
+
 public class RobotContainer {
     private static final double MaxSpeed = Constants.Swerve.kMaxSpeedMetersPerSecond;
     private static final double MaxAngularRate = Constants.Swerve.kMaxAngularVelocity;
@@ -38,8 +42,11 @@ public class RobotContainer {
     private final Subsystems subsystems = Subsystems.getInstance();
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.01).withRotationalDeadband(MaxAngularRate * 0.01) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
+            .withDeadband(MaxSpeed * 0.01).withRotationalDeadband(MaxAngularRate * 0.01)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+    private final SwerveRequest.RobotCentric robotCentricDrive = new SwerveRequest.RobotCentric()
+            .withDeadband(MaxSpeed * 0.01).withRotationalDeadband(MaxAngularRate * 0.01)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
     private final SwerveStateTelemetry swerveStateTelemetry = new SwerveStateTelemetry(MaxSpeed);
@@ -63,8 +70,22 @@ public class RobotContainer {
     //
     // Controller
     //
-    private final RotationController alignController = new RotationController(0.02, 0, 0);
+    private final Trigger startShooter = xboxController.start();
+    private final Trigger stopShooter = xboxController.back();
+    private final Trigger rightBumper = xboxController.rightBumper();
+    private final Trigger leftBumper = xboxController.leftBumper();
+
+    private final Trigger leftTrigger = xboxController.leftTrigger();
+    private final Trigger rightTrigger = xboxController.rightTrigger();
+
+    private final Trigger feedNoteToShooter = xboxController.b();
+    private final Trigger startClimb = xboxController.x();
     //
+    // Miscellaneous
+    //
+    private final RotationController alignController = new RotationController(0.02, 0, 0);
+    Trigger povUp = xboxController.povUp();
+    Trigger povDown = xboxController.povDown();
     MusicController music = new MusicController();
     private boolean useVisionAlignment = false;
 
@@ -76,25 +97,27 @@ public class RobotContainer {
 
     }
 
-    private double supplySwerveRotate() {
+    /**
+     * This method is used to supply the swerve rotate value to the swerve drive
+     *
+     * @return the swerve rotate value
+     */
+    private Measure<Angle> supplySwerveRotate() {
         final double DEADBAND = 0.05;
+        final double twist;
         if (!useVisionAlignment) {
-//            return OIUtil.deadband(-left.getX(), DEADBAND) * (MaxAngularRate * 0.8);
-            return OIUtil.deadband(-left.getX(), DEADBAND) * (MaxAngularRate * 0.8);
+            twist = OIUtil.deadband(-left.getX(), DEADBAND) * (MaxAngularRate * 0.8);
         } else {
             VisionTypes.TargetInfo targetInfo = Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo();
-            // If no target give control bapivotck to human
+            // If no target give control back to human inputs
             if (!targetInfo.hasTarget()) {
-//                return OIUtil.deadband(-left.getX(), DEADBAND) * (MaxAngularRate * 0.8);
-                return OIUtil.deadband(-left.getX(), DEADBAND) * (MaxAngularRate * 0.8);
-
+                twist = OIUtil.deadband(-left.getX(), DEADBAND) * (MaxAngularRate * 0.8);
+            } else {
+                double horizontalComponent = alignController.calculate(targetInfo.xOffset(), 0);
+                twist = horizontalComponent * Constants.Swerve.kMaxAngularVelocity;
             }
-//            SmartDashboard.putNumber("TargetXOff", targetInfo.xOffset());
-            double horizontalComponent = alignController.calculate(targetInfo.xOffset(), 0);
-            double twist = horizontalComponent * Constants.Swerve.kMaxAngularVelocity;
-//            DataLogManager.log(("[VISION ALIGNMENT] Running at: " + Timer.getFPGATimestamp() + " | Twist: " + twist));
-            return twist;
         }
+        return Radians.of(twist);
     }
 
 
@@ -102,58 +125,50 @@ public class RobotContainer {
         drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
                 drivetrain.applyRequest(() -> drive
                         .withDeadband(0.02 * MaxSpeed)
-//                        .withVelocityX(-right.getY() * MaxSpeed)
-//                        .withVelocityY(-right.getX() * MaxSpeed)
-                        .withVelocityX(OIUtil.deadband(-right.getY(),0.05) * MaxSpeed)
+                        .withVelocityX(OIUtil.deadband(-right.getY(), 0.05) * MaxSpeed)
                         .withVelocityY(OIUtil.deadband(-right.getX(), 0.05) * MaxSpeed)
-                        .withRotationalRate(supplySwerveRotate())));
+                        .withRotationalRate(supplySwerveRotate().in(Radians))));
 
 
         //
         // Debug/Development
         //
-
-//        xboxController.y().whileTrue(drivetrain.applyRequest(() -> brake));
-//        xboxController.b().whileTrue(drivetrain
-//                .applyRequest(
-//                        () -> point.withModuleDirection(new Rotation2d(-xboxController.getLeftY(), -xboxController.getLeftX()))));
-
-        xboxController.rightBumper().onTrue(Commands.runOnce(Subsystems.pivot::openLoopUp)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
-        xboxController.leftBumper().onTrue(Commands.runOnce(Subsystems.pivot::openLoopDown)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
+        rightBumper.onTrue(Commands.runOnce(Subsystems.pivot::openLoopUp)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
+        leftBumper.onTrue(Commands.runOnce(Subsystems.pivot::openLoopDown)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
 
         // Test Intake
         if (false) {
-            xboxController.leftTrigger()
+            leftTrigger
                     .onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().pivotOpenLoopDown()))
                     .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().holdPosition()));
-            xboxController.rightTrigger()
+            rightTrigger
                     .onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().pivotOpenLoopUp()))
                     .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().holdPosition()));
         }
         // Test Climber
         if (true) {
-            xboxController.leftTrigger()
+            leftTrigger
                     .onTrue(Commands.runOnce(() -> Subsystems.climber.openLoopUp()))
                     .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
 
-            xboxController.rightTrigger()
+            rightTrigger
                     .onTrue(Commands.runOnce(() -> Subsystems.climber.openLoopDown()))
                     .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
         }
 
         // Test Trap
         if (false) {
-            xboxController.leftTrigger()
+            leftTrigger
                     .onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().openLoopDown()))
                     .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
 
-            xboxController.rightTrigger()
+            rightTrigger
                     .onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().openLoopUp()))
                     .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
         }
-        xboxController.povUp().onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().setTrapPosition(TrapExtender.TrapPosition.Up)));
-        xboxController.povDown().onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero)));
 
+        povUp.onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().setTrapPosition(TrapExtender.TrapPosition.Up)));
+        povDown.onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero)));
 
 
         //
@@ -176,34 +191,21 @@ public class RobotContainer {
         //
         intake.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup))
                 .onFalse(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
-
         feedIntake.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeFeedShooter()))
                 .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));
         eject.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeEject()))
                 .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));
 
-        xboxController.x().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.StartClimb));
 
+        //
+        // Climb subsystem
+        //
+        startClimb.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.StartClimb));
 
-
-        // Testing
-//        xboxController.povUp().onTrue(Commands.runOnce(() -> {
-//            double value = SmartDashboard.getNumber("DebugFeederSpeeds", -0.3);
-//                    Subsystems.shooter.getFeeder().setOpenLoopSetpoint(value);
-//                    Subsystems.intake.getIntakeSpeed().runIntakeDebug(value);[]\
-//                    Subsystems.shooter.runFeeder();
-//                }))
-//                .onFalse(Commands.runOnce(() -> {
-//                    Subsystems.shooter.getFeeder().setOpenLoopSetpoint(0.0);
-//                    Subsystems.intake.getIntakeSpeed().runIntakeDebug(0.0);
-//                }));
 
         //
         // Shooter
         //
-        SmartDashboard.putData("Start Shooter", Commands.runOnce(Subsystems.shooter::runShooter));
-        SmartDashboard.putData("Stop Shooter", Commands.runOnce(Subsystems.shooter::stopShooter));
-
         feed.onTrue(
                 Commands.either(
                         Commands.runOnce(Subsystems.shooter::shoot),
@@ -211,14 +213,11 @@ public class RobotContainer {
                         () -> !Subsystems.intake.isNoteDetected())
         ).onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
 
-        feed.onTrue(Commands.runOnce(Subsystems.shooter::shoot))
-                .onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
-
-        xboxController.b().onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter));
+        feedNoteToShooter.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter));
         ampAim.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PositionForAmp));
 
-        xboxController.start().onTrue(Commands.runOnce(Subsystems.shooter::runShooter));
-        xboxController.back().onTrue(Commands.runOnce(Subsystems.shooter::stopShooter));
+        startShooter.onTrue(Commands.runOnce(Subsystems.shooter::runShooter));
+        stopShooter.onTrue(Commands.runOnce(Subsystems.shooter::stopShooter));
 
 
         if (Utils.isSimulation()) {
@@ -229,16 +228,17 @@ public class RobotContainer {
     }
 
     private void configureDashboardButtons() {
+        SmartDashboard.putData("Start Shooter", Commands.runOnce(Subsystems.shooter::runShooter));
+        SmartDashboard.putData("Stop Shooter", Commands.runOnce(Subsystems.shooter::stopShooter));
+
         SmartDashboard.putData("Tare Odometry", new RunWithDisabledInstantCommand(() -> Subsystems.swerveSubsystem.tareEverything()));
         SmartDashboard.putData("Zero Gyro", new ZeroAndSetOffsetCommand(0).ignoringDisable(true));
-
 
         SmartDashboard.putData("Update IntakeRotate PID", Subsystems.intake.getIntakePivot().updatePIDFromDashbboardCommand().ignoringDisable(true));
         SmartDashboard.putData("Set IntakeRotater Offset", Subsystems.intake.getIntakePivot().getSetPivotEncoderOffestCmd().ignoringDisable(true));
 
         SmartDashboard.putData("Pose: Pickup", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup));
         SmartDashboard.putData("Pose: Handoff", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.NotePickedUp));
-
 
         SmartDashboard.putData("Play Lowrida", music.getPlayCommand());
         SmartDashboard.putData("Stop Music", music.getPauseommand());
