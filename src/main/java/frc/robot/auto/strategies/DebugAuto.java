@@ -10,12 +10,14 @@ import frc.robot.commands.auto.EnableShooterCommand;
 import frc.robot.commands.auto.InitializeAutoState;
 import frc.robot.subsystems.pose.PoseManager;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 public class DebugAuto extends SequentialCommandGroup {
   public DebugAuto() {
     // double speed = 0.5;
     // double offset = -90.0;
     addCommands(
-            new InitializeAutoState(0),
+            new InitializeAutoState(Degrees.of(0)),
             new PrintCommand("DEBUG AUTO"),
             Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShortShot),
             new WaitCommand(2.0),

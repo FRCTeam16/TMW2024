@@ -10,6 +10,8 @@ import frc.robot.subsystems.VisionAimManager;
 import frc.robot.subsystems.intake.IntakePivot;
 import frc.robot.subsystems.pose.PoseManager;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 public class UnderTheBridge extends AutoPathStrategy {
     public static final VisionAimManager.ShootingProfile SecondShotProfile = new VisionAimManager.ShootingProfile(23.19, 59.266, 38.799); // 129ish?
     public static final VisionAimManager.ShootingProfile ThirdShotProfile = new VisionAimManager.ShootingProfile(45.85, 18.27, 20.965); // 55"
@@ -28,7 +30,7 @@ public class UnderTheBridge extends AutoPathStrategy {
         addCommands(
                 Commands.parallel(
                         new PrintStartInfo("Under the Bridge"),
-                        new InitializeAutoState(0),
+                        new InitializeAutoState(Degrees.of(0)),
                         new EnableShooterCommand()
 //                        Subsystems.swerveSubsystem.applyRequest(() -> pointWheels)
                 ),

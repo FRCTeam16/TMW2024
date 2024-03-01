@@ -13,6 +13,8 @@ import frc.robot.subsystems.intake.IntakePivot;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.util.BSLogger;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 public class Tab extends AutoPathStrategy {
 
     public static final VisionAimManager.ShootingProfile SecondShot = new VisionAimManager.ShootingProfile(38, 30, 26); // 87"
@@ -25,7 +27,7 @@ public class Tab extends AutoPathStrategy {
         addCommands(
                 Commands.parallel(
                         new PrintStartInfo("Tab"),
-                        new InitializeAutoState(0),
+                        new InitializeAutoState(Degrees.of(0)),
                         new EnableShooterCommand()
 //                        Subsystems.swerveSubsystem.applyRequest(() -> pointWheels)
                 ),
@@ -34,7 +36,7 @@ public class Tab extends AutoPathStrategy {
                 // First Shot
                 //
 
-                Commands.runOnce(() -> BSLogger.log("Tab", "First Shot")),
+                writeLog("Tab", "First Shot"),
                 Commands.parallel(
                         Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShortShot),
                         new WaitCommand(0.25)
@@ -49,7 +51,7 @@ public class Tab extends AutoPathStrategy {
                 // Run and pickup, second shot
                 //
                 Commands.parallel(
-                        Commands.runOnce(() -> BSLogger.log("Tab", "****** Running Tab")),
+                        writeLog("Tab", "****** Running Tab"),
                         Subsystems.pivot.setQueuedProfileCmd(SecondShot)
                 ),
                 this.runAutoPath("Tab"),
@@ -62,7 +64,7 @@ public class Tab extends AutoPathStrategy {
                 // Pickup, third shot
                 //
                 Commands.parallel(
-                        Commands.runOnce(() -> BSLogger.log("Tab", "****** Running Tab2")),
+                        writeLog("Tab", "****** Running Tab2"),
                         Subsystems.pivot.setQueuedProfileCmd(ThirdShot)
                 ),
                 this.runAutoPath("Tab2"),
@@ -73,7 +75,7 @@ public class Tab extends AutoPathStrategy {
                 // Pickup, forth shot
                 //
                 Commands.parallel(
-                        Commands.runOnce(() -> BSLogger.log("Tab", "****** Running Tab3")),
+                        writeLog("Tab", "****** Running Tab3"),
                         Subsystems.pivot.setQueuedProfileCmd(ForthShot)
                 ),
                 this.runAutoPath("Tab3"),
@@ -85,12 +87,12 @@ public class Tab extends AutoPathStrategy {
                 // Pickup, fifth shot
                 //
                 Commands.parallel(
-                        Commands.runOnce(() -> BSLogger.log("Tab", "****** Running Tab4")),
+                        writeLog("Tab", "****** Running Tab4"),
                         Subsystems.pivot.setQueuedProfileCmd(FifthShot)
                 ),
                 this.runAutoPath("Tab4"),
                 Commands.parallel(
-                        Commands.runOnce(() -> BSLogger.log("FeedNoteInAuto", "starting")),
+                        writeLog("FeedNoteInAuto", "starting"),
                         new WaitIntakeHasNoteCommand(),
                         new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero)
                 ).withTimeout(3.0),
@@ -110,7 +112,7 @@ public class Tab extends AutoPathStrategy {
                         Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))
                 ),
                 new WaitPivotInPosition().withTimeout(0.5),
-                Commands.runOnce(() -> BSLogger.log("DoShotCommand", "******* WILL BE FIRING NEXT *******")),
+                writeLog("DoShotCommand", "******* WILL BE FIRING NEXT *******"),
                 new WaitCommand(0.5),
                 doShootCmd(),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup)
@@ -125,7 +127,7 @@ public class Tab extends AutoPathStrategy {
 
     static Command doShootCmd() {
         return Commands.parallel(
-                Commands.runOnce(() -> BSLogger.log("doShootCmd", "shooting")),
+                writeLog("doShootCmd", "shooting"),
                 Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2))
         );
     }
