@@ -47,6 +47,23 @@
           ]
         }
       }
+    },
+    {
+      "name": "Start Shooter",
+      "waypointRelativePos": 0.65,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "StartShooter"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "globalConstraints": {
