@@ -17,6 +17,7 @@ import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.util.MotionMagicConfig;
 import frc.robot.subsystems.util.OpenLoopSpeedsConfig;
 import frc.robot.subsystems.util.PIDHelper;
+import frc.robot.subsystems.util.SoftLimitValues;
 
 public class TrapExtender implements Lifecycle, Sendable {
     private final TalonFX motor;
@@ -32,14 +33,17 @@ public class TrapExtender implements Lifecycle, Sendable {
 
     private TrapPosition trapPosition = TrapPosition.Zero;
 
+    private final SoftLimitValues softLimits = new SoftLimitValues(0.55, -24.25);
+    private boolean softLimitsEnabled = true;
+
 
     public TrapExtender(TalonFX motor) {
         this.motor = motor;
         configuration = new TalonFXConfiguration()
                 .withSoftwareLimitSwitch(
                         new SoftwareLimitSwitchConfigs()
-                                .withReverseSoftLimitThreshold(-24.25).withReverseSoftLimitEnable(true)   // 0.25 = 1/8"
-                                .withForwardSoftLimitThreshold(0.55).withForwardSoftLimitEnable(true)
+                                .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold()).withReverseSoftLimitEnable(true)   // 0.25 = 1/8"
+                                .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold()).withForwardSoftLimitEnable(true)
                 ).withHardwareLimitSwitch(new HardwareLimitSwitchConfigs().withForwardLimitEnable(false).withReverseLimitEnable(false));
         pidHelper.initialize(2.6, 0.6, 0, 0, 0, 0);
         motionMagicConfig.setJerk(2000);
@@ -82,8 +86,31 @@ public class TrapExtender implements Lifecycle, Sendable {
     }
 
     public void stopOpenLoop() {
+        if (!softLimitsEnabled) {
+            softLimitsEnabled = true;
+            setSoftLimits(true);
+        }
         setOpenLoop(true);
         setOpenLoopSetpoint(0.0);
+    }
+
+    public void unsafeOpenLoopUp() {
+        softLimitsEnabled = false;
+        setSoftLimits(false);
+        openLoopUp();
+    }
+
+    public void unsafeOpenLoopDown() {
+        softLimitsEnabled = false;
+        setSoftLimits(false);
+        openLoopDown();
+    }
+
+    private void setSoftLimits(boolean enable) {
+        this.motor.getConfigurator().apply(
+                new SoftwareLimitSwitchConfigs()
+                        .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold()).withForwardSoftLimitEnable(enable)
+                        .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold()).withReverseSoftLimitEnable(enable));
     }
 
 

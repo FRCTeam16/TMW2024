@@ -1,53 +1,77 @@
 package frc.robot.subsystems.trap;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.subsystems.Lifecycle;
-import frc.robot.subsystems.util.BSLogger;
-import frc.robot.subsystems.util.MotionMagicConfig;
-import frc.robot.subsystems.util.OpenLoopSpeedsConfig;
-import frc.robot.subsystems.util.PIDHelper;
+import frc.robot.subsystems.util.*;
 
 public class TrapPivot implements Lifecycle, Sendable {
     private final TalonFX motor;
     private final TalonFXConfiguration configuration = new TalonFXConfiguration();
-    private final OpenLoopSpeedsConfig openLoopSpeeds = new OpenLoopSpeedsConfig(0.1, -0.1);
+    private final OpenLoopSpeedsConfig openLoopSpeeds = new OpenLoopSpeedsConfig(-1.2, 1.2);
     private final MotionMagicConfig motionMagicConfig = new MotionMagicConfig();
-    private final DutyCycleOut openLoopOut = new DutyCycleOut(0);
+    private final SoftLimitValues softLimits = new SoftLimitValues(0, 0);
+
+    private final VoltageOut openLoopOut = new VoltageOut(0);
     private final PositionVoltage positionOut = new PositionVoltage(0);
     private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private final PIDHelper pidHelper = new PIDHelper(Trap.SUBSYSTEM_NAME + "/Pivot/PID");
     private boolean openLoop = true;
+    private boolean softLimitsEnabled = false;
     private double openLoopSetpoint = 0;
     private double closedLoopSetpoint;
     private TrapPivotPosition trapPosition = TrapPivotPosition.Zero;
 
-    public enum TrapPivotPosition {
-        Zero(0),
-        Feed(0);
-
-        private final double setpoint;
-
-        TrapPivotPosition(double setpoint) {
-            this.setpoint = setpoint;
-        }
-    }
-
     public TrapPivot(TalonFX motor) {
         this.motor = motor;
-        pidHelper.initialize(0, 0, 0, 0, 0, 0);
+        motor.setNeutralMode(NeutralModeValue.Brake);
+        motionMagicConfig.setAcceleration(150);
+        motionMagicConfig.setVelocity(100);
+        motionMagicConfig.setJerk(0);
+        configuration
+                .withSoftwareLimitSwitch(
+                        new SoftwareLimitSwitchConfigs()
+                                .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold()).withForwardSoftLimitEnable(false)
+                                .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold()).withReverseSoftLimitEnable(true))
+                .withHardwareLimitSwitch(
+                        new HardwareLimitSwitchConfigs()
+                                .withForwardLimitEnable(false)
+                                .withReverseLimitEnable(false));
+
+
+        pidHelper.initialize(0.81, 0.24, 0, 0, 0, 0);
         updatePIDFromDashboard();
+        pidHelper.updateConfiguration(configuration.Slot0);
         motor.getConfigurator().apply(configuration);
+    }
+
+    @Override
+    public void teleopInit() {
+        holdPosition();
+    }
+
+    @Override
+    public void autoInit() {
+        holdPosition();
+    }
+
+    private void setSoftLimits(boolean enable) {
+        this.motor.getConfigurator().apply(
+                new SoftwareLimitSwitchConfigs()
+                        .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold()).withForwardSoftLimitEnable(enable)
+                        .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold()).withReverseSoftLimitEnable(enable));
     }
 
     public boolean isOpenLoop() {
@@ -69,8 +93,24 @@ public class TrapPivot implements Lifecycle, Sendable {
     }
 
     public void stopOpenLoop() {
-        setOpenLoop(true);
-        setOpenLoopSetpoint(0.0);
+        // TODO: Enable once soft limit values are set
+//        if (!softLimitsEnabled) {
+//            softLimitsEnabled = true;
+//            setSoftLimits(true);
+//        }
+        holdPosition();
+    }
+
+    public void unsafeOpenLoopUp() {
+        softLimitsEnabled = false;
+        setSoftLimits(false);
+        openLoopUp();
+    }
+
+    public void unsafeOpenLoopDown() {
+        softLimitsEnabled = false;
+        setSoftLimits(false);
+        openLoopDown();
     }
 
     public double getOpenLoopSetpoint() {
@@ -86,37 +126,44 @@ public class TrapPivot implements Lifecycle, Sendable {
     }
 
     public void setClosedLoopSetpoint(double closedLoopSetpoint) {
+        this.openLoop = false;
         this.closedLoopSetpoint = closedLoopSetpoint;
+    }
+
+    public void holdPosition() {
+        this.setClosedLoopSetpoint(this.motor.getPosition().getValue());
     }
 
     public void setTrapPosition(TrapPivotPosition trapPosition) {
         this.trapPosition = trapPosition;
-        this.openLoop = false;
         this.setClosedLoopSetpoint(trapPosition.setpoint);
     }
 
     public void updatePIDFromDashboard() {
-        pidHelper.updateConfiguration(configuration.Slot0);
+        if (pidHelper.updateValuesFromDashboard()) {
+            BSLogger.log("TrapPivot", "updating pid");
+            pidHelper.updateConfiguration(configuration.Slot0);
+            motor.getConfigurator().apply(configuration.Slot0);
+        }
         motionMagicConfig.updateSlot0Config(configuration.Slot0);
         motionMagicConfig.updateMotionMagicConfig(configuration.MotionMagic);
-        StatusCode result = motor.getConfigurator().apply(configuration);
-        if (result != StatusCode.OK) {
-            BSLogger.log("TrapPivot", "Failed to apply configuration to motor: " + result);
-        }
+        StatusCode result = motor.getConfigurator().apply(configuration.MotionMagic);
+//        if (result != StatusCode.OK) {
+//            BSLogger.log("TrapPivot", "Failed to apply configuration to motor: " + result);
+//        }
     }
 
     public Command updateClosedLoopFromDashbboardCommand() {
         return Commands.runOnce(this::updatePIDFromDashboard);
     }
 
-
     public void periodic() {
-//        updatePIDFromDashboard();
+        updatePIDFromDashboard();
         if (openLoop) {
             motor.setControl(openLoopOut.withOutput(openLoopSetpoint));
         } else {
-            motor.setControl(positionOut.withPosition(closedLoopSetpoint));
-//            motor.setControl(motionMagicVoltage.withPosition(closedLoopSetpoint));
+//            motor.setControl(positionOut.withPosition(closedLoopSetpoint));
+            motor.setControl(motionMagicVoltage.withPosition(closedLoopSetpoint));
         }
     }
 
@@ -126,7 +173,6 @@ public class TrapPivot implements Lifecycle, Sendable {
         builder.addDoubleProperty("TrapPivot/Encoder", () -> this.motor.getPosition().getValue(), null);
 
         if (Constants.Dashboard.ConfigurationMode) {
-
 
             builder.addBooleanProperty("TrapPivot/OpenLoop", this::isOpenLoop, this::setOpenLoop);
             builder.addDoubleProperty("TrapPivot/UpSpeed", openLoopSpeeds::getUpSpeed, openLoopSpeeds::setUpSpeed);
@@ -144,5 +190,16 @@ public class TrapPivot implements Lifecycle, Sendable {
             builder.addBooleanProperty("TrapPivot/RevLimitHit", () -> this.motor.getFault_ReverseSoftLimit().getValue(), null);
         }
 //        builder.addDoubleProperty("TrapPivot/ZeroEncoderOffset", this::getZeroPivotEncoderOffset, this::setZeroPivotEncoderOffset);
+    }
+
+    public enum TrapPivotPosition {
+        Zero(0),
+        Feed(0);
+
+        private final double setpoint;
+
+        TrapPivotPosition(double setpoint) {
+            this.setpoint = setpoint;
+        }
     }
 }

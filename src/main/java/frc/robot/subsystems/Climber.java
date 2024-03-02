@@ -7,12 +7,14 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.util.OpenLoopSpeedsConfig;
 import frc.robot.subsystems.util.PIDHelper;
+import frc.robot.subsystems.util.SoftLimitValues;
 
 import javax.swing.plaf.basic.BasicSliderUI;
 
@@ -27,6 +29,7 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
     private final OpenLoopSpeedsConfig climberOpenLoopSpeeds = new OpenLoopSpeedsConfig(6, -6);
     private final TalonFXConfiguration config;
 
+    private final SoftLimitValues softLimits = new SoftLimitValues(0, -320);
 
     //
     // Open Loop Handling
@@ -44,8 +47,8 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
         config = new TalonFXConfiguration()
                 .withSoftwareLimitSwitch(
                         new SoftwareLimitSwitchConfigs()
-                                .withForwardSoftLimitThreshold(0).withForwardSoftLimitEnable(true)
-                                .withReverseSoftLimitThreshold(-320).withReverseSoftLimitEnable(true))
+                                .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold()).withForwardSoftLimitEnable(true)
+                                .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold()).withReverseSoftLimitEnable(true))
                 .withHardwareLimitSwitch(
                         new HardwareLimitSwitchConfigs()
                                 .withForwardLimitEnable(false)
@@ -100,8 +103,8 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
     private void setSoftLimits(boolean enable) {
         climberDrive.getConfigurator().apply(
                 new SoftwareLimitSwitchConfigs()
-                        .withForwardSoftLimitThreshold(0).withForwardSoftLimitEnable(enable)
-                        .withReverseSoftLimitThreshold(-320).withReverseSoftLimitEnable(enable));
+                        .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold()).withForwardSoftLimitEnable(enable)
+                        .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold()).withReverseSoftLimitEnable(enable));
     }
 
 
