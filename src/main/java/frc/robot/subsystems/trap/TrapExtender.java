@@ -137,7 +137,7 @@ public class TrapExtender implements Lifecycle, Sendable {
         builder.addDoubleProperty("TrapExtender/ClosedLoopSetpoint", this::getClosedLoopSetpoint, this::setClosedLoopSetpoint);
         builder.addStringProperty("TrapExtender/Position", () -> this.trapPosition.name(), null);
 
-        if (Constants.Dashboard.ConfigurationMode) {
+        if (Constants.Dashboard.ConfigurationMode || Constants.Dashboard.TrapConfigMode) {
             builder.addDoubleProperty("TrapExtender/UpSpeed", openLoopSpeeds::getUpSpeed, openLoopSpeeds::setUpSpeed);
             builder.addDoubleProperty("TrapExtender/DownSpeed", openLoopSpeeds::getDownSpeed, openLoopSpeeds::setDownSpeed);
 

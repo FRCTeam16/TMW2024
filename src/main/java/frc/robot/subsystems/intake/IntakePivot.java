@@ -29,7 +29,6 @@ public class IntakePivot implements Lifecycle, Sendable {
     private final TalonFXConfiguration pivotConfiguration = new TalonFXConfiguration();
     private final DutyCycleOut pivotOpenLoopDriveRequest = new DutyCycleOut(0);
 
-
     private final MotionMagicConfig motionMagicConfig = new MotionMagicConfig();
     private final MotionMagicVoltage pivotMotionMagicDutyCycle = new MotionMagicVoltage(IntakePosition.Zero.setpoint);
     private final OpenLoopSpeedsConfig pivotOpenLoopSpeeds = new OpenLoopSpeedsConfig(0.1, -0.1);
