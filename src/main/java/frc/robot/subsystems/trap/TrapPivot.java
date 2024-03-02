@@ -139,6 +139,26 @@ public class TrapPivot implements Lifecycle, Sendable {
         this.setClosedLoopSetpoint(trapPosition.setpoint);
     }
 
+
+    // TODO: make better ( aka don't hit things )
+    // public void goToZero(){
+    //     setTrapPosition(TrapPivotPosition.Zero);
+    // }
+    // public void goToFeed(){
+    //     setTrapPosition(TrapPivotPosition.Feed);
+    // }
+    // public void goToDrive(){
+    //     setTrapPosition(TrapPivotPosition.Drive);
+    // }
+    // public void goToTop(){
+    //     setTrapPosition(TrapPivotPosition.Top);
+    // }
+    // public void goToScore(){
+    //     setTrapPosition(TrapPivotPosition.Score);
+    // }
+
+
+
     public void updatePIDFromDashboard() {
         if (pidHelper.updateValuesFromDashboard()) {
             BSLogger.log("TrapPivot", "updating pid");
@@ -192,7 +212,11 @@ public class TrapPivot implements Lifecycle, Sendable {
 
     public enum TrapPivotPosition {
         Zero(0),
-        Feed(0);
+        Feed(21),
+        Drive(20),
+        Top(14),
+        Score(8.8);
+
 
         private final double setpoint;
 
