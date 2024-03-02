@@ -7,7 +7,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Distance;
 import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Velocity;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,11 +28,12 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.trap.Trap;
 import frc.robot.subsystems.trap.TrapExtender;
+import frc.robot.subsystems.util.VisionAlignmentHelper;
 import frc.robot.subsystems.vision.VisionTypes;
 
 import java.util.Objects;
 
-import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.*;
 
 public class RobotContainer {
     private static final double MaxSpeed = Constants.Swerve.kMaxSpeedMetersPerSecond;
@@ -65,6 +68,8 @@ public class RobotContainer {
 
     private final JoystickButton unsafeRaiseClimber = new JoystickButton(left, 14);
     private final JoystickButton unsafeLowerClimber = new JoystickButton(left, 15);
+    private final JoystickButton unsafeLowerTrap = new JoystickButton(left, 8);
+    private final JoystickButton unsafeRaiseTrap = new JoystickButton(left, 9);
 
 
     //
@@ -72,8 +77,12 @@ public class RobotContainer {
     //
     private final Trigger feed = new Trigger(right::getTrigger);
     private final JoystickButton runVisionAlignAngle = new JoystickButton(right, 2);
-    //private final JoystickButton feedNote = new JoystickButton(right, 3);
+    private final JoystickButton robotCentric = new JoystickButton(right, 3);
     private final JoystickButton ampAim = new JoystickButton(right, 4);
+
+    //
+    // Debug Controller
+    //
     private final Trigger debugLeftTrigger = new Trigger(() -> debugJoystick.getLeftTriggerAxis() > 0.1);
     private final Trigger debugRightTrigger = new Trigger(() -> debugJoystick.getRightTriggerAxis() > 0.1);
     private final Trigger debugYButton = new JoystickButton(debugJoystick, 4);
@@ -103,7 +112,14 @@ public class RobotContainer {
     Trigger povUp = xboxController.povUp();
     Trigger povDown = xboxController.povDown();
     MusicController music = new MusicController();
-    private boolean useVisionAlignment = false;
+
+    //
+    // Vision integration
+    //
+    private boolean useVisionAlignment = false; // twist alignment for auto-aiming
+
+    private final VisionAlignmentHelper trapAlignHelper = new VisionAlignmentHelper();
+    private boolean useVisionTrapAligment = false; // horizontal input for trap alignment
 
 
     public RobotContainer() {
@@ -111,7 +127,6 @@ public class RobotContainer {
         configureDashboardButtons();
         alignController.setTolerance(0.05);
         SmartDashboard.putData("AlignPID", alignController);
-
     }
 
     /**
@@ -119,7 +134,7 @@ public class RobotContainer {
      *
      * @return the swerve rotate value
      */
-    private Measure<Angle> supplySwerveRotate() {
+    private Measure<Velocity<Angle>> supplySwerveRotate() {
         final double DEADBAND = 0.05;
         final double twist;
         if (!useVisionAlignment) {
@@ -134,7 +149,28 @@ public class RobotContainer {
                 twist = horizontalComponent * Constants.Swerve.kMaxAngularVelocity;
             }
         }
-        return Radians.of(twist);
+        return RadiansPerSecond.of(twist);
+    }
+
+    /**
+     * This method is used to supply the swerve horizontal value to the swerve drive
+     *
+     * Will be wired in if/when second limelight is added.  Will also need trap-specific AprilTag pipeline to use
+     *
+     * @return the swerve horizontal value
+     */
+    private Measure<Velocity<Distance>> supplySwerveHorizontal() {
+        if (!useVisionTrapAligment) {
+            return MetersPerSecond.of(OIUtil.deadband(-right.getY(), 0.05) * MaxSpeed);
+        } else {
+            VisionTypes.TargetInfo targetInfo = Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo();
+            if (!targetInfo.hasTarget()) {
+                return MetersPerSecond.of(OIUtil.deadband(-right.getY(), 0.05) * MaxSpeed);
+            } else {
+                double horizontalComponent = alignController.calculate(targetInfo.yOffset(), 0);
+                return MetersPerSecond.of(horizontalComponent * MaxSpeed);
+            }
+        }
     }
 
 
@@ -144,7 +180,14 @@ public class RobotContainer {
                         .withDeadband(0.02 * MaxSpeed)
                         .withVelocityX(OIUtil.deadband(-right.getY(), 0.05) * MaxSpeed)
                         .withVelocityY(OIUtil.deadband(-right.getX(), 0.05) * MaxSpeed)
-                        .withRotationalRate(supplySwerveRotate().in(Radians))));
+                        .withRotationalRate(supplySwerveRotate().in(RadiansPerSecond))));
+
+        robotCentric.whileTrue(
+                drivetrain.applyRequest(() -> robotCentricDrive
+                        .withDeadband(0.02 * MaxSpeed)
+                        .withVelocityX(OIUtil.deadband(-right.getY(), 0.05) * MaxSpeed)
+                        .withVelocityY(OIUtil.deadband(-right.getX(), 0.05) * MaxSpeed)
+                        .withRotationalRate(supplySwerveRotate().in(RadiansPerSecond))));
 
 
         //
@@ -153,8 +196,7 @@ public class RobotContainer {
         rightBumper.onTrue(Commands.runOnce(Subsystems.pivot::openLoopUp)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
         leftBumper.onTrue(Commands.runOnce(Subsystems.pivot::openLoopDown)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
 
-        xboxController.povLeft().onTrue(Commands.runOnce(() -> Subsystems.climber.setClimberPosition(Climber.ClimberPosition.DOWN)));
-        xboxController.povRight().onTrue(Commands.runOnce(() -> Subsystems.climber.setClimberPosition(Climber.ClimberPosition.UP)));
+
 
         // Test Intake
         if (false) {
@@ -166,7 +208,7 @@ public class RobotContainer {
                     .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakePivot().holdPosition()));
         }
         // Test Climber
-        if (true) {
+        if (false) {
             leftTrigger
                     .onTrue(Commands.runOnce(() -> Subsystems.climber.openLoopUp()))
                     .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
@@ -196,8 +238,17 @@ public class RobotContainer {
 
         }
 
-        povUp.onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().setTrapPosition(TrapExtender.TrapPosition.Up)));
-        povDown.onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero)));
+        // Test Trap
+        if (true) {
+            leftTrigger
+                    .onTrue(Commands.runOnce(() -> Subsystems.trap.getPivot().openLoopUp()))
+                    .onFalse(Commands.runOnce(() -> Subsystems.trap.getPivot().stopOpenLoop()));
+
+            rightTrigger
+                    .onTrue(Commands.runOnce(() -> Subsystems.trap.getPivot().openLoopDown()))
+                    .onFalse(Commands.runOnce(() -> Subsystems.trap.getPivot().stopOpenLoop()));
+        }
+
 
 
         //
@@ -234,6 +285,21 @@ public class RobotContainer {
                 .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
         unsafeRaiseClimber.onTrue(Commands.runOnce(() -> Subsystems.climber.unsafeOpenLoopDown()))
                 .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
+
+        xboxController.povLeft().onTrue(Commands.runOnce(() -> Subsystems.climber.setClimberPosition(Climber.ClimberPosition.DOWN)));
+        xboxController.povRight().onTrue(Commands.runOnce(() -> Subsystems.climber.setClimberPosition(Climber.ClimberPosition.UP)));
+
+        //
+        // Trap Subsystem
+        //
+        unsafeLowerTrap.onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().unsafeOpenLoopDown()))
+                .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
+        unsafeRaiseTrap.onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().unsafeOpenLoopUp()))
+                .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
+
+        povUp.onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().setTrapPosition(TrapExtender.TrapPosition.Up)));
+        povDown.onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero)));
+
 
 
         //

@@ -81,8 +81,8 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
     public record FingerPosition(double leftPosition, double rightPosition) {
     }
     public static class FingerPositions {
-        public static final FingerPosition StartPosition = new FingerPosition(0.2, 0.8);
-        public static final FingerPosition Closed = new FingerPosition(0.05, 0.95);
+        public static final FingerPosition StartPosition = new FingerPosition(0.85, 0.15);
+        public static final FingerPosition Closed = new FingerPosition(0.85, 0.15);
         public static final FingerPosition Open = new FingerPosition(0.5, 0.5);
     }
 
