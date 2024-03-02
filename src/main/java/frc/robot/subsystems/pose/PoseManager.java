@@ -2,7 +2,6 @@ package frc.robot.subsystems.pose;
 
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -36,17 +35,16 @@ public class PoseManager {
         ShortShot,
         // Start climb
         StartClimb,
-        PrepareBloopShot
+        ExtendClimbers, PrepareBloopShot
     }
 
-    private Pose currentPose = Pose.StartingConfig;
     private Pose lastPose = Pose.StartingConfig;
     private final Map<Pose, Supplier<Command>> registry = new HashMap<>();
 
     private final StringLogEntry poseLog;
 
     public PoseManager() {
-        poseLog = new StringLogEntry(DataLogManager.getLog(), "/posemanager");
+        poseLog = new StringLogEntry(DataLogManager.getLog(), "datalog/posemanager");
 
         registry.put(Pose.StartingConfig, PoseCommands::moveToStartingConfigPose);
         registry.put(Pose.Pickup, PoseCommands::moveToPickupPose);
@@ -62,22 +60,17 @@ public class PoseManager {
     }
 
     public Command getPoseCommand(Pose requestedPose) {
-        BSLogger.log("PoseManager", "Requested Pose: " + requestedPose);
+        BSLogger.log("PoseManager", "Fetching Pose: " + requestedPose);
         SmartDashboard.putString("PoseManager/RequestedPose", requestedPose.name());
 
         if (registry.containsKey(requestedPose)) {
-            lastPose = currentPose;
-            currentPose = requestedPose;
+            lastPose = requestedPose;
             poseLog.append(requestedPose.name());
             return registry.get(requestedPose).get();
         } else {
             BSLogger.log("PoseManager", "!!! Unhandled pose requested: " + requestedPose);
             return Commands.none();
         }
-    }
-
-    public Pose getCurrentPose() {
-        return currentPose;
     }
 
     public Pose getLastPose() {

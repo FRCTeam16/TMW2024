@@ -1,14 +1,9 @@
 package frc.robot.subsystems.util;
 
-/**
- * Represents the open-loop speeds for intake pivot movement.
- */
 public class OpenLoopSpeedsConfig {
     private double upSpeed = .5;
     private double downSpeed = -.5;
 
-    public OpenLoopSpeedsConfig() {
-    }
 
     public OpenLoopSpeedsConfig(double upSpeed, double downSpeed) {
         this.upSpeed = upSpeed;

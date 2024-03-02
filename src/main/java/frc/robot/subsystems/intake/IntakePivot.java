@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.util.CachedValue;
 import frc.robot.subsystems.util.MotionMagicConfig;
@@ -31,7 +32,7 @@ public class IntakePivot implements Lifecycle, Sendable {
 
     private final MotionMagicConfig motionMagicConfig = new MotionMagicConfig();
     private final MotionMagicVoltage pivotMotionMagicDutyCycle = new MotionMagicVoltage(IntakePosition.Zero.setpoint);
-    private final OpenLoopSpeedsConfig pivotOpenLoopSpeeds = new OpenLoopSpeedsConfig();
+    private final OpenLoopSpeedsConfig pivotOpenLoopSpeeds = new OpenLoopSpeedsConfig(0.1, -0.1);
     //
     // Util
     //
@@ -210,24 +211,25 @@ public class IntakePivot implements Lifecycle, Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.addBooleanProperty("Pivot/OpenLoop", this::isPivotOpenLoop, this::setPivotOpenLoop);
-        builder.addDoubleProperty("Pivot/UpSpeed", pivotOpenLoopSpeeds::getUpSpeed, pivotOpenLoopSpeeds::setUpSpeed);
-        builder.addDoubleProperty("Pivot/DownSpeed", pivotOpenLoopSpeeds::getDownSpeed, pivotOpenLoopSpeeds::setDownSpeed);
-
         builder.addDoubleProperty("Pivot/Setpoint", this::getPivotSetpoint, this::setPivotSetpoint);
         builder.addStringProperty("Pivot/Position", () -> this.getIntakePosition().name(), null);
-
-        builder.addDoubleProperty("Pivot/MM/kS", motionMagicConfig::getkS, motionMagicConfig::setkS);
-        builder.addDoubleProperty("Pivot/MM/kG", motionMagicConfig::getkG, motionMagicConfig::setkG);
-        builder.addDoubleProperty("Pivot/MM/Acceleration", motionMagicConfig::getAcceleration, motionMagicConfig::setAcceleration);
-        builder.addDoubleProperty("Pivot/MM/Velocity", motionMagicConfig::getVelocity, motionMagicConfig::setVelocity);
-        builder.addDoubleProperty("Pivot/MM/Jerk", motionMagicConfig::getJerk, motionMagicConfig::setJerk);
-
-        builder.addBooleanProperty("Pivot/FwdLimitHit", () -> this.pivotDrive.getFault_ForwardSoftLimit().getValue(), null);
-        builder.addBooleanProperty("Pivot/RevLimitHit", () -> this.pivotDrive.getFault_ReverseSoftLimit().getValue(), null);
-
         builder.addDoubleProperty("Pivot/Encoder", () -> this.pivotDrive.getPosition().getValue(), null);
         builder.addDoubleProperty("Pivot/ZeroEncoderOffset", this::getZeroPivotEncoderOffset, this::setZeroPivotEncoderOffset);
+
+        if (Constants.Dashboard.ConfigurationMode) {
+            builder.addBooleanProperty("Pivot/OpenLoop", this::isPivotOpenLoop, this::setPivotOpenLoop);
+            builder.addDoubleProperty("Pivot/UpSpeed", pivotOpenLoopSpeeds::getUpSpeed, pivotOpenLoopSpeeds::setUpSpeed);
+            builder.addDoubleProperty("Pivot/DownSpeed", pivotOpenLoopSpeeds::getDownSpeed, pivotOpenLoopSpeeds::setDownSpeed);
+
+            builder.addDoubleProperty("Pivot/MM/kS", motionMagicConfig::getkS, motionMagicConfig::setkS);
+            builder.addDoubleProperty("Pivot/MM/kG", motionMagicConfig::getkG, motionMagicConfig::setkG);
+            builder.addDoubleProperty("Pivot/MM/Acceleration", motionMagicConfig::getAcceleration, motionMagicConfig::setAcceleration);
+            builder.addDoubleProperty("Pivot/MM/Velocity", motionMagicConfig::getVelocity, motionMagicConfig::setVelocity);
+            builder.addDoubleProperty("Pivot/MM/Jerk", motionMagicConfig::getJerk, motionMagicConfig::setJerk);
+
+            builder.addBooleanProperty("Pivot/FwdLimitHit", () -> this.pivotDrive.getFault_ForwardSoftLimit().getValue(), null);
+            builder.addBooleanProperty("Pivot/RevLimitHit", () -> this.pivotDrive.getFault_ReverseSoftLimit().getValue(), null);
+        }
     }
 
     public boolean isInPosition(IntakePosition position) {
@@ -254,7 +256,7 @@ public class IntakePivot implements Lifecycle, Sendable {
 
         Telemetry() {
             DataLog log = DataLogManager.getLog();
-            pivotPositionLog = new StringLogEntry(log, "Intake/PivotPosition");
+            pivotPositionLog = new StringLogEntry(log, "datalog/Intake/PivotPosition");
         }
 
         void logPositionChange(IntakePosition position) {

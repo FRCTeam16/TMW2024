@@ -11,7 +11,7 @@
         "x": 1.9371826097804077,
         "y": 7.4385770347126225
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -27,52 +27,52 @@
         "x": 4.184963292293213,
         "y": 7.761273970425198
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
       "anchor": {
         "x": 4.619369692962239,
-        "y": 7.620534417789915
+        "y": 7.63
       },
       "prevControl": {
-        "x": 3.78153576698546,
-        "y": 7.722578293389651
+        "x": 3.775903487920552,
+        "y": 7.662981217710439
       },
       "nextControl": {
-        "x": 5.535026201351196,
-        "y": 7.509012150742542
+        "x": 6.418784008203229,
+        "y": 7.559639296835478
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "DS1Bloop"
     },
     {
       "anchor": {
         "x": 8.1,
-        "y": 7.48
+        "y": 7.63
       },
       "prevControl": {
-        "x": 6.268725326662861,
-        "y": 7.409229069700156
+        "x": 6.2816692093011515,
+        "y": 7.6192760016398475
       },
       "nextControl": {
-        "x": 8.149962704476216,
-        "y": 7.481930844743042
+        "x": 8.149999130446366,
+        "y": 7.63029488066509
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.251116547655381,
-        "y": 6.681399537390985
+        "x": 7.4180048271365395,
+        "y": 6.985550368616265
       },
       "prevControl": {
-        "x": 7.072859568004445,
-        "y": 7.086401454563023
+        "x": 7.651099312846363,
+        "y": 7.568286582890824
       },
       "nextControl": null,
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "DS1End"
     }
   ],
@@ -98,7 +98,7 @@
     },
     {
       "name": "Bloop",
-      "waypointRelativePos": 2.15,
+      "waypointRelativePos": 1.95,
       "command": {
         "type": "parallel",
         "data": {

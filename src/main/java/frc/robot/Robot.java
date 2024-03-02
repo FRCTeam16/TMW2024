@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -15,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.config.RobotConfiguration;
 import frc.robot.config.BuildConstants;
 import frc.robot.subsystems.PowerTelemetry;
-import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.subsystems.vision.VisionTypes;
 
 public class Robot extends TimedRobot {
@@ -32,6 +30,7 @@ public class Robot extends TimedRobot {
     robotContainer = new RobotContainer();
 
     // Log Startup Message
+    //noinspection ConstantValue
     DataLogManager.log(
             String.format("""
                             *********************************
@@ -59,9 +58,8 @@ public class Robot extends TimedRobot {
 //        PortForwarder.add(port, "limelight.local", port);
 //    }
 
-    /*
-     * addPeriodic(Subsystems.ledSubsystem::Report, 0.1);
-     */
+
+    addPeriodic(Subsystems.ledSubsystem::Report, 0.1);
   }
 
   @Override

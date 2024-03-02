@@ -97,7 +97,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
                 intakePivot.setIntakePosition(IntakePivot.IntakePosition.AMPShot);
             }
             case Climb -> {
-                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Pickup);
+                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Vertical);
                 intakeSpeed.stopIntake();
             }
             default -> {
@@ -196,17 +196,19 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        if (Constants.UseSendables) {
+        if (Constants.Dashboard.UseSendables) {
             builder.setSmartDashboardType(SUBSYSTEM_NAME);
             builder.addStringProperty("IntakeState", () -> this.intakeState.name(), null);
             builder.addBooleanProperty("NoteDetected", this::isNoteDetected, null);
-            builder.addDoubleProperty("AmpShotWait", this::getAmpShotTime, this::setAmpShotTime);
-            builder.addDoubleProperty("AmoShotPosition", this::getShotPosition, this::setShotPosition);
-
-            builder.addDoubleProperty("MM_V", () -> this.MM_Velocity, (v) -> this.MM_Velocity = v);
 
             intakeSpeed.initSendable(builder);
             intakePivot.initSendable(builder);
+
+            if (Constants.Dashboard.ConfigurationMode) {
+                builder.addDoubleProperty("AmpShotWait", this::getAmpShotTime, this::setAmpShotTime);
+                builder.addDoubleProperty("AmoShotPosition", this::getShotPosition, this::setShotPosition);
+                builder.addDoubleProperty("MM_V", () -> this.MM_Velocity, (v) -> this.MM_Velocity = v);
+            }
         }
     }
 

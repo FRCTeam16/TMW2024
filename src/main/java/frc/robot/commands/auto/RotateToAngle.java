@@ -62,13 +62,19 @@ public class RotateToAngle extends Command {
 
 
         Subsystems.swerveSubsystem.setControl(rotate.withRotationalRate(twistRate));
-        System.out.println("[RotateToAngle] " + Subsystems.swerveSubsystem.getYaw() + " : " + twistRate);
 
-        double now = Timer.getFPGATimestamp();
-        ;
-        SmartDashboard.putNumber("RotateToAngle Scan Time", (now - lastScanTime));
-        lastScanTime = now;
-        SmartDashboard.putNumber("RotateToAngleError", rotationController.getPositionError());
+//        System.out.println("[RotateToAngle] " + Subsystems.swerveSubsystem.getYaw() + " : " + twistRate);
+//        double now = Timer.getFPGATimestamp();
+//        SmartDashboard.putNumber("RotateToAngle Scan Time", (now - lastScanTime));
+//        lastScanTime = now;
+
+        if (Constants.Dashboard.UseSendables) {
+            SmartDashboard.putNumber("RotateToAngle/Error", rotationController.getPositionError());
+            if (Constants.Dashboard.ConfigurationMode) {
+                SmartDashboard.putNumber("RotateToAngle/Twist", twist);
+                SmartDashboard.putNumber("RotateToAngle/TwistRate", twistRate);
+            }
+        }
     }
 
     @Override

@@ -18,7 +18,7 @@ public class ZeroAndSetOffsetCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    DataLogManager.log("ZeroANdSetOffsetCommand(" + offsetAngleDegrees + ") called");
+    DataLogManager.log("ZeroAndSetOffsetCommand(" + offsetAngleDegrees + ") called");
     Subsystems.swerveSubsystem.getPigeon2().setYaw(offsetAngleDegrees);
   }
 

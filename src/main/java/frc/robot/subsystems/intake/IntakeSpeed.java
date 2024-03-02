@@ -1,7 +1,6 @@
 package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -10,6 +9,7 @@ import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
+import frc.robot.Constants;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.util.CachedValue;
 import frc.robot.subsystems.util.DoubleChanger;
@@ -89,11 +89,13 @@ public class IntakeSpeed implements Lifecycle, Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.addDoubleProperty("Intake/FastSpeed", this.intakeSpeedVolts::getFastSpeed, this.intakeSpeedVolts::setFastSpeed);
-        builder.addDoubleProperty("Intake/FeedNote", this.intakeSpeedVolts::getFeedShooterIntakeSpeed, this.intakeSpeedVolts::setFeedShooterIntakeSpeed);
-        builder.addDoubleProperty("Intake/EjectSpeed", this.intakeSpeedVolts::getEjectSpeed, this.intakeSpeedVolts::setEjectSpeed);
-        builder.addDoubleProperty("Intake/AmpShootSpeed", this.intakeSpeedVolts::getAmpShotSpeed, this.intakeSpeedVolts::setAmpShotSpeed);
-//        builder.addDoubleProperty("Intake/FeedShooterIntakeSpeed", this.intakeSpeeds::getFeedShooterIntakeSpeed, this.intakeSpeeds::setFeedShooterIntakeSpeed);
+        builder.addDoubleProperty("Intake/IntakeSpeed", () -> this.intakeOpenLoopSpeed, null);
+        if (Constants.Dashboard.ConfigurationMode) {
+            builder.addDoubleProperty("Intake/FastSpeed", this.intakeSpeedVolts::getFastSpeed, this.intakeSpeedVolts::setFastSpeed);
+            builder.addDoubleProperty("Intake/FeedNote", this.intakeSpeedVolts::getFeedShooterIntakeSpeed, this.intakeSpeedVolts::setFeedShooterIntakeSpeed);
+            builder.addDoubleProperty("Intake/EjectSpeed", this.intakeSpeedVolts::getEjectSpeed, this.intakeSpeedVolts::setEjectSpeed);
+            builder.addDoubleProperty("Intake/AmpShootSpeed", this.intakeSpeedVolts::getAmpShotSpeed, this.intakeSpeedVolts::setAmpShotSpeed);
+        }
     }
 
     static class IntakeSpeedVolts {

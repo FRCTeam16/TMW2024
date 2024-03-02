@@ -3,16 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.4180048271365395,
-        "y": 6.985550368616265
+        "x": 4.4080643448724794,
+        "y": 6.382050294263825
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.271265002074205,
-        "y": 6.962071996606292
+        "x": 4.525456204922345,
+        "y": 6.288136806223932
       },
       "isLocked": false,
-      "linkedName": "DS1End"
+      "linkedName": "DS2End"
+    },
+    {
+      "anchor": {
+        "x": 7.865254623341043,
+        "y": 5.959439598084306
+      },
+      "prevControl": {
+        "x": 7.589529380447841,
+        "y": 6.026881279845968
+      },
+      "nextControl": {
+        "x": 8.22655132444249,
+        "y": 5.871067358816173
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,37 +36,26 @@
         "y": 6.382050294263825
       },
       "prevControl": {
-        "x": 4.496108239909879,
-        "y": 6.411398259276293
+        "x": 4.162077888424987,
+        "y": 6.471582042443332
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "DS2End"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.85,
+      "rotationDegrees": -15.00732053534051,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "Feed",
-      "waypointRelativePos": 0.05,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "FeedNote"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "Start Shooter",
-      "waypointRelativePos": 0.65,
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.15,
       "command": {
         "type": "parallel",
         "data": {
@@ -58,7 +63,7 @@
             {
               "type": "named",
               "data": {
-                "name": "StartShooter"
+                "name": "StartIntake"
               }
             }
           ]
@@ -74,14 +79,14 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 10.0,
+    "rotation": 13.0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "DropShot",
   "previewStartingState": {
     "rotation": 0,
-    "velocity": 2.0
+    "velocity": 0
   },
   "useDefaultConstraints": true
 }

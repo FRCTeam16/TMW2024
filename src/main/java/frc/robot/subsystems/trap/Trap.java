@@ -1,31 +1,67 @@
 package frc.robot.subsystems.trap;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Lifecycle;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 public class Trap extends SubsystemBase implements Lifecycle, Sendable {
     public static final String SUBSYSTEM_NAME = "TrapSubsystem";
-    private TrapExtender extender = new TrapExtender(new TalonFX(21));
-    private TrapPivot pivot = new TrapPivot(new TalonFX(22));
-    private Servo finger1 = new Servo(1); // I dont know what 1 means but yea
-    private Servo finger2 = new Servo(2);
-    private Servo wristRotate = new Servo(3);
+    private final TrapExtender extender = new TrapExtender(new TalonFX(21));
+    private final TrapPivot pivot = new TrapPivot(new TalonFX(22));
+    private final Servo fingerLeft = new Servo(0);
+    private final Servo fingerRight = new Servo(1);
+
+    private TrapState state = TrapState.Default;
+
+    public enum TrapState {
+        Default,
+        Feed,
+    }
 
     @Override
     public void teleopInit() {
         this.getExtender().teleopInit();
         this.getPivot().teleopInit();
+        setFingerPosition(FingerPositions.StartPosition);
     }
 
     @Override
     public void autoInit() {
         this.getExtender().autoInit();
         this.getPivot().autoInit();
+    }
+
+    public void setTrapState(TrapState state) {
+        this.state = state;
+        switch (state) {
+            case Default:
+                getPivot().setClosedLoopSetpoint(0);
+                getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero);
+                fingerLeft.setAngle(0);
+                fingerRight.setAngle(0);
+                break;
+            case Feed:
+                getPivot().setClosedLoopSetpoint(0);
+                getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero);
+                fingerLeft.setAngle(0);
+                fingerRight.setAngle(0);
+                break;
+        }
+    }
+
+    public void setFingerPosition(FingerPosition position) {
+        this.fingerLeft.setPosition(position.leftPosition);
+        this.fingerRight.setPosition(position.rightPosition);
     }
 
     public TrapExtender getExtender() {
@@ -42,13 +78,29 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
         pivot.periodic();
     }
 
+    public record FingerPosition(double leftPosition, double rightPosition) {
+    }
+    public static class FingerPositions {
+        public static final FingerPosition StartPosition = new FingerPosition(0.2, 0.8);
+        public static final FingerPosition Closed = new FingerPosition(0.05, 0.95);
+        public static final FingerPosition Open = new FingerPosition(0.5, 0.5);
+    }
+
+
     @Override
     public void initSendable(SendableBuilder builder) {
-        if (Constants.UseSendables) {
+        if (Constants.Dashboard.UseSendables) {
             builder.setSmartDashboardType(SUBSYSTEM_NAME);
             // TODO: expose finger values
             pivot.initSendable(builder);
             extender.initSendable(builder);
+
+            builder.addDoubleProperty("Servo/finger1Angle", fingerLeft::getAngle, fingerLeft::setAngle);
+            builder.addDoubleProperty("Servo/finger2Angle", fingerRight::getAngle, fingerRight::setAngle);
+
+            SmartDashboard.putData("TrapSubsystem/Debug/FL", fingerLeft);
+            SmartDashboard.putData("TrapSubsystem/Debug/FR", fingerRight);
         }
     }
 }
+
