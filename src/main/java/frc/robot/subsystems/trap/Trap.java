@@ -4,6 +4,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Lifecycle;
@@ -15,6 +16,11 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
     private Servo finger1 = new Servo(1); // I dont know what 1 means but yea
     private Servo finger2 = new Servo(2);
     private Servo wristRotate = new Servo(3);
+
+    public enum TrapState {
+        EXTENDED,
+        RETRACTED
+    }
 
     @Override
     public void teleopInit() {
@@ -49,6 +55,10 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
             // TODO: expose finger values
             pivot.initSendable(builder);
             extender.initSendable(builder);
+
+            SmartDashboard.putData("Debug/finger1", finger1);
+            SmartDashboard.putData("Debug/finger2", finger2);
+            SmartDashboard.putData("Debug/wristRotate", wristRotate);
         }
     }
 }

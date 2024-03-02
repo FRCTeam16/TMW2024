@@ -64,7 +64,7 @@ public class Subsystems {
         shooter = new Shooter();
         pivot = new Pivot();
         climber = new Climber();
-        // trap = new Trap();
+         trap = new Trap();
 
         lifecycleSubsystems.add(visionSubsystem);
         lifecycleSubsystems.add(ledSubsystem);
@@ -72,13 +72,13 @@ public class Subsystems {
         lifecycleSubsystems.add(shooter);
         lifecycleSubsystems.add(pivot);
         lifecycleSubsystems.add(climber);
-        // lifecycleSubsystems.add(trap);
+         lifecycleSubsystems.add(trap);
 
         SmartDashboard.putData("ShooterSubsystem", shooter);
         SmartDashboard.putData("PivotSubsystem", pivot);
         SmartDashboard.putData("IntakeSubsystem", intake);
         SmartDashboard.putData("ClimberSubsystem", climber);
-        // SmartDashboard.putData("TrapSubsystem", trap);
+         SmartDashboard.putData("TrapSubsystem", trap);
 
         createUtilitySubsystems();
     }

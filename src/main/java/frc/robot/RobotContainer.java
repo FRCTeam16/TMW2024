@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Angle;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.ZeroAndSetOffsetCommand;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.RotationController;
 import frc.robot.subsystems.intake.Intake;
@@ -36,6 +38,8 @@ public class RobotContainer {
     private final Joystick left = new Joystick(0);
     private final Joystick right = new Joystick(1);
     private final CommandXboxController xboxController = new CommandXboxController(2);
+    private final XboxController debugJoystick = new XboxController(3);
+
     private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
 
     @SuppressWarnings("unused")
@@ -66,6 +70,8 @@ public class RobotContainer {
     private final JoystickButton runVisionAlignAngle = new JoystickButton(right, 2);
     //private final JoystickButton feedNote = new JoystickButton(right, 3);
     private final JoystickButton ampAim = new JoystickButton(right, 4);
+    private final Trigger debugLeftTrigger = new Trigger(() -> debugJoystick.getLeftTriggerAxis() > 0.1);
+    private final Trigger debugRightTrigger = new Trigger(() -> debugJoystick.getRightTriggerAxis() > 0.1);
 
     //
     // Controller
@@ -80,6 +86,8 @@ public class RobotContainer {
 
     private final Trigger feedNoteToShooter = xboxController.b();
     private final Trigger startClimb = xboxController.x();
+
+
     //
     // Miscellaneous
     //
@@ -136,6 +144,9 @@ public class RobotContainer {
         rightBumper.onTrue(Commands.runOnce(Subsystems.pivot::openLoopUp)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
         leftBumper.onTrue(Commands.runOnce(Subsystems.pivot::openLoopDown)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
 
+        xboxController.povLeft().onTrue(Commands.runOnce(() -> Subsystems.climber.setClimberPosition(Climber.ClimberPosition.DOWN)));
+        xboxController.povRight().onTrue(Commands.runOnce(() -> Subsystems.climber.setClimberPosition(Climber.ClimberPosition.UP)));
+
         // Test Intake
         if (false) {
             leftTrigger
@@ -157,12 +168,12 @@ public class RobotContainer {
         }
 
         // Test Trap
-        if (false) {
-            leftTrigger
+        if (true) {
+            debugLeftTrigger
                     .onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().openLoopDown()))
                     .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
 
-            rightTrigger
+            debugRightTrigger
                     .onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().openLoopUp()))
                     .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
         }
