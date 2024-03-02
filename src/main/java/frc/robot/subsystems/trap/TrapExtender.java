@@ -126,7 +126,7 @@ public class TrapExtender implements Lifecycle, Sendable {
         if (openLoop) {
             motor.setControl(openLoopOut.withOutput(openLoopSetpoint));
         } else {
-            updatePIDFromDashboard();
+//            updatePIDFromDashboard();
             motor.setControl(motionMagicVoltage.withPosition(closedLoopSetpoint));
         }
     }

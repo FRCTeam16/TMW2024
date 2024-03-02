@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.DMS;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -13,6 +9,7 @@ import edu.wpi.first.wpilibj.SerialPort.WriteBufferMode;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Subsystems;
 import frc.robot.subsystems.Lifecycle;
 
 public class LEDSubsystem extends SubsystemBase implements Lifecycle {
@@ -104,7 +101,17 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
             }
        }
 
-  
+        //
+        // Calculate part present value
+        //
+        int partPresent = 0;
+        if (Subsystems.intake.isNoteDetected()) {
+            partPresent = 1;
+        } else if (Subsystems.shooter.isNoteDetected()) {
+            partPresent = 2;
+        } else {
+            // Future
+        }
 
         byte[] buffer = new byte[BUFFER_SIZE];
 
@@ -121,13 +128,11 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
 
         buffer[9] = (byte) robotState; // comm status
         buffer[10] = (byte) allianceColor;
-        buffer[11] = (byte) 0;
-        buffer[12] = (byte) 0;
-        buffer[13] = (byte) 0; // Double.valueOf(robotPitch).intValue();
-        buffer[14] = (byte) 0;
+        buffer[11] = (byte) (Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo().hasTarget() ? 1 : 0);
+        buffer[12] = (byte) partPresent;
+        buffer[13] = (byte) 0;
+        buffer[14] = (byte) 0;  // extra
         buffer[15] = (byte) 255;
-
-        // System.out.println("[LED] Part Detected: " + (byte)partDetected);
 
         this.serial.write(buffer, buffer.length);
         this.serial.flush();

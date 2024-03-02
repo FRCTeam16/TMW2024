@@ -4,6 +4,7 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -12,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.util.BSLogger;
 import frc.robot.subsystems.util.MotionMagicConfig;
 import frc.robot.subsystems.util.OpenLoopSpeedsConfig;
 import frc.robot.subsystems.util.PIDHelper;
@@ -22,11 +24,24 @@ public class TrapPivot implements Lifecycle, Sendable {
     private final OpenLoopSpeedsConfig openLoopSpeeds = new OpenLoopSpeedsConfig(0.1, -0.1);
     private final MotionMagicConfig motionMagicConfig = new MotionMagicConfig();
     private final DutyCycleOut openLoopOut = new DutyCycleOut(0);
+    private final PositionVoltage positionOut = new PositionVoltage(0);
     private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private final PIDHelper pidHelper = new PIDHelper(Trap.SUBSYSTEM_NAME + "/Pivot/PID");
     private boolean openLoop = true;
     private double openLoopSetpoint = 0;
     private double closedLoopSetpoint;
+    private TrapPivotPosition trapPosition = TrapPivotPosition.Zero;
+
+    public enum TrapPivotPosition {
+        Zero(0),
+        Feed(0);
+
+        private final double setpoint;
+
+        TrapPivotPosition(double setpoint) {
+            this.setpoint = setpoint;
+        }
+    }
 
     public TrapPivot(TalonFX motor) {
         this.motor = motor;
@@ -74,12 +89,20 @@ public class TrapPivot implements Lifecycle, Sendable {
         this.closedLoopSetpoint = closedLoopSetpoint;
     }
 
+    public void setTrapPosition(TrapPivotPosition trapPosition) {
+        this.trapPosition = trapPosition;
+        this.openLoop = false;
+        this.setClosedLoopSetpoint(trapPosition.setpoint);
+    }
+
     public void updatePIDFromDashboard() {
         pidHelper.updateConfiguration(configuration.Slot0);
         motionMagicConfig.updateSlot0Config(configuration.Slot0);
         motionMagicConfig.updateMotionMagicConfig(configuration.MotionMagic);
         StatusCode result = motor.getConfigurator().apply(configuration);
-        DataLogManager.log("[TrapPivot] update PID info from dash: " + configuration + ": result = " + result);
+        if (result != StatusCode.OK) {
+            BSLogger.log("TrapPivot", "Failed to apply configuration to motor: " + result);
+        }
     }
 
     public Command updateClosedLoopFromDashbboardCommand() {
@@ -88,10 +111,12 @@ public class TrapPivot implements Lifecycle, Sendable {
 
 
     public void periodic() {
+//        updatePIDFromDashboard();
         if (openLoop) {
             motor.setControl(openLoopOut.withOutput(openLoopSetpoint));
         } else {
-            motor.setControl(motionMagicVoltage.withPosition(closedLoopSetpoint));
+            motor.setControl(positionOut.withPosition(closedLoopSetpoint));
+//            motor.setControl(motionMagicVoltage.withPosition(closedLoopSetpoint));
         }
     }
 

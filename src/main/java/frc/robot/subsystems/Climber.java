@@ -11,7 +11,10 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.util.OpenLoopSpeedsConfig;
 import frc.robot.subsystems.util.PIDHelper;
+
+import javax.swing.plaf.basic.BasicSliderUI;
 
 public class Climber extends SubsystemBase implements Lifecycle, Sendable {
     public static final String SUBSYSTEM_NAME = "ClimberSubsystem";
@@ -21,7 +24,7 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
     private final PositionVoltage positionOut = new PositionVoltage(0);
 
     private final PIDHelper pidHelper = new PIDHelper(SUBSYSTEM_NAME + "/PID");
-    private final ClimberOpenLoopSpeeds climberOpenLoopSpeeds = new ClimberOpenLoopSpeeds();
+    private final OpenLoopSpeedsConfig climberOpenLoopSpeeds = new OpenLoopSpeedsConfig(6, -6);
     private final TalonFXConfiguration config;
 
 
@@ -33,10 +36,11 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
     private ClimberPosition currentPosition = ClimberPosition.DOWN;
     // Closed loop setpoint
     private double setpoint = 0.0;
+    private boolean softLimitsEnabled = true;
 
     public Climber() {
 //    climberDrive.setNeutralMode(NeutralModeValue.Brake);
-        pidHelper.initialize(0.2, 0, 0, 0, 0, 0);
+        pidHelper.initialize(2.0, 0, 0, 0, 0, 0);
         config = new TalonFXConfiguration()
                 .withSoftwareLimitSwitch(
                         new SoftwareLimitSwitchConfigs()
@@ -81,7 +85,31 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
         openLoopSpeed = climberOpenLoopSpeeds.getDownSpeed();
     }
 
+    public void unsafeOpenLoopUp() {
+        softLimitsEnabled = false;
+        setSoftLimits(false);
+        openLoopUp();
+    }
+
+    public void unsafeOpenLoopDown() {
+        softLimitsEnabled = false;
+        setSoftLimits(false);
+        openLoopDown();
+    }
+
+    private void setSoftLimits(boolean enable) {
+        climberDrive.getConfigurator().apply(
+                new SoftwareLimitSwitchConfigs()
+                        .withForwardSoftLimitThreshold(0).withForwardSoftLimitEnable(enable)
+                        .withReverseSoftLimitThreshold(-320).withReverseSoftLimitEnable(enable));
+    }
+
+
     public void stopOpenLoop() {
+        if (!softLimitsEnabled) {
+            softLimitsEnabled = true;
+            setSoftLimits(true);
+        }
         openLoop = true;
         openLoopSpeed = 0.0;
     }
@@ -116,7 +144,9 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
         }
 
         if (openLoop) {
-            climberDrive.setControl(openLoopOut.withOutput(openLoopSpeed));
+            climberDrive.setControl(openLoopOut.withOutput(openLoopSpeed)
+                    .withLimitForwardMotion(softLimitsEnabled)
+                    .withLimitReverseMotion(softLimitsEnabled));
         } else {
             climberDrive.setControl(positionOut.withPosition(this.setpoint));
         }
@@ -141,6 +171,8 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
         }
     }
 
+
+
     public enum ClimberPosition {
         DOWN(0),
         UP(-315);
@@ -149,27 +181,6 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
 
         private ClimberPosition(double setpoint) {
             this.setpoint = setpoint;
-        }
-    }
-
-    static class ClimberOpenLoopSpeeds {
-        private double upSpeed = 6;
-        private double downSpeed = -6;
-
-        public double getUpSpeed() {
-            return upSpeed;
-        }
-
-        public void setUpSpeed(double upSpeed) {
-            this.upSpeed = upSpeed;
-        }
-
-        public double getDownSpeed() {
-            return downSpeed;
-        }
-
-        public void setDownSpeed(double downSpeed) {
-            this.downSpeed = downSpeed;
         }
     }
 }

@@ -35,7 +35,7 @@ public class PoseManager {
         ShortShot,
         // Start climb
         StartClimb,
-        PrepareBloopShot
+        ExtendClimbers, PrepareBloopShot
     }
 
     private Pose lastPose = Pose.StartingConfig;
@@ -60,7 +60,7 @@ public class PoseManager {
     }
 
     public Command getPoseCommand(Pose requestedPose) {
-        BSLogger.log("PoseManager", "Requested Pose: " + requestedPose);
+        BSLogger.log("PoseManager", "Fetching Pose: " + requestedPose);
         SmartDashboard.putString("PoseManager/RequestedPose", requestedPose.name());
 
         if (registry.containsKey(requestedPose)) {

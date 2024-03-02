@@ -2,6 +2,7 @@ package frc.robot.subsystems.pose;
 
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Subsystems;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.intake.Intake;
 
@@ -85,8 +86,9 @@ class PoseCommands {
                 Commands.runOnce(Subsystems.shooter::stopShooter),
                 Commands.runOnce(Subsystems.shooter::stopFeeder),
                 Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Up),
-                Subsystems.intake.moveToStateCmd(Intake.IntakeState.Climb)
-        );
+                Subsystems.intake.moveToStateCmd(Intake.IntakeState.Climb),
+                Commands.runOnce(() -> Subsystems.climber.setClimberPosition(Climber.ClimberPosition.UP)));
+                // TODO: Rotate trap
     }
 
     public static Command prepareBloopShotPose() {
@@ -95,4 +97,5 @@ class PoseCommands {
                 Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(Subsystems.shooter.BloopProfile))
         );
     }
+
 }

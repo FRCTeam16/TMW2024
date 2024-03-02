@@ -24,6 +24,7 @@ import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.RotationController;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pose.PoseManager;
+import frc.robot.subsystems.trap.Trap;
 import frc.robot.subsystems.trap.TrapExtender;
 import frc.robot.subsystems.vision.VisionTypes;
 
@@ -62,6 +63,9 @@ public class RobotContainer {
     private final JoystickButton eject = new JoystickButton(left, 2);
     private final JoystickButton feedIntake = new JoystickButton(left, 4);  // debug feed intake speeds
 
+    private final JoystickButton unsafeRaiseClimber = new JoystickButton(left, 14);
+    private final JoystickButton unsafeLowerClimber = new JoystickButton(left, 15);
+
 
     //
     // Right Joystick
@@ -72,6 +76,10 @@ public class RobotContainer {
     private final JoystickButton ampAim = new JoystickButton(right, 4);
     private final Trigger debugLeftTrigger = new Trigger(() -> debugJoystick.getLeftTriggerAxis() > 0.1);
     private final Trigger debugRightTrigger = new Trigger(() -> debugJoystick.getRightTriggerAxis() > 0.1);
+    private final Trigger debugYButton = new JoystickButton(debugJoystick, 4);
+    private final Trigger debugAButton = new JoystickButton(debugJoystick, 1);
+    private final Trigger debugBButton = new JoystickButton(debugJoystick, 2);
+    private final Trigger debugXButton = new JoystickButton(debugJoystick, 3);
 
     //
     // Controller
@@ -96,6 +104,7 @@ public class RobotContainer {
     Trigger povDown = xboxController.povDown();
     MusicController music = new MusicController();
     private boolean useVisionAlignment = false;
+
 
     public RobotContainer() {
         configureBindings();
@@ -176,6 +185,15 @@ public class RobotContainer {
             debugRightTrigger
                     .onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().openLoopUp()))
                     .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
+
+            debugYButton.onTrue(Commands.runOnce(() -> Subsystems.trap.getPivot().openLoopUp()))
+                    .onFalse(Commands.runOnce(() -> Subsystems.trap.getPivot().stopOpenLoop()));
+            debugAButton.onTrue(Commands.runOnce(() -> Subsystems.trap.getPivot().openLoopDown()))
+                    .onFalse(Commands.runOnce(() -> Subsystems.trap.getPivot().stopOpenLoop()));
+
+            debugBButton.onTrue(Commands.runOnce(() -> Subsystems.trap.setFingerPosition(Trap.FingerPositions.Closed)));
+            debugXButton.onTrue(Commands.runOnce(() -> Subsystems.trap.setFingerPosition(Trap.FingerPositions.Open)));
+
         }
 
         povUp.onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().setTrapPosition(TrapExtender.TrapPosition.Up)));
@@ -212,6 +230,10 @@ public class RobotContainer {
         // Climb subsystem
         //
         startClimb.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.StartClimb));
+        unsafeLowerClimber.onTrue(Commands.runOnce(() -> Subsystems.climber.unsafeOpenLoopUp()))
+                .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
+        unsafeRaiseClimber.onTrue(Commands.runOnce(() -> Subsystems.climber.unsafeOpenLoopDown()))
+                .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
 
 
         //
@@ -258,6 +280,8 @@ public class RobotContainer {
 
         // Debug
         SmartDashboard.putNumber("DebugFeederSpeeds", -0.3);
+
+
     }
 
     public Command getAutonomousCommand() {

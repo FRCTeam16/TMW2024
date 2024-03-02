@@ -58,9 +58,8 @@ public class Robot extends TimedRobot {
 //        PortForwarder.add(port, "limelight.local", port);
 //    }
 
-    /*
-     * addPeriodic(Subsystems.ledSubsystem::Report, 0.1);
-     */
+
+    addPeriodic(Subsystems.ledSubsystem::Report, 0.1);
   }
 
   @Override
