@@ -2,6 +2,7 @@ package frc.robot.subsystems.pose;
 
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Subsystems;
+import frc.robot.commands.auto.WaitIntakeInPosition;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.intake.Intake;

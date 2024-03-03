@@ -1,18 +1,15 @@
 package frc.robot.subsystems.trap;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.units.Angle;
-import edu.wpi.first.units.Measure;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Lifecycle;
-
-import static edu.wpi.first.units.Units.Degrees;
 
 public class Trap extends SubsystemBase implements Lifecycle, Sendable {
     public static final String SUBSYSTEM_NAME = "TrapSubsystem";
@@ -25,7 +22,8 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
 
     public enum TrapState {
         Default,
-        Feed,
+        FeedNoteToTrap,
+        Drive
     }
 
     @Override
@@ -41,20 +39,27 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
         this.getPivot().autoInit();
     }
 
+    public Command moveToStateCmd(TrapState state) {
+        return Commands.runOnce(() -> setTrapState(state));
+    }
+
     public void setTrapState(TrapState state) {
         this.state = state;
         switch (state) {
             case Default:
-                getPivot().setClosedLoopSetpoint(0);
+                getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.Zero);
                 getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero);
-                fingerLeft.setAngle(0);
-                fingerRight.setAngle(0);
+                setFingerPosition(FingerPositions.StartPosition);
                 break;
-            case Feed:
-                getPivot().setClosedLoopSetpoint(0);
+            case Drive:
+                getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.Drive);
                 getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero);
-                fingerLeft.setAngle(0);
-                fingerRight.setAngle(0);
+                setFingerPosition(FingerPositions.Closed);
+                break;
+            case FeedNoteToTrap:
+                getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.Feed);
+                getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero);
+                setFingerPosition(FingerPositions.Closed);
                 break;
         }
     }
@@ -80,6 +85,7 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
 
     public record FingerPosition(double leftPosition, double rightPosition) {
     }
+
     public static class FingerPositions {
         public static final FingerPosition StartPosition = new FingerPosition(0.85, 0.15);
         public static final FingerPosition Closed = new FingerPosition(0.85, 0.15);

@@ -334,7 +334,7 @@ public class RobotContainer {
         SmartDashboard.putData("Zero Gyro", new ZeroAndSetOffsetCommand(0).ignoringDisable(true));
 
         SmartDashboard.putData("Update IntakeRotate PID", Subsystems.intake.getIntakePivot().updatePIDFromDashbboardCommand().ignoringDisable(true));
-        SmartDashboard.putData("Set IntakeRotater Offset", Subsystems.intake.getIntakePivot().getSetPivotEncoderOffestCmd().ignoringDisable(true));
+        SmartDashboard.putData("Fix Intake Pivot Offset", Subsystems.intake.getIntakePivot().fixMotorPositionCmd().ignoringDisable(true));
 
         SmartDashboard.putData("Pose: Pickup", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup));
         SmartDashboard.putData("Pose: Handoff", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.NotePickedUp));

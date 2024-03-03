@@ -11,20 +11,19 @@ import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.subsystems.Lifecycle;
-import frc.robot.subsystems.util.CachedValue;
-import frc.robot.subsystems.util.MotionMagicConfig;
-import frc.robot.subsystems.util.PIDHelper;
-import frc.robot.subsystems.util.OpenLoopSpeedsConfig;
+import frc.robot.subsystems.util.*;
 
 import java.util.Objects;
 
 public class IntakePivot implements Lifecycle, Sendable {
     private final TalonFX pivotDrive;
+    private final DutyCycleEncoder encoder = new DutyCycleEncoder(4);
     private final PIDHelper pidHelper = new PIDHelper("IntakeSubsystem/Pivot/PID");
     private final TalonFXConfiguration pivotConfiguration = new TalonFXConfiguration();
     private final DutyCycleOut pivotOpenLoopDriveRequest = new DutyCycleOut(0);
@@ -36,13 +35,15 @@ public class IntakePivot implements Lifecycle, Sendable {
     // Util
     //
     private final Telemetry telemetry;
+    // the amount to offset the absolute encoder to make it show zero when we are in a Zero position
+    private final double zeroEncoderOffsetPosition = 0.364;
+    private final double encoderToMotorRatio = -48;
     private boolean softLimitsEnabled = true;
     private boolean pivotOpenLoop = false;
     private double pivotOpenLoopSpeed = 0.0;
     private double pivotSetpoint = 0;
     private IntakePosition pivotCurrentPosition = IntakePosition.Zero;
 
-    private double zeroPivotEncoderOffset = 24;
 
     private static final double MAXIMUM_LIMIT = 1;
     private static final double MINIMUM_LIMIT = -25;
@@ -50,6 +51,8 @@ public class IntakePivot implements Lifecycle, Sendable {
     public IntakePivot(TalonFX pivotDrive) {
         this.pivotDrive = pivotDrive;
         telemetry = new Telemetry();
+
+        encoder.setPositionOffset(zeroEncoderOffsetPosition);
 
         // kp = 0.25, ka = 0.01
         // kp 15, ka = 0.01
@@ -93,6 +96,19 @@ public class IntakePivot implements Lifecycle, Sendable {
     @Override
     public void autoInit() {
         holdPosition();
+    }
+
+    /**
+     * If the Kraken reads an incorrect position, we will us the absolute encoder to fix the position
+     */
+    public void fixMotorPosition() {
+        double realMotorPosition = encoder.get() * encoderToMotorRatio;
+        BSLogger.log("IntakePivot", "fixMotorPosition to: " + realMotorPosition);
+        pivotDrive.setPosition(realMotorPosition);
+    }
+
+    public Command fixMotorPositionCmd() {
+        return Commands.runOnce(this::fixMotorPosition);
     }
 
     public IntakePosition getIntakePosition() {
@@ -150,17 +166,6 @@ public class IntakePivot implements Lifecycle, Sendable {
         this.pivotOpenLoop = pivotOpenLoop;
     }
 
-    public void setZeroPivotEncoderOffset(double zeroPivotEncoderOffset) {
-        this.zeroPivotEncoderOffset = zeroPivotEncoderOffset;
-    }
-
-    public double getZeroPivotEncoderOffset() {
-        return zeroPivotEncoderOffset;
-    }
-
-    public Command getSetPivotEncoderOffestCmd() {
-        return Commands.runOnce(() -> pivotDrive.setPosition(this.getZeroPivotEncoderOffset()));
-    }
 
     public void periodic() {
         if (pivotOpenLoop) {
@@ -178,11 +183,6 @@ public class IntakePivot implements Lifecycle, Sendable {
                     .withLimitForwardMotion(softLimitsEnabled)
                     .withLimitReverseMotion(softLimitsEnabled));
         }
-    }
-
-    // FIXME: Hack
-    public TalonFX getPivotDrive() {
-        return pivotDrive;
     }
 
    public MotionMagicConfigs getMotionMagicConfigs() {
@@ -203,17 +203,16 @@ public class IntakePivot implements Lifecycle, Sendable {
     public Command updatePIDFromDashbboardCommand() {
         return Commands.runOnce(this::updatePIDFromDashboard);
     }
-
-    public Command getIntakePivotPositionCmd(IntakePosition position) {
-        return Commands.runOnce(() -> this.setIntakePosition(position));
-    }
+    
 
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Pivot/Setpoint", this::getPivotSetpoint, this::setPivotSetpoint);
-        builder.addStringProperty("Pivot/Position", () -> this.getIntakePosition().name(), null);
-        builder.addDoubleProperty("Pivot/Encoder", () -> this.pivotDrive.getPosition().getValue(), null);
-        builder.addDoubleProperty("Pivot/ZeroEncoderOffset", this::getZeroPivotEncoderOffset, this::setZeroPivotEncoderOffset);
+        builder.addStringProperty("Pivot/PositionName", () -> this.getIntakePosition().name(), null);
+        builder.addDoubleProperty("Pivot/MotorPosition", () -> this.pivotDrive.getPosition().getValue(), null);
+        builder.addDoubleProperty("Pivot/EncoderPosition", this.encoder::get, null);
+        builder.addDoubleProperty("Pivot/EncoderAbsolutePosition", this.encoder::getAbsolutePosition, null);
+        builder.addDoubleProperty("Pivot/EncoderOffset", this.encoder::getPositionOffset, null);
 
         if (Constants.Dashboard.ConfigurationMode) {
             builder.addBooleanProperty("Pivot/OpenLoop", this::isPivotOpenLoop, this::setPivotOpenLoop);
@@ -233,6 +232,11 @@ public class IntakePivot implements Lifecycle, Sendable {
 
     public boolean isInPosition(IntakePosition position) {
         return (Math.abs(getCurrentPosition() - position.setpoint) <= 0.15);
+    }
+
+    public Command fixMotorOffsetCmd() {
+        BSLogger.log("IntakePivot", "fixMotorOffsetCmd");
+        return Commands.none();
     }
 
 

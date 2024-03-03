@@ -206,7 +206,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
 
             if (Constants.Dashboard.ConfigurationMode || Constants.Dashboard.IntakeConfigMode) {
                 builder.addDoubleProperty("AmpShotWait", this::getAmpShotTime, this::setAmpShotTime);
-                builder.addDoubleProperty("AmoShotPosition", this::getShotPosition, this::setShotPosition);
+                builder.addDoubleProperty("AmpShotPosition", this::getShotPosition, this::setShotPosition);
                 builder.addDoubleProperty("MM_V", () -> this.MM_Velocity, (v) -> this.MM_Velocity = v);
             }
         }
