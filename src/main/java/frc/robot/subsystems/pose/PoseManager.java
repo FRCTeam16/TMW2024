@@ -30,6 +30,8 @@ public class PoseManager {
         ReadyToShoot,
         // Robot pose used in preparation for scoring on the amp
         PositionForAmp,
+        // Robot pose used to fire the amp shot
+        FireAmpShot,
         // Pose for automatically adjusting shooter pivot based on vision
         ShooterAimVision,
         ShortShot,
@@ -53,6 +55,7 @@ public class PoseManager {
         registry.put(Pose.FeedNoteToShooter, PoseCommands::feedNoteToShooterPose);
         registry.put(Pose.ReadyToShoot, PoseCommands::readyToShootPose);
         registry.put(Pose.PositionForAmp, PoseCommands::positionForAmpPose);
+        registry.put(Pose.FireAmpShot, PoseCommands::fireAmpShotPose);
         registry.put(Pose.ShooterAimVision, PoseCommands::shooterAimVisionPose);
         registry.put(Pose.ShortShot, PoseCommands::shortShotPose);
         registry.put(Pose.StartClimb, PoseCommands::startClimbPose);

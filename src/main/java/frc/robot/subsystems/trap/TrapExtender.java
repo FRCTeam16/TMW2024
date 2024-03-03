@@ -194,7 +194,7 @@ public class TrapExtender implements Lifecycle, Sendable {
     public enum TrapPosition {
         Zero(0.35),
         Up(-23.5),
-        Middle(-12.0);
+        AmpShot(-12.263671875);
 
         private final double setpoint;
 

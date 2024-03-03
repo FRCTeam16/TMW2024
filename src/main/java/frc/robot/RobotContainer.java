@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.CenterNoteIntakeCommand;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.ZeroAndSetOffsetCommand;
 import frc.robot.generated.TunerConstants;
@@ -308,7 +309,7 @@ public class RobotContainer {
         feed.onTrue(
                 Commands.either(
                         Commands.runOnce(Subsystems.shooter::shoot),
-                        Commands.runOnce(() -> Subsystems.intake.setIntakeState(Intake.IntakeState.TryShootAmp)),
+                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireAmpShot),
                         () -> !Subsystems.intake.isNoteDetected())
         ).onFalse(Commands.parallel(
                 Commands.runOnce(Subsystems.shooter::stopFeeder)));
@@ -348,6 +349,8 @@ public class RobotContainer {
 
         // Debug
         SmartDashboard.putNumber("DebugFeederSpeeds", -0.3);
+
+        SmartDashboard.putData("Center Note in intake", new CenterNoteIntakeCommand());
 
 
     }

@@ -2,10 +2,14 @@ package frc.robot.subsystems.pose;
 
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Subsystems;
+import frc.robot.commands.CenterNoteIntakeCommand;
 import frc.robot.commands.auto.WaitIntakeInPosition;
+import frc.robot.commands.auto.WaitPivotInPosition;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakePivot;
+import frc.robot.subsystems.trap.Trap;
 
 class PoseCommands {
 
@@ -63,8 +67,29 @@ class PoseCommands {
     }
 
     public static Command positionForAmpPose() {
-        return new SequentialCommandGroup(
-                Subsystems.intake.moveToStateCmd(Intake.IntakeState.AmpAim)
+        return Commands.sequence(
+                Commands.parallel(
+                        Subsystems.trap.moveToStateCmd(Trap.TrapState.AmpShot),
+                        Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition)
+                ),
+                new WaitPivotInPosition().withTimeout(0.2),
+                new CenterNoteIntakeCommand(),
+                Commands.parallel(
+                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.AmpAim)
+                        // TODO make sure our trap arms are in the correct position
+                ),
+                new WaitIntakeInPosition(IntakePivot.IntakePosition.AMPShot).withTimeout(0.2));
+
+    }
+
+    public static Command fireAmpShotPose() {
+        return Commands.sequence(
+                Subsystems.intake.moveToStateCmd(Intake.IntakeState.TryShootAmp),
+                new WaitCommand(1.0),
+                Commands.parallel(
+                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote),
+                        Subsystems.trap.moveToStateCmd(Trap.TrapState.Default)
+                )
         );
     }
 
@@ -89,7 +114,7 @@ class PoseCommands {
                 Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Up),
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.Climb),
                 Commands.runOnce(() -> Subsystems.climber.setClimberPosition(Climber.ClimberPosition.UP)));
-                // TODO: Rotate trap
+        // TODO: Rotate trap
     }
 
     public static Command prepareBloopShotPose() {

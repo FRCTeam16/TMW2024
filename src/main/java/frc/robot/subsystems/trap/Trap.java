@@ -23,7 +23,8 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
     public enum TrapState {
         Default,
         FeedNoteToTrap,
-        Drive
+        Drive,
+        AmpShot;
     }
 
     @Override
@@ -60,6 +61,9 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
                 getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.Feed);
                 getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero);
                 setFingerPosition(FingerPositions.Closed);
+                break;
+            case AmpShot:
+                getExtender().setTrapPosition(TrapExtender.TrapPosition.AmpShot);
                 break;
         }
     }
