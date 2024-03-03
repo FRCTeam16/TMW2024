@@ -81,7 +81,6 @@ public class IntakeSpeed implements Lifecycle, Sendable {
     }
 
     void periodic() {
-//        intakeDrive.setControl(intakeDrive_Request.withOutput(intakeOpenLoopSpeed));
         intakeDrive.setControl(intakeDrive_Request.withOutput(intakeOpenLoopSpeed));
     }
 
@@ -99,11 +98,11 @@ public class IntakeSpeed implements Lifecycle, Sendable {
     }
 
     static class IntakeSpeedVolts {
-        private double fastSpeed = 6.0;
+        private double fastSpeed = 4.8;
 //        private double slowSpeed = -2;
         private double ejectSpeed = -6;
         private double feedShooterIntakeSpeed = -2; // FIXME feed is using slowSpeed
-        private double ampShotSpeed = -4.8;
+        private double ampShotSpeed = -7.25;
 
         // Getter for fastSpeed
         public double getFastSpeed() {

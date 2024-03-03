@@ -4,6 +4,7 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.util.datalog.DataLog;
@@ -26,11 +27,15 @@ public class IntakePivot implements Lifecycle, Sendable {
     private final DutyCycleEncoder encoder = new DutyCycleEncoder(4);
     private final PIDHelper pidHelper = new PIDHelper("IntakeSubsystem/Pivot/PID");
     private final TalonFXConfiguration pivotConfiguration = new TalonFXConfiguration();
-    private final DutyCycleOut pivotOpenLoopDriveRequest = new DutyCycleOut(0);
+    private final VoltageOut voltageOut = new VoltageOut(0);
 
     private final MotionMagicConfig motionMagicConfig = new MotionMagicConfig();
     private final MotionMagicVoltage pivotMotionMagicDutyCycle = new MotionMagicVoltage(IntakePosition.Zero.setpoint);
-    private final OpenLoopSpeedsConfig pivotOpenLoopSpeeds = new OpenLoopSpeedsConfig(0.1, -0.1);
+    private final OpenLoopSpeedsConfig pivotOpenLoopSpeeds = new OpenLoopSpeedsConfig(0.083, -0.083);
+
+    private final AmpShotController ampShotPIDController = new AmpShotController(encoder, 0.145);
+
+
     //
     // Util
     //
@@ -56,11 +61,12 @@ public class IntakePivot implements Lifecycle, Sendable {
 
         // kp = 0.25, ka = 0.01
         // kp 15, ka = 0.01
-        pidHelper.initialize(0.7, 0.2, 0, 0, 0.12, 0.01);
+//        pidHelper.initialize(0.7, 0.2, 0, 0, 0.12, 0.01);
+        pidHelper.initialize(4.0, 0.0, 0, 0, 0.12, 0.0);
         motionMagicConfig.setkS(0);
-        motionMagicConfig.setkG(0.2);
-        motionMagicConfig.setVelocity(60);
-        motionMagicConfig.setAcceleration(220);
+        motionMagicConfig.setkG(0);
+        motionMagicConfig.setVelocity(50);
+        motionMagicConfig.setAcceleration(120);
         motionMagicConfig.setJerk(2000);
 
         pidHelper.updateConfiguration(pivotConfiguration.Slot0);
@@ -169,7 +175,7 @@ public class IntakePivot implements Lifecycle, Sendable {
 
     public void periodic() {
         if (pivotOpenLoop) {
-            pivotDrive.setControl(pivotOpenLoopDriveRequest.withOutput(pivotOpenLoopSpeed)
+            pivotDrive.setControl(voltageOut.withOutput(pivotOpenLoopSpeed)
                     .withLimitForwardMotion(softLimitsEnabled)
                     .withLimitReverseMotion(softLimitsEnabled));
             SmartDashboard.putNumber(Intake.SUBSYSTEM_NAME + "/Pivot/RotationV", this.pivotDrive.getVelocity().getValueAsDouble());
@@ -179,9 +185,14 @@ public class IntakePivot implements Lifecycle, Sendable {
 //                pidHelper.updateConfiguration(pivotConfiguration.Slot0);
 //                pivotDrive.getConfigurator().apply(pivotConfiguration.Slot0);
 //            }
-            pivotDrive.setControl(pivotMotionMagicDutyCycle.withPosition(pivotSetpoint)
-                    .withLimitForwardMotion(softLimitsEnabled)
-                    .withLimitReverseMotion(softLimitsEnabled));
+
+            if (IntakePosition.AMPShot == pivotCurrentPosition) {
+                pivotDrive.setControl(voltageOut.withOutput(ampShotPIDController.calculate()));
+            } else {
+                pivotDrive.setControl(pivotMotionMagicDutyCycle.withPosition(pivotSetpoint)
+                        .withLimitForwardMotion(softLimitsEnabled)
+                        .withLimitReverseMotion(softLimitsEnabled));
+            }
         }
     }
 
@@ -214,6 +225,8 @@ public class IntakePivot implements Lifecycle, Sendable {
         builder.addDoubleProperty("Pivot/EncoderAbsolutePosition", this.encoder::getAbsolutePosition, null);
         builder.addDoubleProperty("Pivot/EncoderOffset", this.encoder::getPositionOffset, null);
 
+        ampShotPIDController.initSendable(builder);
+
         if (Constants.Dashboard.ConfigurationMode) {
             builder.addBooleanProperty("Pivot/OpenLoop", this::isPivotOpenLoop, this::setPivotOpenLoop);
             builder.addDoubleProperty("Pivot/UpSpeed", pivotOpenLoopSpeeds::getUpSpeed, pivotOpenLoopSpeeds::setUpSpeed);
@@ -244,7 +257,8 @@ public class IntakePivot implements Lifecycle, Sendable {
         Zero(0),
         Vertical(-7),
         Pickup(-23.0),
-        AMPShot(-8.5);
+//        AMPShot(-8.5);
+        AMPShot(-6.27);
 
         private final double setpoint;
 

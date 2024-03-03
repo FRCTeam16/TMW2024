@@ -310,9 +310,11 @@ public class RobotContainer {
                         Commands.runOnce(Subsystems.shooter::shoot),
                         Commands.runOnce(() -> Subsystems.intake.setIntakeState(Intake.IntakeState.TryShootAmp)),
                         () -> !Subsystems.intake.isNoteDetected())
-        ).onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
+        ).onFalse(Commands.parallel(
+                Commands.runOnce(Subsystems.shooter::stopFeeder)));
 
         feedNoteToShooter.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter));
+
         ampAim.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PositionForAmp));
 
         startShooter.onTrue(Commands.runOnce(Subsystems.shooter::runShooter));

@@ -27,6 +27,8 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
 
     private Optional<Timer> postNoteDetectedTimer = Optional.empty();
 
+    private Optional<Timer> ampShotTimer = Optional.empty();
+
 
     public enum IntakeState {
         StartingPosition,
@@ -34,10 +36,14 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         HoldNote,
         FeedNote,
 
-        AmpAim,
+        StopFeed,
+
+
         RotateUpWhileFeedingNote,
-        Trap,
-        Climb, TryShootAmp
+        Climb,
+
+        AmpAim,
+        TryShootAmp
     }
 
     private IntakeState intakeState = IntakeState.StartingPosition;
@@ -100,6 +106,9 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
                 intakePivot.setIntakePosition(IntakePivot.IntakePosition.Vertical);
                 intakeSpeed.stopIntake();
             }
+            case StopFeed -> {
+                intakeSpeed.stopIntake();
+            }
             default -> {
                 DataLogManager.log("[Intake] Unhandled IntakeState: " + state.name());
             }
@@ -118,6 +127,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void periodic() {
+
         if (IntakeState.IntakeFromFloor == intakeState && isNoteDetected()) {
             postNoteDetectedTimer = Optional.of(new Timer());
             postNoteDetectedTimer.get().start();
@@ -135,34 +145,41 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         //
         // Trying Amp Shot
         //
-        if (IntakeState.TryShootAmp == intakeState) {
-            if (tryShootAmp.isEmpty()) {
-                tryShootAmp = Optional.of(new Timer());
-                tryShootAmp.get().start();
-//                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Vertical);
-                var cfg = intakePivot.getMotionMagicConfigs();
-                this.original_velocity = cfg.MotionMagicCruiseVelocity;
-                cfg.MotionMagicCruiseVelocity = this.MM_Velocity;
-                intakePivot.applyConfigs(cfg);
-            } else {
-                final double position = intakePivot.getCurrentPosition();
-                final double elapsed = tryShootAmp.get().get();
-                final double END = 1.0;
-                if (position < shotPosition && elapsed < END) {
-                    intakeSpeed.runAmpShot();
-                } else if (elapsed > END) {
-                    var cfg = intakePivot.getMotionMagicConfigs();
-                    cfg.MotionMagicCruiseVelocity = original_velocity;
-                    intakePivot.applyConfigs(cfg);
-
-                    intakeSpeed.stopIntake();
-                    tryShootAmp = Optional.empty();
-                    this.setIntakeState(IntakeState.HoldNote);
-                }
-            }
-        } else {
-
+        if (ampShotTimer.isPresent() && ampShotTimer.get().hasElapsed(1.0)) {
+            ampShotTimer = Optional.empty();
+            setIntakeState(IntakeState.StopFeed);
+        } else if (IntakeState.TryShootAmp == intakeState && ampShotTimer.isEmpty()) {
+            ampShotTimer = Optional.of(new Timer());
+            ampShotTimer.get().start();
+            intakeSpeed.runAmpShot();
         }
+
+
+//            if (tryShootAmp.isEmpty()) {
+//                tryShootAmp = Optional.of(new Timer());
+//                tryShootAmp.get().start();
+////                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Vertical);
+//                var cfg = intakePivot.getMotionMagicConfigs();
+//                this.original_velocity = cfg.MotionMagicCruiseVelocity;
+//                cfg.MotionMagicCruiseVelocity = this.MM_Velocity;
+//                intakePivot.applyConfigs(cfg);
+//            } else {
+//                final double position = intakePivot.getCurrentPosition();
+//                final double elapsed = tryShootAmp.get().get();
+//                final double END = 1.0;
+//                if (position < shotPosition && elapsed < END) {
+//                    intakeSpeed.runAmpShot();
+//                } else if (elapsed > END) {
+//                    var cfg = intakePivot.getMotionMagicConfigs();
+//                    cfg.MotionMagicCruiseVelocity = original_velocity;
+//                    intakePivot.applyConfigs(cfg);
+//
+//                    intakeSpeed.stopIntake();
+//                    tryShootAmp = Optional.empty();
+//                    this.setIntakeState(IntakeState.HoldNote);
+//                }
+//            }
+
 
         intakeSpeed.periodic();
         intakePivot.periodic();
