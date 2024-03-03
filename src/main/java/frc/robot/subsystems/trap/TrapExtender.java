@@ -136,6 +136,10 @@ public class TrapExtender implements Lifecycle, Sendable {
         this.setClosedLoopSetpoint(trapPosition.setpoint);
     }
 
+    public boolean isInPosition() {
+        return Math.abs(motor.getPosition().getValue() - getClosedLoopSetpoint()) < 0.35;
+    }
+
     public void updatePIDFromDashboard() {
         pidHelper.updateConfiguration(configuration.Slot0);
         motionMagicConfig.updateSlot0Config(configuration.Slot0);
@@ -150,6 +154,12 @@ public class TrapExtender implements Lifecycle, Sendable {
 
 
     public void periodic() {
+        // Check whether to switch to open loop
+        if (!openLoop && isInPosition()) {
+            openLoop = true;
+            openLoopSetpoint = 0.0;
+        }
+
         if (openLoop) {
             motor.setControl(openLoopOut.withOutput(openLoopSetpoint));
         } else {

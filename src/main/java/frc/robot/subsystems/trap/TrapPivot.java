@@ -44,7 +44,7 @@ public class TrapPivot implements Lifecycle, Sendable {
                 .withSoftwareLimitSwitch(
                         new SoftwareLimitSwitchConfigs()
                                 .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold()).withForwardSoftLimitEnable(false)
-                                .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold()).withReverseSoftLimitEnable(true))
+                                .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold()).withReverseSoftLimitEnable(false))
                 .withHardwareLimitSwitch(
                         new HardwareLimitSwitchConfigs()
                                 .withForwardLimitEnable(false)
@@ -68,10 +68,10 @@ public class TrapPivot implements Lifecycle, Sendable {
     }
 
     private void setSoftLimits(boolean enable) {
-        this.motor.getConfigurator().apply(
-                new SoftwareLimitSwitchConfigs()
-                        .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold()).withForwardSoftLimitEnable(enable)
-                        .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold()).withReverseSoftLimitEnable(enable));
+//        this.motor.getConfigurator().apply(
+//                new SoftwareLimitSwitchConfigs()
+//                        .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold()).withForwardSoftLimitEnable(enable)
+//                        .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold()).withReverseSoftLimitEnable(enable));
     }
 
     public boolean isOpenLoop() {
