@@ -15,17 +15,21 @@ class PoseCommands {
 
     static Command moveToStartingConfigPose() {
         return new SequentialCommandGroup(
-                Commands.parallel(
-                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.StartingPosition),
-                        Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.StartingPosition)
-                ));
+                Subsystems.intake.moveToStateCmd(Intake.IntakeState.StartingPosition),
+                new WaitCommand(0.25),
+                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.StartingPosition));
     }
 
     static Command moveToPickupPose() {
-        return new ParallelCommandGroup(
-                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
-                Subsystems.intake.moveToStateCmd(Intake.IntakeState.IntakeFromFloor),
-                Commands.runOnce(Subsystems.shooter::stopFeeder)
+        return Commands.sequence(
+                Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive),
+                new WaitCommand(0.25),  // add wait for intake pivot to be in position
+                Commands.parallel(
+                        Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
+                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.IntakeFromFloor),
+                        Commands.runOnce(Subsystems.shooter::stopFeeder)
+
+                )
         );
     }
 
@@ -108,13 +112,15 @@ class PoseCommands {
     }
 
     public static Command startClimbPose() {
-        return Commands.parallel(
-                Commands.runOnce(Subsystems.shooter::stopShooter),
-                Commands.runOnce(Subsystems.shooter::stopFeeder),
-                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Up),
-                Subsystems.intake.moveToStateCmd(Intake.IntakeState.Climb),
-                Commands.runOnce(() -> Subsystems.climber.setClimberPosition(Climber.ClimberPosition.UP)));
-        // TODO: Rotate trap
+        return Commands.sequence(
+                Commands.parallel(
+                        Commands.runOnce(Subsystems.shooter::stopShooter),
+                        Subsystems.trap.moveToStateCmd(Trap.TrapState.Climb),
+                        Commands.runOnce(Subsystems.shooter::stopFeeder),
+                        Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Up),
+                        Subsystems.climber.moveToStateCmd(Climber.ClimberPosition.UP)),
+                // TODO : check wait between trap arm and intake
+                Subsystems.intake.moveToStateCmd(Intake.IntakeState.Climb));
     }
 
     public static Command prepareBloopShotPose() {

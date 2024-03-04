@@ -22,7 +22,7 @@ public class TrapPivot implements Lifecycle, Sendable {
     private final TalonFXConfiguration configuration = new TalonFXConfiguration();
     private final OpenLoopSpeedsConfig openLoopSpeeds = new OpenLoopSpeedsConfig(-1.2, 1.2);
     private final MotionMagicConfig motionMagicConfig = new MotionMagicConfig();
-    private final SoftLimitValues softLimits = new SoftLimitValues(0, 0);
+    private final SoftLimitValues softLimits = new SoftLimitValues(30, -1);
 
     private final VoltageOut openLoopOut = new VoltageOut(0);
     private final PositionVoltage positionOut = new PositionVoltage(0);
@@ -43,8 +43,8 @@ public class TrapPivot implements Lifecycle, Sendable {
         configuration
                 .withSoftwareLimitSwitch(
                         new SoftwareLimitSwitchConfigs()
-                                .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold()).withForwardSoftLimitEnable(false)
-                                .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold()).withReverseSoftLimitEnable(false))
+                                .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold()).withForwardSoftLimitEnable(true)
+                                .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold()).withReverseSoftLimitEnable(true))
                 .withHardwareLimitSwitch(
                         new HardwareLimitSwitchConfigs()
                                 .withForwardLimitEnable(false)
@@ -65,6 +65,15 @@ public class TrapPivot implements Lifecycle, Sendable {
     @Override
     public void autoInit() {
         holdPosition();
+    }
+
+    private void normalizePosition() {
+        double position = this.motor.getPosition().getValue();
+        if (position >= 24) {
+            double newPosition = position % 24.0;
+            this.motor.setPosition(newPosition);
+            BSLogger.log("TrapPivot", "normalized position");
+        }
     }
 
     private void setSoftLimits(boolean enable) {
@@ -138,26 +147,6 @@ public class TrapPivot implements Lifecycle, Sendable {
         this.trapPosition = trapPosition;
         this.setClosedLoopSetpoint(trapPosition.setpoint);
     }
-
-
-    // TODO: make better ( aka don't hit things )
-    // public void goToZero(){
-    //     setTrapPosition(TrapPivotPosition.Zero);
-    // }
-    // public void goToFeed(){
-    //     setTrapPosition(TrapPivotPosition.Feed);
-    // }
-    // public void goToDrive(){
-    //     setTrapPosition(TrapPivotPosition.Drive);
-    // }
-    // public void goToTop(){
-    //     setTrapPosition(TrapPivotPosition.Top);
-    // }
-    // public void goToScore(){
-    //     setTrapPosition(TrapPivotPosition.Score);
-    // }
-
-
 
     public void updatePIDFromDashboard() {
         if (pidHelper.updateValuesFromDashboard()) {

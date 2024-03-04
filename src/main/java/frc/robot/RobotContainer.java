@@ -25,16 +25,17 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.RotationController;
-import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.trap.Trap;
 import frc.robot.subsystems.trap.TrapExtender;
+import frc.robot.subsystems.trap.TrapPivot;
 import frc.robot.subsystems.util.VisionAlignmentHelper;
 import frc.robot.subsystems.vision.VisionTypes;
 
 import java.util.Objects;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 public class RobotContainer {
     private static final double MaxSpeed = Constants.Swerve.kMaxSpeedMetersPerSecond;
@@ -229,10 +230,15 @@ public class RobotContainer {
                     .onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().openLoopUp()))
                     .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
 
-            debugYButton.onTrue(Commands.runOnce(() -> Subsystems.trap.getPivot().openLoopUp()))
-                    .onFalse(Commands.runOnce(() -> Subsystems.trap.getPivot().stopOpenLoop()));
-            debugAButton.onTrue(Commands.runOnce(() -> Subsystems.trap.getPivot().openLoopDown()))
-                    .onFalse(Commands.runOnce(() -> Subsystems.trap.getPivot().stopOpenLoop()));
+//            debugYButton.onTrue(Commands.runOnce(() -> Subsystems.trap.getPivot().openLoopUp()))
+//                    .onFalse(Commands.runOnce(() -> Subsystems.trap.getPivot().stopOpenLoop()));
+//            debugAButton.onTrue(Commands.runOnce(() -> Subsystems.trap.getPivot().openLoopDown()))
+//                    .onFalse(Commands.runOnce(() -> Subsystems.trap.getPivot().stopOpenLoop()));
+
+            debugYButton.onTrue(Commands.runOnce(() -> Subsystems.trap.getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.Top)));
+            debugAButton.onTrue(Commands.runOnce(() -> Subsystems.trap.getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.Drive)));
+
+
 
             debugBButton.onTrue(Commands.runOnce(() -> Subsystems.trap.setFingerPosition(Trap.FingerPositions.Closed)));
             debugXButton.onTrue(Commands.runOnce(() -> Subsystems.trap.setFingerPosition(Trap.FingerPositions.Open)));
@@ -270,7 +276,7 @@ public class RobotContainer {
         //
         // Intake Subsystem
         //
-        intake.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup))
+        intake.whileTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup))
                 .onFalse(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
         feedIntake.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeFeedShooter()))
                 .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));

@@ -7,16 +7,15 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.util.OpenLoopSpeedsConfig;
 import frc.robot.subsystems.util.PIDHelper;
 import frc.robot.subsystems.util.SoftLimitValues;
-
-import javax.swing.plaf.basic.BasicSliderUI;
 
 public class Climber extends SubsystemBase implements Lifecycle, Sendable {
     public static final String SUBSYSTEM_NAME = "ClimberSubsystem";
@@ -117,6 +116,10 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
         openLoopSpeed = 0.0;
     }
 
+    public Command moveToStateCmd(ClimberPosition climberPosition) {
+        return Commands.runOnce(() -> setClimberPosition(climberPosition));
+    }
+
     public ClimberPosition getClimberPosition() {
         return this.currentPosition;
     }
@@ -173,6 +176,7 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
             }
         }
     }
+
 
 
 

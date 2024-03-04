@@ -24,7 +24,8 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
         Default,
         FeedNoteToTrap,
         Drive,
-        AmpShot;
+        AmpShot,
+        Climb;
     }
 
     @Override
@@ -48,7 +49,7 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
         this.state = state;
         switch (state) {
             case Default:
-                getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.Zero);
+                getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.Drive);
                 getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero);
                 setFingerPosition(FingerPositions.StartPosition);
                 break;
@@ -64,6 +65,11 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
                 break;
             case AmpShot:
                 getExtender().setTrapPosition(TrapExtender.TrapPosition.AmpShot);
+                getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.Drive);
+                break;
+            case Climb:
+                getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.Top);
+                getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero);
                 break;
         }
     }
