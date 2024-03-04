@@ -25,6 +25,12 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
     public final VisionAimManager.ShootingProfile BloopProfile =
             new VisionAimManager.ShootingProfile(Pivot.PivotPosition.Horizontal.setpoint, 10, 10);
 
+    public static final VisionAimManager.ShootingProfile BigShotProfile =
+            new VisionAimManager.ShootingProfile(35, 25, 25);
+
+    public static final VisionAimManager.ShootingProfile SubShotProfile =
+            new VisionAimManager.ShootingProfile(50, 25, 25);
+
 
 
     public Shooter(){

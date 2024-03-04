@@ -102,7 +102,7 @@ public class IntakeSpeed implements Lifecycle, Sendable {
 //        private double slowSpeed = -2;
         private double ejectSpeed = -6;
         private double feedShooterIntakeSpeed = -2; // FIXME feed is using slowSpeed
-        private double ampShotSpeed = -7.25;
+        private double ampShotSpeed = -7.75;
 
         // Getter for fastSpeed
         public double getFastSpeed() {

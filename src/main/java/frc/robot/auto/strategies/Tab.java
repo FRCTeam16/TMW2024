@@ -38,7 +38,7 @@ public class Tab extends AutoPathStrategy {
 
                 writeLog("Tab", "First Shot"),
                 Commands.parallel(
-                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShortShot),
+                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.AutoShortShot),
                         new WaitCommand(0.25)
                 ),
                 doShootCmd(),

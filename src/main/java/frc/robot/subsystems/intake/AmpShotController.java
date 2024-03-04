@@ -23,6 +23,10 @@ public class AmpShotController implements Sendable {
         this.goal = new TrapezoidProfile.State(setpoint, 0);
     }
 
+    public void setSetpoint(double setpoint) {
+        this.goal = new TrapezoidProfile.State(setpoint, 0);
+    }
+
     public double calculate() {
         double rawValue = -pid.calculate(encoder.get(), goal.position);
         return MathUtil.clamp(rawValue, -clamp, clamp);

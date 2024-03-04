@@ -122,8 +122,12 @@ public class IntakePivot implements Lifecycle, Sendable {
     }
 
     public void setIntakePosition(IntakePosition newPosition) {
+        if (IntakePosition.AMPShot == newPosition || IntakePosition.Climb == newPosition) {
+            ampShotPIDController.setSetpoint(newPosition.setpoint);
+        } else {
+            setPivotSetpoint(newPosition.setpoint);
+        }
         pivotCurrentPosition = newPosition;
-        setPivotSetpoint(pivotCurrentPosition.setpoint);
         telemetry.logPositionChange(newPosition);
     }
 
@@ -186,7 +190,7 @@ public class IntakePivot implements Lifecycle, Sendable {
 //                pivotDrive.getConfigurator().apply(pivotConfiguration.Slot0);
 //            }
 
-            if (IntakePosition.AMPShot == pivotCurrentPosition) {
+            if (IntakePosition.AMPShot == pivotCurrentPosition || IntakePosition.Climb == pivotCurrentPosition) {
                 pivotDrive.setControl(voltageOut.withOutput(ampShotPIDController.calculate()));
             } else {
                 pivotDrive.setControl(pivotMotionMagicDutyCycle.withPosition(pivotSetpoint)
@@ -258,7 +262,8 @@ public class IntakePivot implements Lifecycle, Sendable {
         Vertical(-7),
         Pickup(-23.0),
 //        AMPShot(-8.5);
-        AMPShot(-6.27);
+        AMPShot(0.145),
+        Climb(0.177);
 
         private final double setpoint;
 

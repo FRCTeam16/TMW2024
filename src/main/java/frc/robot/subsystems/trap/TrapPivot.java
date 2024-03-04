@@ -201,7 +201,7 @@ public class TrapPivot implements Lifecycle, Sendable {
 
     public enum TrapPivotPosition {
         Zero(0),
-        Feed(21),
+        PreClimb(5.39),
         Drive(20),
         Top(14),
         Score(8.8);

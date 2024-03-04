@@ -103,7 +103,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
                 intakePivot.setIntakePosition(IntakePivot.IntakePosition.AMPShot);
             }
             case Climb -> {
-                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Vertical);
+                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Climb);
                 intakeSpeed.stopIntake();
             }
             case StopFeed -> {

@@ -3,11 +3,11 @@ package frc.robot;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Angle;
-import edu.wpi.first.units.Distance;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Velocity;
 import edu.wpi.first.wpilibj.Joystick;
@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.CenterNoteIntakeCommand;
 import frc.robot.commands.RunWithDisabledInstantCommand;
@@ -29,12 +30,10 @@ import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.trap.Trap;
 import frc.robot.subsystems.trap.TrapExtender;
 import frc.robot.subsystems.trap.TrapPivot;
-import frc.robot.subsystems.util.VisionAlignmentHelper;
 import frc.robot.subsystems.vision.VisionTypes;
 
 import java.util.Objects;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 public class RobotContainer {
@@ -79,8 +78,10 @@ public class RobotContainer {
     //
     private final Trigger feed = new Trigger(right::getTrigger);
     private final JoystickButton runVisionAlignAngle = new JoystickButton(right, 2);
-    private final JoystickButton robotCentric = new JoystickButton(right, 3);
+    private final JoystickButton robotCentric = new JoystickButton(right, 5);
+    private final JoystickButton bigShot = new JoystickButton(right, 3);
     private final JoystickButton ampAim = new JoystickButton(right, 4);
+    private final POVButton subShot = new POVButton(right, 180);
 
     //
     // Debug Controller
@@ -120,8 +121,8 @@ public class RobotContainer {
     //
     private boolean useVisionAlignment = false; // twist alignment for auto-aiming
 
-    private final VisionAlignmentHelper trapAlignHelper = new VisionAlignmentHelper();
-    private boolean useVisionTrapAligment = false; // horizontal input for trap alignment
+//    private final VisionAlignmentHelper trapAlignHelper = new VisionAlignmentHelper();
+//    private boolean useVisionTrapAligment = false; // horizontal input for trap alignment
 
 
     public RobotContainer() {
@@ -129,6 +130,7 @@ public class RobotContainer {
         configureDashboardButtons();
         alignController.setTolerance(0.05);
         SmartDashboard.putData("AlignPID", alignController);
+        SmartDashboard.setDefaultNumber("AlignPIDFactor", 200);
     }
 
     /**
@@ -147,12 +149,15 @@ public class RobotContainer {
             if (!targetInfo.hasTarget()) {
                 twist = OIUtil.deadband(-left.getX(), DEADBAND) * (MaxAngularRate * 0.8);
             } else {
-                double horizontalComponent = alignController.calculate(targetInfo.xOffset(), 0);
-                twist = horizontalComponent * Constants.Swerve.kMaxAngularVelocity;
+                double distance = targetInfo.calculateDistance();
+                double factor = distance / SmartDashboard.getNumber("AlignPIDFactor", 200);
+                double horizontalComponent = factor * alignController.calculate(targetInfo.xOffset(), 0);
+                twist = MathUtil.clamp(horizontalComponent * Constants.Swerve.kMaxAngularVelocity, -Math.PI, Math.PI);
             }
         }
         return RadiansPerSecond.of(twist);
     }
+
 
     /**
      * This method is used to supply the swerve horizontal value to the swerve drive
@@ -161,19 +166,19 @@ public class RobotContainer {
      *
      * @return the swerve horizontal value
      */
-    private Measure<Velocity<Distance>> supplySwerveHorizontal() {
-        if (!useVisionTrapAligment) {
-            return MetersPerSecond.of(OIUtil.deadband(-right.getY(), 0.05) * MaxSpeed);
-        } else {
-            VisionTypes.TargetInfo targetInfo = Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo();
-            if (!targetInfo.hasTarget()) {
-                return MetersPerSecond.of(OIUtil.deadband(-right.getY(), 0.05) * MaxSpeed);
-            } else {
-                double horizontalComponent = alignController.calculate(targetInfo.yOffset(), 0);
-                return MetersPerSecond.of(horizontalComponent * MaxSpeed);
-            }
-        }
-    }
+//    private Measure<Velocity<Distance>> supplySwerveHorizontal() {
+//        if (!useVisionTrapAligment) {
+//            return MetersPerSecond.of(OIUtil.deadband(-right.getY(), 0.05) * MaxSpeed);
+//        } else {
+//            VisionTypes.TargetInfo targetInfo = Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo();
+//            if (!targetInfo.hasTarget()) {
+//                return MetersPerSecond.of(OIUtil.deadband(-right.getY(), 0.05) * MaxSpeed);
+//            } else {
+//                double horizontalComponent = alignController.calculate(targetInfo.yOffset(), 0);
+//                return MetersPerSecond.of(horizontalComponent * MaxSpeed);
+//            }
+//        }
+//    }
 
 
     private void configureBindings() {
@@ -287,7 +292,11 @@ public class RobotContainer {
         //
         // Climb subsystem
         //
-        startClimb.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.StartClimb));
+//        startClimb.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.StartClimb));
+        startClimb.onTrue(
+                Commands.runOnce(() -> Subsystems.poseManager.getClimbManager().getNextPoseCommand().schedule()));
+
+
         unsafeLowerClimber.onTrue(Commands.runOnce(() -> Subsystems.climber.unsafeOpenLoopUp()))
                 .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
         unsafeRaiseClimber.onTrue(Commands.runOnce(() -> Subsystems.climber.unsafeOpenLoopDown()))
@@ -314,7 +323,9 @@ public class RobotContainer {
         //
         feed.onTrue(
                 Commands.either(
-                        Commands.runOnce(Subsystems.shooter::shoot),
+                        Commands.sequence(
+                                Commands.runOnce(Subsystems.shooter::runShooter),
+                                Commands.runOnce(Subsystems.shooter::shoot)),
                         Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireAmpShot),
                         () -> !Subsystems.intake.isNoteDetected())
         ).onFalse(Commands.parallel(
@@ -326,6 +337,14 @@ public class RobotContainer {
 
         startShooter.onTrue(Commands.runOnce(Subsystems.shooter::runShooter));
         stopShooter.onTrue(Commands.runOnce(Subsystems.shooter::stopShooter));
+
+        bigShot.onTrue(
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireBigShot)
+        ).onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
+
+        subShot.onTrue(
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.SubShot)
+        ).onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
 
 
         if (Utils.isSimulation()) {

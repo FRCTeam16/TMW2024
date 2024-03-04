@@ -10,6 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
@@ -35,6 +36,10 @@ public class TrapExtender implements Lifecycle, Sendable {
 
     private final SoftLimitValues softLimits = new SoftLimitValues(0.55, -24.25);
     private boolean softLimitsEnabled = true;
+
+    private double inPositionThreshold = 0.5;
+
+    private final Timer closedLoopSetTimer = new Timer();
 
 
     public TrapExtender(TalonFX motor) {
@@ -127,6 +132,7 @@ public class TrapExtender implements Lifecycle, Sendable {
     }
 
     public void setClosedLoopSetpoint(double closedLoopSetpoint) {
+        this.closedLoopSetTimer.restart();
         this.setOpenLoop(false);
         this.closedLoopSetpoint = closedLoopSetpoint;
     }
@@ -154,6 +160,11 @@ public class TrapExtender implements Lifecycle, Sendable {
 
 
     public void periodic() {
+        // Check whether to expire closed loop control request
+        if (closedLoopSetTimer.hasElapsed(0.5)) {
+            openLoop = true;
+        }
+
         // Check whether to switch to open loop
         if (!openLoop && isInPosition()) {
             openLoop = true;
@@ -173,6 +184,7 @@ public class TrapExtender implements Lifecycle, Sendable {
         builder.addBooleanProperty("TrapExtender/OpenLoop", this::isOpenLoop, this::setOpenLoop);
         builder.addDoubleProperty("TrapExtender/ClosedLoopSetpoint", this::getClosedLoopSetpoint, this::setClosedLoopSetpoint);
         builder.addStringProperty("TrapExtender/Position", () -> this.trapPosition.name(), null);
+        builder.addBooleanProperty("TrapExtender/InPosition", this::isInPosition, null);
 
         if (Constants.Dashboard.ConfigurationMode || Constants.Dashboard.TrapConfigMode) {
             builder.addDoubleProperty("TrapExtender/UpSpeed", openLoopSpeeds::getUpSpeed, openLoopSpeeds::setUpSpeed);
@@ -188,6 +200,8 @@ public class TrapExtender implements Lifecycle, Sendable {
             builder.addBooleanProperty("TrapExtender/RevLimitHit", () -> this.motor.getFault_ReverseSoftLimit().getValue(), null);
 
             builder.addDoubleProperty("TrapExtender/Encoder", () -> this.motor.getPosition().getValue(), null);
+            builder.addDoubleProperty("TrapExtender/InPosThreshold", () -> this.inPositionThreshold, (value) -> this.inPositionThreshold = value);
+
         }
     }
 

@@ -38,7 +38,7 @@ public class UnderTheBridge extends AutoPathStrategy {
                 //
                 // First Shot
                 //
-                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShortShot),
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.AutoShortShot),
                 new WaitCommand(0.25),
                 Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2)),
                 Commands.parallel(

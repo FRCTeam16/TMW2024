@@ -5,10 +5,10 @@ import frc.robot.Subsystems;
 import frc.robot.commands.CenterNoteIntakeCommand;
 import frc.robot.commands.auto.WaitIntakeInPosition;
 import frc.robot.commands.auto.WaitPivotInPosition;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakePivot;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.trap.Trap;
 
 class PoseCommands {
@@ -22,6 +22,7 @@ class PoseCommands {
 
     static Command moveToPickupPose() {
         return Commands.sequence(
+                Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeFast()),
                 Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive),
                 new WaitCommand(0.25),  // add wait for intake pivot to be in position
                 Commands.parallel(
@@ -98,36 +99,67 @@ class PoseCommands {
     }
 
     public static Command shooterAimVisionPose() {
-        return Commands.parallel(
-                Commands.runOnce(Subsystems.shooter::runShooter),
-                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.VisionAim)
+        return Commands.sequence(
+                Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive),
+                new WaitCommand(0.25),  // add wait for intake pivot to be in position
+                Commands.parallel(
+                        Commands.runOnce(Subsystems.shooter::runShooter),
+                        Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.VisionAim)
+
+                )
         );
     }
 
     public static Command shortShotPose() {
-        return Commands.parallel(
-                Commands.runOnce(Subsystems.shooter::runShooter),
-                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.ShortShot)
+        return Commands.sequence(
+                Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive),
+                new WaitCommand(0.25),  // add wait for intake pivot to be in position
+                Commands.parallel(
+                        Commands.runOnce(Subsystems.shooter::runShooter),
+                        Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.ShortShot)
+                )
         );
     }
 
-    public static Command startClimbPose() {
-        return Commands.sequence(
-                Commands.parallel(
-                        Commands.runOnce(Subsystems.shooter::stopShooter),
-                        Subsystems.trap.moveToStateCmd(Trap.TrapState.Climb),
-                        Commands.runOnce(Subsystems.shooter::stopFeeder),
-                        Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Up),
-                        Subsystems.climber.moveToStateCmd(Climber.ClimberPosition.UP)),
-                // TODO : check wait between trap arm and intake
-                Subsystems.intake.moveToStateCmd(Intake.IntakeState.Climb));
+    public static Command stepClimbPose() {
+        return Subsystems.poseManager.climbManager.getNextPoseCommand();
     }
 
     public static Command prepareBloopShotPose() {
-        return Commands.parallel(
-                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.StartingPosition),
-                Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(Subsystems.shooter.BloopProfile))
+        return Commands.sequence(
+                Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive),
+                new WaitCommand(0.25),  // add wait for intake pivot to be in position
+                Commands.parallel(
+                        Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.StartingPosition),
+                        Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(Subsystems.shooter.BloopProfile))
+                )
         );
     }
 
+    public static Command fireBigShot() {
+        return Commands.sequence(
+                Commands.runOnce(Subsystems.shooter::runShooter),
+                Commands.parallel(
+                        Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(Shooter.BigShotProfile)),
+                        Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(Shooter.BigShotProfile)),
+                        Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive)
+                ),
+                Commands.runOnce(Subsystems.shooter::runShooter),
+                new WaitCommand(0.25),
+                Commands.runOnce((Subsystems.shooter::shoot)
+                ));
+    }
+
+    public static Command fireSubShot() {
+        return Commands.sequence(
+                Commands.runOnce(Subsystems.shooter::runShooter),
+                Commands.parallel(
+                        Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(Shooter.SubShotProfile)),
+                        Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(Shooter.SubShotProfile)),
+                        Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive)
+                ),
+                Commands.runOnce(Subsystems.shooter::runShooter),
+                new WaitCommand(0.5),
+                Commands.runOnce(Subsystems.shooter::shoot));
+    }
 }

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Subsystems;
 import frc.robot.subsystems.util.BSLogger;
 
 import java.util.HashMap;
@@ -14,6 +15,8 @@ import java.util.function.Supplier;
 
 public class PoseManager {
 
+
+    public final ClimbManager climbManager = new ClimbManager();
 
     public enum Pose {
         // Default starting configuration
@@ -34,10 +37,10 @@ public class PoseManager {
         FireAmpShot,
         // Pose for automatically adjusting shooter pivot based on vision
         ShooterAimVision,
-        ShortShot,
+        AutoShortShot,
         // Start climb
         StartClimb,
-        ExtendClimbers, PrepareBloopShot
+        ExtendClimbers, FireBigShot, SubShot, PrepareBloopShot
     }
 
     private Pose lastPose = Pose.StartingConfig;
@@ -57,14 +60,25 @@ public class PoseManager {
         registry.put(Pose.PositionForAmp, PoseCommands::positionForAmpPose);
         registry.put(Pose.FireAmpShot, PoseCommands::fireAmpShotPose);
         registry.put(Pose.ShooterAimVision, PoseCommands::shooterAimVisionPose);
-        registry.put(Pose.ShortShot, PoseCommands::shortShotPose);
-        registry.put(Pose.StartClimb, PoseCommands::startClimbPose);
+        registry.put(Pose.AutoShortShot, PoseCommands::shortShotPose);
+//        registry.put(Pose.StartClimb, PoseCommands::stepClimbPose);
         registry.put(Pose.PrepareBloopShot, PoseCommands::prepareBloopShotPose);
+        registry.put(Pose.FireBigShot, PoseCommands::fireBigShot);
+        registry.put(Pose.SubShot, PoseCommands::fireSubShot);
+    }
+
+    public ClimbManager getClimbManager() {
+        return climbManager;
     }
 
     public Command getPoseCommand(Pose requestedPose) {
         BSLogger.log("PoseManager", "Fetching Pose: " + requestedPose);
         SmartDashboard.putString("PoseManager/RequestedPose", requestedPose.name());
+
+        if (Pose.StartClimb == requestedPose) {
+            BSLogger.log("PoseManager", "Special handling for next pose command");
+            return Commands.print("Don't use this method to do climbing");
+        }
 
         if (registry.containsKey(requestedPose)) {
             lastPose = requestedPose;
@@ -72,7 +86,7 @@ public class PoseManager {
             return registry.get(requestedPose).get();
         } else {
             BSLogger.log("PoseManager", "!!! Unhandled pose requested: " + requestedPose);
-            return Commands.none();
+            return Commands.print("CLIMB IS FINISHED");
         }
     }
 
