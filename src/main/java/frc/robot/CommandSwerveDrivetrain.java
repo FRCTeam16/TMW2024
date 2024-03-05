@@ -1,6 +1,5 @@
 package frc.robot;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.Utils;
@@ -16,12 +15,12 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.subsystems.util.GameInfo;
 
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements
@@ -70,6 +69,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
         }
 
+        // Assume Blue is default
         AutoBuilder.configureHolonomic(
                 () -> this.getState().Pose,
                 this::seedFieldRelative,
@@ -81,17 +81,12 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
                         Constants.AutoConstants.kMaxSpeedMetersPerSecond, // TunerConstants.kSpeedAtVoltsMps,
                         driveBaseRadius,
                         new ReplanningConfig()),
-                () -> {
-                    // Assume Blue is default
-                    Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-                    if (alliance.isPresent()) {
-                        return alliance.get() == DriverStation.Alliance.Red;
-                    }
-                    return false;
-                },
+                GameInfo::isRedAlliance,
                 this);
 
     }
+
+
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
         return run(() -> this.setControl(requestSupplier.get()));

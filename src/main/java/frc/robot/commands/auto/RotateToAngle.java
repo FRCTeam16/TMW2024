@@ -3,6 +3,8 @@ package frc.robot.commands.auto;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 
+import com.pathplanner.lib.util.GeometryUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,8 +23,23 @@ public class RotateToAngle extends Command {
     private final int scansToHold = 5;
     private int scanCount = 0;
 
+    private boolean mirror = false;
+
+    /**
+     * Rotates the robot to a specific angle, assumes field mirror will be used
+     * @param targetAngleDegrees
+     */
+
     public RotateToAngle(double targetAngleDegrees) {
-        this.targetAngleDegrees = targetAngleDegrees;
+        this(targetAngleDegrees, true);
+    }
+
+    public RotateToAngle(double targetAngleDegrees, boolean mirror) {
+        Rotation2d rotation = Rotation2d.fromDegrees(targetAngleDegrees);
+        if (mirror) {
+            rotation = GeometryUtil.flipFieldRotation(rotation);
+        }
+        this.targetAngleDegrees = rotation.getDegrees();
         rotationController.setSetpoint(targetAngleDegrees);
         addRequirements(Subsystems.swerveSubsystem);
     }
@@ -59,7 +76,6 @@ public class RotateToAngle extends Command {
 
         // twist = RotationController.clampToDPS(0.2);
         final double twistRate = twist * Constants.Swerve.kMaxAngularVelocity;
-
 
         Subsystems.swerveSubsystem.setControl(rotate.withRotationalRate(twistRate));
 

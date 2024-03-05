@@ -1,7 +1,10 @@
 package frc.robot.auto.strategies;
 
+import com.pathplanner.lib.util.GeometryUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.proto.Geometry2D;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -12,6 +15,7 @@ import frc.robot.subsystems.VisionAimManager;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.util.BSLogger;
+import frc.robot.subsystems.util.GameInfo;
 
 import static edu.wpi.first.units.Units.Degree;
 
@@ -34,9 +38,17 @@ public class DropShot extends AutoPathStrategy {
 //                        pointWheelsAtCmd(Degree.of(0))
                 ),
                 Commands.runOnce(
-                        () ->
+                        () -> {
+                            if (GameInfo.isBlueAlliance()) {
                                 Subsystems.swerveSubsystem.seedFieldRelative(
-                                        new Pose2d(1.84, 7.44, new Rotation2d(Degree.of(0))))
+                                        new Pose2d(1.84, 7.44, new Rotation2d(Degree.of(0))));
+                            } else {
+                                Subsystems.swerveSubsystem.seedFieldRelative(
+                                        GeometryUtil.flipFieldPose( // Flip the field pose for red alliance
+                                                new Pose2d(1.84, 7.44, new Rotation2d(Degree.of(0)))));
+                            }
+                        }
+
                 ),
 //                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PrepareBloopShot),
                 Commands.parallel(
