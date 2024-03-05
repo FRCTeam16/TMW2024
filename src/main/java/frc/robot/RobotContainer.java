@@ -382,6 +382,8 @@ public class RobotContainer {
         // Debug
         SmartDashboard.putNumber("DebugFeederSpeeds", -0.3);
 
+        SmartDashboard.setDefaultNumber("DeflectDelay", 0.75);
+
         SmartDashboard.putData("Center Note in intake", new CenterNoteIntakeCommand());
 
 

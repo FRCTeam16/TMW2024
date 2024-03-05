@@ -143,10 +143,12 @@ public class TrapExtender implements Lifecycle, Sendable {
         return Math.abs(motor.getPosition().getValue() - getClosedLoopSetpoint()) < 0.35;
     }
 
+    public boolean isInPosition(double threshold) {
+        return Math.abs(motor.getPosition().getValue() - getClosedLoopSetpoint()) <= threshold;
+    }
+
     public void updatePIDFromDashboard() {
         pidHelper.updateConfiguration(configuration.Slot0);
-//        motionMagicConfig.updateSlot0Config(configuration.Slot0);
-//        motionMagicConfig.updateMotionMagicConfig(configuration.MotionMagic);
         StatusCode result = motor.getConfigurator().apply(configuration);
         DataLogManager.log("[TrapExtender] update PID info from dash, result: " + result);
     }

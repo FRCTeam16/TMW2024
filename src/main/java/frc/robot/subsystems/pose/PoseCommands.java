@@ -6,6 +6,7 @@ import frc.robot.Subsystems;
 import frc.robot.commands.CenterNoteIntakeCommand;
 import frc.robot.commands.auto.WaitIntakeInPosition;
 import frc.robot.commands.auto.WaitPivotInPosition;
+import frc.robot.commands.auto.WaitTrapExtendInPosition;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakePivot;
@@ -85,19 +86,19 @@ class PoseCommands {
                 ),
                 new WaitPivotInPosition().withTimeout(0.2),
                 new CenterNoteIntakeCommand(),
+                Subsystems.intake.moveToStateCmd(Intake.IntakeState.AmpAim),
                 Commands.parallel(
-                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.AmpAim),
-                        Subsystems.trap.moveToStateCmd(Trap.TrapState.AmpShotPivot)),
-                new WaitIntakeInPosition(IntakePivot.IntakePosition.AMPShot).withTimeout(0.2));
+                        new WaitTrapExtendInPosition(),
+                        new WaitIntakeInPosition(IntakePivot.IntakePosition.AMPShot)
+                ).withTimeout(0.5),
+                Subsystems.trap.moveToStateCmd(Trap.TrapState.AmpShotPivot).unless(() -> Subsystems.trap.getExtender().isInPosition(10)),
+                new WaitCommand(0.25));
     }
 
     public static Command fireAmpShotPose() {
         return Commands.sequence(
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.TryShootAmp),
-                Commands.runOnce(() -> {
-                    double delay = SmartDashboard.getNumber("DeflectDelay", 0.25);
-                    new WaitCommand(delay).schedule();
-                }),
+                new WaitCommand(0.25),
                 Subsystems.trap.moveToStateCmd(Trap.TrapState.AmpShotDeflectShot),
                 new WaitCommand(1.0),
                 Subsystems.trap.moveToStateCmd(Trap.TrapState.PivotDrive),
