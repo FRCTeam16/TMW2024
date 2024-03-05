@@ -1,5 +1,6 @@
 package frc.robot.subsystems.pose;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Subsystems;
 import frc.robot.commands.CenterNoteIntakeCommand;
@@ -12,6 +13,10 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.trap.Trap;
 
 class PoseCommands {
+
+    PoseCommands() {
+        SmartDashboard.setDefaultNumber("DeflectDelay", 0.25);
+    }
 
     static Command moveToStartingConfigPose() {
         return new SequentialCommandGroup(
@@ -72,30 +77,33 @@ class PoseCommands {
     }
 
     public static Command positionForAmpPose() {
+        // Assumes intake is in zero position
         return Commands.sequence(
                 Commands.parallel(
-                        Subsystems.trap.moveToStateCmd(Trap.TrapState.AmpShot),
+                        Subsystems.trap.moveToStateCmd(Trap.TrapState.AmpShotExtend),
                         Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition)
                 ),
                 new WaitPivotInPosition().withTimeout(0.2),
                 new CenterNoteIntakeCommand(),
                 Commands.parallel(
-                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.AmpAim)
-                        // TODO make sure our trap arms are in the correct position
-                ),
+                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.AmpAim),
+                        Subsystems.trap.moveToStateCmd(Trap.TrapState.AmpShotPivot)),
                 new WaitIntakeInPosition(IntakePivot.IntakePosition.AMPShot).withTimeout(0.2));
-
     }
 
     public static Command fireAmpShotPose() {
         return Commands.sequence(
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.TryShootAmp),
+                Commands.runOnce(() -> {
+                    double delay = SmartDashboard.getNumber("DeflectDelay", 0.25);
+                    new WaitCommand(delay).schedule();
+                }),
+                Subsystems.trap.moveToStateCmd(Trap.TrapState.AmpShotDeflectShot),
                 new WaitCommand(1.0),
-                Commands.parallel(
-                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote),
-                        Subsystems.trap.moveToStateCmd(Trap.TrapState.Default)
-                )
-        );
+                Subsystems.trap.moveToStateCmd(Trap.TrapState.PivotDrive),
+                new WaitCommand(0.25),
+                Subsystems.trap.moveToStateCmd(Trap.TrapState.Default),
+                Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote));
     }
 
     public static Command shooterAimVisionPose() {

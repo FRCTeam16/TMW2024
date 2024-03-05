@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.Lifecycle;
 
@@ -25,9 +24,13 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
         Default,
         FeedNoteToTrap,
         Drive,
-        AmpShot,
+        PivotDrive,
+        AmpShotExtend,
+        AmpShotPivot,
+        AmpShotDeflectShot,
+
         Climb,
-        ScoreFromClimb;
+        ScoreFromClimb, ;
     }
 
     @Override
@@ -60,14 +63,22 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
                 getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero);
                 setFingerPosition(FingerPositions.Closed);
                 break;
+            case PivotDrive:
+                getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.Drive);
+                break;
             case FeedNoteToTrap:
                 getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.PreClimb);
                 getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero);
                 setFingerPosition(FingerPositions.Closed);
                 break;
-            case AmpShot:
+            case AmpShotExtend:
                 getExtender().setTrapPosition(TrapExtender.TrapPosition.AmpShot);
-                getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.Drive);
+                break;
+            case AmpShotPivot:
+                getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.AmpShot);
+                break;
+            case AmpShotDeflectShot:
+                getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.AmpDeflect);
                 break;
             case Climb:
                 getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.PreClimb);
@@ -76,7 +87,6 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
             case ScoreFromClimb:
                 getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.Score);
                 break;
-
         }
     }
 

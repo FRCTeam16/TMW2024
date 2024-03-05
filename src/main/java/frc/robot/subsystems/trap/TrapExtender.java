@@ -21,6 +21,7 @@ import frc.robot.subsystems.util.PIDHelper;
 import frc.robot.subsystems.util.SoftLimitValues;
 
 public class TrapExtender implements Lifecycle, Sendable {
+    public static final double CLOSED_LOOP_TIMEOUT = 1.0;
     private final TalonFX motor;
     private final TalonFXConfiguration configuration;
     private final OpenLoopSpeedsConfig openLoopSpeeds = new OpenLoopSpeedsConfig(-0.3, 0.3);
@@ -161,13 +162,15 @@ public class TrapExtender implements Lifecycle, Sendable {
 
     public void periodic() {
         // Check whether to expire closed loop control request
-        if (closedLoopSetTimer.hasElapsed(1.0) && !openLoop) {
+        if (closedLoopSetTimer.hasElapsed(CLOSED_LOOP_TIMEOUT) && !openLoop) {
             openLoop = true;
+            closedLoopSetTimer.stop();
         }
 
         // Check whether to switch to open loop
         if (!openLoop && isInPosition()) {
             openLoop = true;
+            closedLoopSetTimer.stop();
             openLoopSetpoint = 0.0;
         }
 
@@ -207,8 +210,8 @@ public class TrapExtender implements Lifecycle, Sendable {
 
     public enum TrapPosition {
         Zero(0.35),
-        Up(-23.5),
-        AmpShot(-12.263671875);
+        Up(-24.0),
+        AmpShot(-24.0);
 
         private final double setpoint;
 

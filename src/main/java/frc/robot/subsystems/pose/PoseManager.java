@@ -49,6 +49,7 @@ public class PoseManager {
     private final StringLogEntry poseLog;
 
     public PoseManager() {
+        var pc = new PoseCommands();
         poseLog = new StringLogEntry(DataLogManager.getLog(), "datalog/posemanager");
 
         registry.put(Pose.StartingConfig, PoseCommands::moveToStartingConfigPose);
