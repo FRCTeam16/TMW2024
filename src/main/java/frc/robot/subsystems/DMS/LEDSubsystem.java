@@ -36,7 +36,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
 
     private int secondsToClimb = 30;
 
-    private static final int BUFFER_SIZE = 16;
+    private static final int BUFFER_SIZE = 15;
 
     /** Creates a new LEDSubsystem. */
     public LEDSubsystem() {
@@ -130,9 +130,8 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
         buffer[10] = (byte) allianceColor;
         buffer[11] = (byte) (Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo().hasTarget() ? 1 : 0);
         buffer[12] = (byte) partPresent;
-        buffer[13] = (byte) 0;
-        buffer[14] = (byte) 0;  // extra
-        buffer[15] = (byte) 255;
+        buffer[13] = (byte) 0;  // extra
+        buffer[14] = (byte) 255;
 
         this.serial.write(buffer, buffer.length);
         this.serial.flush();
