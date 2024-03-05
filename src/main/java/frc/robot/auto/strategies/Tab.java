@@ -19,7 +19,7 @@ public class Tab extends AutoPathStrategy {
 
     public static final VisionAimManager.ShootingProfile SecondShot = new VisionAimManager.ShootingProfile(38, 30, 26); // 87"
     public static final VisionAimManager.ShootingProfile ThirdShot = new VisionAimManager.ShootingProfile(44, 22, 22); // 55"
-    public static final VisionAimManager.ShootingProfile ForthShot = new VisionAimManager.ShootingProfile(39, 31, 27); // 76.5"
+    public static final VisionAimManager.ShootingProfile ForthShot = new VisionAimManager.ShootingProfile(40, 31, 27); // 76.5"
     public static final VisionAimManager.ShootingProfile FifthShot = new VisionAimManager.ShootingProfile(28.5, 45, 32); // 98.8"
 
 
@@ -130,7 +130,7 @@ public class Tab extends AutoPathStrategy {
     static Command doShootCmd() {
         return Commands.parallel(
                 writeLog("doShootCmd", "shooting"),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.1))
+                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2))
         );
     }
 }
