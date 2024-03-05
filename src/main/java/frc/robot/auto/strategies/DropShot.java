@@ -23,6 +23,10 @@ public class DropShot extends AutoPathStrategy {
 
     public DropShot() {
         addCommands(
+
+                //
+                // Initialize the robot
+                //
                 Commands.parallel(
                         new PrintStartInfo("DropShot"),
                         new InitializeAutoState(Degree.of(0)),
@@ -43,15 +47,12 @@ public class DropShot extends AutoPathStrategy {
                 ).withTimeout(0.5),
                 Tab.doShootCmd(),
                 new RotateToAngle(0).withThreshold(5).withTimeout(0.5),
-                Commands.parallel(
-//                        new EnableShooterCommand(false),
-                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive)
-                ),
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive),
 
                 //
                 // Run first leg and pickup
                 //
-                writeLog("DropShot", "Running"),
+                writeLog("DropShot", "Running DropShot1"),
                 this.runAutoPath("DropShot"),
 
                 //
@@ -59,7 +60,12 @@ public class DropShot extends AutoPathStrategy {
                 //
                 writeLog("DropShot", () -> "********************** NOTE DETECTED: " + Subsystems.intake.isNoteDetected()),
                 Commands.either(
-                        RouteCommand("DropShot2").andThen(RouteCommand("DropShot3a")),
+//                        RouteCommand("DropShot2").andThen(RouteCommand("DropShot3a")),
+//                        Commands.sequence(
+//                                RouteCommand("DropShot2"),
+//                                RouteCommand("DropShot3a")
+//                        ),
+                        RouteCommand("DropShot2"),
                         RouteCommand("DropShot3"),
                         () -> Subsystems.intake.isNoteDetected()
                 ),
@@ -72,7 +78,7 @@ public class DropShot extends AutoPathStrategy {
                 writeLog("DropShot", "Finished DropShot4"),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
                 Tab.DoShotCommand(fieldShotProfile),
-                Commands.print("Finished"));
+                Commands.print("@@@@ Finished DropShot @@@@"));
     }
 
     public static void registerAutoPaths(PathRegistry pathRegistry) {
@@ -98,6 +104,7 @@ public class DropShot extends AutoPathStrategy {
         return Commands.sequence(
                 writeLog("DropShot", "!!!!! RUNNING ROUTE COMMAND: " + pathName),
                 this.runAutoPath(pathName),
+                writeLog("DropShot3", "Finished drive portion of : " + pathName),
                 Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(fieldShotProfile)),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
                 Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(fieldShotProfile)),

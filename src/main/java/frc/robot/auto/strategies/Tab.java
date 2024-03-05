@@ -106,8 +106,10 @@ public class Tab extends AutoPathStrategy {
                 // Start point is that we expect the shooter to have a note
                 new WaitShooterHasNote().withTimeout(0.5),
                 Commands.runOnce(() -> Subsystems.intake.setIntakeState(Intake.IntakeState.IntakeFromFloor)),
+                writeLog("DoShotCommand", "If shooter has note then we will try shot"),
                 Commands.sequence(
                         Commands.parallel(
+                                writeLog("DoShotCommand", "Setting shooter and pivot profiles"),
                                 new EnableShooterCommand(),
                                 Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(profile)),
                                 Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))
