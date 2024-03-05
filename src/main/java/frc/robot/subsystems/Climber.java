@@ -121,7 +121,7 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     public ClimberPosition getClimberPosition() {
-        return  this.currentPosition.setpoint;
+        return  this.currentPosition;
     }
 
     public void setClimberPosition(ClimberPosition position) {
