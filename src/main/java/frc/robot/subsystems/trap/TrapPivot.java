@@ -1,59 +1,62 @@
 package frc.robot.subsystems.trap;
 
-import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.Constants;
 import frc.robot.subsystems.Lifecycle;
-import frc.robot.subsystems.util.*;
+import frc.robot.subsystems.util.OpenLoopSpeedsConfig;
+import frc.robot.subsystems.util.PIDHelper;
+import frc.robot.subsystems.util.SoftLimitValues;
 
 public class TrapPivot implements Lifecycle, Sendable {
     private final TalonFX motor;
     private final TalonFXConfiguration configuration = new TalonFXConfiguration();
     private final OpenLoopSpeedsConfig openLoopSpeeds = new OpenLoopSpeedsConfig(-1.2, 1.2);
-    private final MotionMagicConfig motionMagicConfig = new MotionMagicConfig();
     private final SoftLimitValues softLimits = new SoftLimitValues(30, -1);
 
-    private final VoltageOut openLoopOut = new VoltageOut(0);
-    private final PositionVoltage positionOut = new PositionVoltage(0);
-    private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
+    private final VoltageOut voltageOut = new VoltageOut(0);
     private final PIDHelper pidHelper = new PIDHelper(Trap.SUBSYSTEM_NAME + "/Pivot/PID");
+    //
+    // Encoder handling
+    //
+    private final DutyCycleEncoder encoder = new DutyCycleEncoder(5);
+    private final double zeroEncoderOffsetPosition = 0.881;
+    private final PIDController pid;
     private boolean openLoop = true;
     private boolean softLimitsEnabled = false;
     private double openLoopSetpoint = 0;
-    private double closedLoopSetpoint;
     private TrapPivotPosition trapPosition = TrapPivotPosition.Zero;
+    private TrapezoidProfile.State goal = new TrapezoidProfile.State(0, 0);
 
     public TrapPivot(TalonFX motor) {
         this.motor = motor;
         motor.setNeutralMode(NeutralModeValue.Brake);
-        motionMagicConfig.setAcceleration(150);
-        motionMagicConfig.setVelocity(100);
-        motionMagicConfig.setJerk(0);
         configuration
                 .withSoftwareLimitSwitch(
                         new SoftwareLimitSwitchConfigs()
-                                .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold()).withForwardSoftLimitEnable(true)
-                                .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold()).withReverseSoftLimitEnable(true))
+                                .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold()).withForwardSoftLimitEnable(false)
+                                .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold()).withReverseSoftLimitEnable(false))
                 .withHardwareLimitSwitch(
                         new HardwareLimitSwitchConfigs()
                                 .withForwardLimitEnable(false)
                                 .withReverseLimitEnable(false));
 
 
-        pidHelper.initialize(0.81, 0.24, 0, 0, 0, 0);
-        updatePIDFromDashboard();
-        pidHelper.updateConfiguration(configuration.Slot0);
+//        pidHelper.initialize(0.81, 0.24, 0, 0, 0, 0);
+        pidHelper.initialize(30, 0, 0, 0, 0, 0);
+
+        pid = new PIDController(0, 0, 0);
+        pidHelper.updatePIDController(pid);
+        encoder.setPositionOffset(zeroEncoderOffsetPosition);
         motor.getConfigurator().apply(configuration);
     }
 
@@ -67,14 +70,6 @@ public class TrapPivot implements Lifecycle, Sendable {
         holdPosition();
     }
 
-    private void normalizePosition() {
-        double position = this.motor.getPosition().getValue();
-        if (position >= 24) {
-            double newPosition = position % 24.0;
-            this.motor.setPosition(newPosition);
-            BSLogger.log("TrapPivot", "normalized position");
-        }
-    }
 
     private void setSoftLimits(boolean enable) {
 //        this.motor.getConfigurator().apply(
@@ -82,6 +77,7 @@ public class TrapPivot implements Lifecycle, Sendable {
 //                        .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold()).withForwardSoftLimitEnable(enable)
 //                        .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold()).withReverseSoftLimitEnable(enable));
     }
+
 
     public boolean isOpenLoop() {
         return openLoop;
@@ -131,16 +127,16 @@ public class TrapPivot implements Lifecycle, Sendable {
     }
 
     public double getClosedLoopSetpoint() {
-        return closedLoopSetpoint;
+        return goal.position;
     }
 
     public void setClosedLoopSetpoint(double closedLoopSetpoint) {
         this.openLoop = false;
-        this.closedLoopSetpoint = closedLoopSetpoint;
+        this.goal = new TrapezoidProfile.State(closedLoopSetpoint, 0);
     }
 
     public void holdPosition() {
-        this.setClosedLoopSetpoint(this.motor.getPosition().getValue());
+        this.setClosedLoopSetpoint(this.encoder.get());
     }
 
     public void setTrapPosition(TrapPivotPosition trapPosition) {
@@ -148,50 +144,29 @@ public class TrapPivot implements Lifecycle, Sendable {
         this.setClosedLoopSetpoint(trapPosition.setpoint);
     }
 
-    public void updatePIDFromDashboard() {
-        if (pidHelper.updateValuesFromDashboard()) {
-            BSLogger.log("TrapPivot", "updating pid");
-            pidHelper.updateConfiguration(configuration.Slot0);
-            motor.getConfigurator().apply(configuration.Slot0);
-        }
-        motionMagicConfig.updateSlot0Config(configuration.Slot0);
-        motionMagicConfig.updateMotionMagicConfig(configuration.MotionMagic);
-        StatusCode result = motor.getConfigurator().apply(configuration.MotionMagic);
-//        if (result != StatusCode.OK) {
-//            BSLogger.log("TrapPivot", "Failed to apply configuration to motor: " + result);
-//        }
-    }
-
-    public Command updateClosedLoopFromDashbboardCommand() {
-        return Commands.runOnce(this::updatePIDFromDashboard);
-    }
-
     public void periodic() {
-        updatePIDFromDashboard();
         if (openLoop) {
-            motor.setControl(openLoopOut.withOutput(openLoopSetpoint));
+            motor.setControl(voltageOut.withOutput(openLoopSetpoint));
         } else {
-//            motor.setControl(positionOut.withPosition(closedLoopSetpoint));
-            motor.setControl(motionMagicVoltage.withPosition(closedLoopSetpoint));
+            if (pidHelper.updateValuesFromDashboard()) {
+                pidHelper.updatePIDController(pid);
+            }
+            final double output = pid.calculate(this.encoder.get(), goal.position);
+            motor.setControl(voltageOut.withOutput(output));
         }
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.addDoubleProperty("TrapPivot/Encoder", () -> this.motor.getPosition().getValue(), null);
+        builder.addDoubleProperty("TrapPivot/MotorPosition", () -> this.motor.getPosition().getValue(), null);
+        builder.addDoubleProperty("TrapPivot/Encoder", this.encoder::get, null);
         if (Constants.Dashboard.ConfigurationMode || Constants.Dashboard.TrapConfigMode) {
-
+            builder.addDoubleProperty("TrapPivot/EncoderAbs", this.encoder::getAbsolutePosition, null);
             builder.addBooleanProperty("TrapPivot/OpenLoop", this::isOpenLoop, this::setOpenLoop);
             builder.addDoubleProperty("TrapPivot/UpSpeed", openLoopSpeeds::getUpSpeed, openLoopSpeeds::setUpSpeed);
             builder.addDoubleProperty("TrapPivot/DownSpeed", openLoopSpeeds::getDownSpeed, openLoopSpeeds::setDownSpeed);
 
             builder.addDoubleProperty("TrapPivot/ClosedLoopSetpoint", this::getClosedLoopSetpoint, this::setClosedLoopSetpoint);
-            
-            builder.addDoubleProperty("TrapPivot/MM/kS", motionMagicConfig::getkS, motionMagicConfig::setkS);
-            builder.addDoubleProperty("TrapPivot/MM/kG", motionMagicConfig::getkG, motionMagicConfig::setkG);
-            builder.addDoubleProperty("TrapPivot/MM/Acceleration", motionMagicConfig::getAcceleration, motionMagicConfig::setAcceleration);
-            builder.addDoubleProperty("TrapPivot/MM/Velocity", motionMagicConfig::getVelocity, motionMagicConfig::setVelocity);
-            builder.addDoubleProperty("TrapPivot/MM/Jerk", motionMagicConfig::getJerk, motionMagicConfig::setJerk);
 
             builder.addBooleanProperty("TrapPivot/FwdLimitHit", () -> this.motor.getFault_ForwardSoftLimit().getValue(), null);
             builder.addBooleanProperty("TrapPivot/RevLimitHit", () -> this.motor.getFault_ReverseSoftLimit().getValue(), null);
@@ -200,11 +175,17 @@ public class TrapPivot implements Lifecycle, Sendable {
     }
 
     public enum TrapPivotPosition {
+
         Zero(0),
-        PreClimb(5.39),
-        Drive(20),
-        Top(14),
-        Score(8.8);
+        Drive(0),
+
+        AmpShot(0.211),
+        AmpDeflect(0.35),
+
+        PreClimb(0.75),
+
+        Top(0.75),
+        Score(0.75);
 
 
         private final double setpoint;
@@ -213,4 +194,5 @@ public class TrapPivot implements Lifecycle, Sendable {
             this.setpoint = setpoint;
         }
     }
+
 }
