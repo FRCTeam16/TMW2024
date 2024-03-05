@@ -81,10 +81,13 @@ public class RobotContainer {
     private final JoystickButton robotCentric = new JoystickButton(right, 5);
     private final JoystickButton bigShot = new JoystickButton(right, 3);
     private final JoystickButton ampAim = new JoystickButton(right, 4);
+    private final JoystickButton bumpClimberDown = new JoystickButton(right,6);
+    private final JoystickButton bumpClimberUp = new JoystickButton(right,7);
+
     private final POVButton subShot = new POVButton(right, 180);
 
     //
-    // Debug Controller
+    // Debug Controller 
     //
     private final Trigger debugLeftTrigger = new Trigger(() -> debugJoystick.getLeftTriggerAxis() > 0.1);
     private final Trigger debugRightTrigger = new Trigger(() -> debugJoystick.getRightTriggerAxis() > 0.1);
@@ -304,6 +307,10 @@ public class RobotContainer {
 
         xboxController.povLeft().onTrue(Commands.runOnce(() -> Subsystems.climber.setClimberPosition(Climber.ClimberPosition.DOWN)));
         xboxController.povRight().onTrue(Commands.runOnce(() -> Subsystems.climber.setClimberPosition(Climber.ClimberPosition.UP)));
+        bumpClimberUp.onTrue(Commands.runOnce(() -> Subsystems.climber.bumpSetpoint(0.5))); //TODO: change to a tested number
+        bumpClimberDown.onTrue(Commands.runOnce(() -> Subsystems.climber.bumpSetpoint(-0.5)));
+        
+
 
         //
         // Trap Subsystem

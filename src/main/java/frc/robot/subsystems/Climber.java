@@ -121,7 +121,7 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     public ClimberPosition getClimberPosition() {
-        return this.currentPosition;
+        return  this.currentPosition.setpoint;
     }
 
     public void setClimberPosition(ClimberPosition position) {
@@ -140,6 +140,14 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
 
     public void setSetpoint(double setpoint) {
         this.setpoint = setpoint;
+    }
+
+    public void bumpSetpoint(double modifiedAmmt){
+      this.setpoint += modifiedAmmt;
+    }
+
+    public double getBumpAmmt(){
+      return this.setpoint - this.currentPosition.setpoint; 
     }
 
     @Override
@@ -173,7 +181,8 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
                 builder.addBooleanProperty("Pivot/OpenLoopEnabled", this::isOpenLoop, this::setOpenLoop);
                 builder.addDoubleProperty("Pivot/UpSpeed", this.climberOpenLoopSpeeds::getUpSpeed, this.climberOpenLoopSpeeds::setUpSpeed);
                 builder.addDoubleProperty("Pivot/DownSpeed", this.climberOpenLoopSpeeds::getDownSpeed, this.climberOpenLoopSpeeds::setDownSpeed);
-            }
+                builder.addDoubleProperty("Pivot/BumpVal", ()->getBumpAmmt(), null);
+      }
         }
     }
 
