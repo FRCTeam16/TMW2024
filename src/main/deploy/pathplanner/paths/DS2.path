@@ -3,16 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.4180048271365395,
-        "y": 6.985550368616265
+        "x": 7.659818868253777,
+        "y": 7.4385770347126225
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.271265002074205,
-        "y": 6.962071996606292
+        "x": 7.513079043191443,
+        "y": 7.415098662702649
       },
       "isLocked": false,
       "linkedName": "DS1End"
+    },
+    {
+      "anchor": {
+        "x": 6.1689422456204746,
+        "y": 6.927922443495704
+      },
+      "prevControl": {
+        "x": 6.989951566844226,
+        "y": 7.136659844646872
+      },
+      "nextControl": {
+        "x": 5.347932924396723,
+        "y": 6.719185042344535
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -33,7 +49,7 @@
   "eventMarkers": [
     {
       "name": "Feed",
-      "waypointRelativePos": 0.05,
+      "waypointRelativePos": 0.1,
       "command": {
         "type": "sequential",
         "data": {
@@ -50,7 +66,7 @@
     },
     {
       "name": "Start Shooter",
-      "waypointRelativePos": 0.65,
+      "waypointRelativePos": 0.6,
       "command": {
         "type": "parallel",
         "data": {
@@ -67,8 +83,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 4.5,
+    "maxAcceleration": 4.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
@@ -81,7 +97,7 @@
   "folder": "DropShot",
   "previewStartingState": {
     "rotation": 0,
-    "velocity": 2.0
+    "velocity": 3.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

@@ -1,5 +1,7 @@
 package frc.robot.auto.strategies;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -15,7 +17,8 @@ import static edu.wpi.first.units.Units.Degree;
 
 public class DropShot extends AutoPathStrategy {
 
-    private final VisionAimManager.ShootingProfile shotProfile = new VisionAimManager.ShootingProfile(26.5, 45, 32);
+    private final VisionAimManager.ShootingProfile firstShotProfile = new VisionAimManager.ShootingProfile(36.46, 40, 40);
+    private final VisionAimManager.ShootingProfile fieldShotProfile = new VisionAimManager.ShootingProfile(20.3, 55, 55);
 
 
     public DropShot() {
@@ -23,10 +26,31 @@ public class DropShot extends AutoPathStrategy {
                 Commands.parallel(
                         new PrintStartInfo("DropShot"),
                         new InitializeAutoState(Degree.of(0)),
-                        new EnableShooterCommand(true),
-                        pointWheelsAtCmd(Degree.of(0))
+                        new EnableShooterCommand(true)
+//                        pointWheelsAtCmd(Degree.of(0))
                 ),
-                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PrepareBloopShot),
+                Commands.runOnce(
+                        () ->
+                                Subsystems.swerveSubsystem.seedFieldRelative(
+                                        new Pose2d(1.84, 7.44, new Rotation2d(Degree.of(0))))
+                ),
+//                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PrepareBloopShot),
+                Commands.parallel(
+                        new RotateToAngle(50).withThreshold(5).withTimeout(0.5),
+                        Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(firstShotProfile)),
+                        Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(firstShotProfile)),
+                        new WaitCommand(0.25)
+                ).withTimeout(0.5),
+                Tab.doShootCmd(),
+                new RotateToAngle(0).withThreshold(5).withTimeout(0.5),
+                Commands.parallel(
+//                        new EnableShooterCommand(false),
+                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive)
+                ),
+
+                //
+                // Run first leg and pickup
+                //
                 writeLog("DropShot", "Running"),
                 this.runAutoPath("DropShot"),
 
@@ -43,12 +67,11 @@ public class DropShot extends AutoPathStrategy {
                 //
                 // Fourth route runs and gets the note we dropped
                 //
-                new RotateToAngle(90),
                 writeLog("DropShot", "Running DropShot4"),
                 this.runAutoPath("DropShot4"),
                 writeLog("DropShot", "Finished DropShot4"),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
-                DoShotCommand(shotProfile),
+                Tab.DoShotCommand(fieldShotProfile),
                 Commands.print("Finished"));
     }
 
@@ -75,8 +98,11 @@ public class DropShot extends AutoPathStrategy {
         return Commands.sequence(
                 writeLog("DropShot", "!!!!! RUNNING ROUTE COMMAND: " + pathName),
                 this.runAutoPath(pathName),
+                Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(fieldShotProfile)),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
-                DoShotCommand(shotProfile),
+                Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(fieldShotProfile)),
+                new WaitCommand(0.25),
+                Tab.DoShotCommand(fieldShotProfile),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup),
                 writeLog("DropShot", "!!!!! FINISHED ROUTE COMMAND: " + pathName)
         );
@@ -85,15 +111,18 @@ public class DropShot extends AutoPathStrategy {
     Command DoShotCommand(VisionAimManager.ShootingProfile profile) {
         return Commands.sequence(
                         // Start point is that we expect the shooter to have a note
-                        new WaitShooterHasNote().withTimeout(1.5),
-                        Commands.parallel(
-                                new EnableShooterCommand(),
-                                Commands.runOnce(() -> Subsystems.intake.setIntakeState(Intake.IntakeState.IntakeFromFloor)),
-                                Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(profile)),
-                                Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))
+                        new WaitShooterHasNote().withTimeout(0.5),
+                        Commands.runOnce(() -> Subsystems.intake.setIntakeState(Intake.IntakeState.IntakeFromFloor)),
+                        Commands.sequence(
+                                Commands.parallel(
+                                        new EnableShooterCommand(),
+                                        Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(profile)),
+                                        Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))
+                                )
+
                         ),
                         new WaitPivotInPosition().withTimeout(0.5),
-                        new WaitCommand(0.5),
+//                        new WaitCommand(0.5),
                         fire()
                 ).beforeStarting(() -> BSLogger.log("DoShotCommand", "starting"))
                 .finallyDo(() -> BSLogger.log("DoShotCommand", "ending"));
