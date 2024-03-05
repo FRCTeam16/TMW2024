@@ -35,8 +35,11 @@ public class DropShot extends AutoPathStrategy {
                         new PrintStartInfo("DropShot"),
                         new InitializeAutoState(Degree.of(0)),
                         new EnableShooterCommand(true)
-//                        pointWheelsAtCmd(Degree.of(0))
                 ),
+
+                //
+                // Configure starting pose
+                //
                 Commands.runOnce(
                         () -> {
                             if (GameInfo.isBlueAlliance()) {
@@ -48,9 +51,12 @@ public class DropShot extends AutoPathStrategy {
                                                 new Pose2d(1.84, 7.44, new Rotation2d(Degree.of(0)))));
                             }
                         }
-
                 ),
 //                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PrepareBloopShot),
+
+                //
+                // First Shot
+                //
                 Commands.parallel(
                         new RotateToAngle(50).withThreshold(5).withTimeout(0.5),
                         Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(firstShotProfile)),
@@ -62,22 +68,18 @@ public class DropShot extends AutoPathStrategy {
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive),
 
                 //
-                // Run first leg and pickup
+                // Run first leg to pickup
                 //
                 writeLog("DropShot", "Running DropShot1"),
                 this.runAutoPath("DropShot"),
 
                 //
                 // Select which route to run based on whether we have a note or not
+                // If we have a note, then we run DS2 and DS3a, otherwise we run DS3
                 //
                 writeLog("DropShot", () -> "********************** NOTE DETECTED: " + Subsystems.intake.isNoteDetected()),
                 Commands.either(
-//                        RouteCommand("DropShot2").andThen(RouteCommand("DropShot3a")),
-//                        Commands.sequence(
-//                                RouteCommand("DropShot2"),
-//                                RouteCommand("DropShot3a")
-//                        ),
-                        RouteCommand("DropShot2"),
+                        Route2And3ACommand(),
                         RouteCommand("DropShot3"),
                         () -> Subsystems.intake.isNoteDetected()
                 ),
@@ -103,6 +105,13 @@ public class DropShot extends AutoPathStrategy {
                 writeLog("DropShot", "!!! FIRE !!!"),
                 Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2))
         );
+    }
+
+    Command Route2And3ACommand() {
+        return Commands.sequence(
+                writeLog("DropShot", "~~~ Running the 2 + 3a routes ~~~"),
+                RouteCommand("DropShot2"),
+                RouteCommand("DropShot3a"));
     }
 
 

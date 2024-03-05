@@ -18,8 +18,6 @@ public class InitializeAutoState extends ParallelCommandGroup {
     addCommands(
       new ZeroAndSetOffsetCommand(initialRobotAngle.in(Units.Degrees)),
       new InstantCommand(() -> Subsystems.swerveSubsystem.tareEverything()),
-      // new InstantCommand(() -> Subsystems.swerveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d(Math.toRadians(initialRobotAngleDegrees))))),
-      // new InstantCommand(() -> Subsystems.swerveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d()))),
       new WaitCommand(0.10)
     );
   }
