@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.Utils;
@@ -15,6 +16,7 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -79,7 +81,14 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
                         Constants.AutoConstants.kMaxSpeedMetersPerSecond, // TunerConstants.kSpeedAtVoltsMps,
                         driveBaseRadius,
                         new ReplanningConfig()),
-                () -> false, // change if need to flip on red vs. blue
+                () -> {
+                    // Assume Blue is default
+                    Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+                    if (alliance.isPresent()) {
+                        return alliance.get() == DriverStation.Alliance.Red;
+                    }
+                    return false;
+                },
                 this);
 
     }
