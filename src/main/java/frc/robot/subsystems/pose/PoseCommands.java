@@ -91,7 +91,8 @@ class PoseCommands {
                         new WaitTrapExtendInPosition(),
                         new WaitIntakeInPosition(IntakePivot.IntakePosition.AMPShot)
                 ).withTimeout(0.5),
-                Subsystems.trap.moveToStateCmd(Trap.TrapState.AmpShotPivot).unless(() -> Subsystems.trap.getExtender().isInPosition(10)),
+                Subsystems.trap.moveToStateCmd(Trap.TrapState.AmpShotPivot)
+                        .unless(() -> !Subsystems.trap.getExtender().isInPosition(30)),
                 new WaitCommand(0.25));
     }
 
@@ -126,7 +127,8 @@ class PoseCommands {
                 Commands.parallel(
                         Commands.runOnce(Subsystems.shooter::runShooter),
                         Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.ShortShot)
-                )
+                ),
+                new WaitPivotInPosition().withTimeout(0.5)
         );
     }
 

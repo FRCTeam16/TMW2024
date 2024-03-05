@@ -33,7 +33,7 @@ public class TrapExtender implements Lifecycle, Sendable {
 
     private TrapPosition trapPosition = TrapPosition.Zero;
 
-    private final SoftLimitValues softLimits = new SoftLimitValues(0.55, -24.25);
+    private final SoftLimitValues softLimits = new SoftLimitValues(0.55, -72.75);
     private boolean softLimitsEnabled = true;
     private double inPositionThreshold = 0.5;
 
@@ -140,7 +140,7 @@ public class TrapExtender implements Lifecycle, Sendable {
     }
 
     public boolean isInPosition() {
-        return Math.abs(motor.getPosition().getValue() - getClosedLoopSetpoint()) < 0.35;
+        return Math.abs(motor.getPosition().getValue() - getClosedLoopSetpoint()) < 1;
     }
 
     public boolean isInPosition(double threshold) {
@@ -203,9 +203,9 @@ public class TrapExtender implements Lifecycle, Sendable {
     }
 
     public enum TrapPosition {
-        Zero(0.35),
-        Up(-24.0),
-        AmpShot(-24.0);
+        Zero(0.188),
+        Up(-72.0),
+        AmpShot(-72.0);
 
         private final double setpoint;
 

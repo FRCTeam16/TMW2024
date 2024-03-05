@@ -18,9 +18,9 @@ import static edu.wpi.first.units.Units.Degrees;
 public class Tab extends AutoPathStrategy {
 
     public static final VisionAimManager.ShootingProfile SecondShot = new VisionAimManager.ShootingProfile(38, 30, 26); // 87"
-    public static final VisionAimManager.ShootingProfile ThirdShot = new VisionAimManager.ShootingProfile(43, 22, 22); // 55"
-    public static final VisionAimManager.ShootingProfile ForthShot = new VisionAimManager.ShootingProfile(37, 31, 27); // 76.5"
-    public static final VisionAimManager.ShootingProfile FifthShot = new VisionAimManager.ShootingProfile(26.5, 45, 32); // 98.8"
+    public static final VisionAimManager.ShootingProfile ThirdShot = new VisionAimManager.ShootingProfile(44, 22, 22); // 55"
+    public static final VisionAimManager.ShootingProfile ForthShot = new VisionAimManager.ShootingProfile(39, 31, 27); // 76.5"
+    public static final VisionAimManager.ShootingProfile FifthShot = new VisionAimManager.ShootingProfile(28.5, 45, 32); // 98.8"
 
 
     public Tab() {
@@ -56,7 +56,7 @@ public class Tab extends AutoPathStrategy {
                 ),
                 this.runAutoPath("Tab"),
                 Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(SecondShot)),
-                new RotateToAngle(-32).withTimeout(0.5),
+                new RotateToAngle(-30).withThreshold(5).withTimeout(0.5),
                 DoShotCommand(SecondShot),
 
 
@@ -104,17 +104,19 @@ public class Tab extends AutoPathStrategy {
     static Command DoShotCommand(VisionAimManager.ShootingProfile profile) {
         return new SequentialCommandGroup(
                 // Start point is that we expect the shooter to have a note
-                new WaitShooterHasNote().withTimeout(1.5),
-                Commands.parallel(
-                        new EnableShooterCommand(),
-                        Commands.runOnce(() -> Subsystems.intake.setIntakeState(Intake.IntakeState.IntakeFromFloor)),
-                        Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(profile)),
-                        Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))
-                ),
-                new WaitPivotInPosition().withTimeout(0.5),
-                writeLog("DoShotCommand", "******* WILL BE FIRING NEXT *******"),
-                new WaitCommand(0.5),
-                doShootCmd(),
+                new WaitShooterHasNote().withTimeout(0.5),
+                Commands.runOnce(() -> Subsystems.intake.setIntakeState(Intake.IntakeState.IntakeFromFloor)),
+                Commands.sequence(
+                        Commands.parallel(
+                                new EnableShooterCommand(),
+                                Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(profile)),
+                                Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))
+                        ),
+                        new WaitPivotInPosition().withTimeout(0.5),
+                        writeLog("DoShotCommand", "******* WILL BE FIRING NEXT *******"),
+//                        new WaitCommand(0.5),
+                        doShootCmd()
+                ).unless(() -> !Subsystems.shooter.isNoteDetected()),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup)
         ).beforeStarting(() -> BSLogger.log("DoShotCommand", "starting"))
                 .finallyDo(() -> BSLogger.log("DoShotCommand", "ending"));
@@ -128,7 +130,7 @@ public class Tab extends AutoPathStrategy {
     static Command doShootCmd() {
         return Commands.parallel(
                 writeLog("doShootCmd", "shooting"),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2))
+                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.1))
         );
     }
 }

@@ -89,9 +89,10 @@ public class RotateToAngle extends Command {
         return rotationController.atSetpoint();
     }
 
-    // @Override
-    // public void end(boolean interrupted) {
-    // rotationController.resetTolerance();
-    // }
+     @Override
+     public void end(boolean interrupted) {
+        rotationController.resetTolerance();
+         Subsystems.swerveSubsystem.setControl(rotate.withRotationalRate(0));
+     }
 
 }
