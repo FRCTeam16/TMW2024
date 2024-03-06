@@ -1,5 +1,6 @@
 package frc.robot.auto.strategies;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.GeometryUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -79,14 +80,10 @@ public class DropShot extends AutoPathStrategy {
                 // If we have a note, then we run DS2 and DS3a, otherwise we run DS3
                 //
                 writeLog("DropShot", () -> "********************** NOTE DETECTED: " + Subsystems.intake.isNoteDetected()),
-//                Commands.runOnce(() -> {
-//                    if (Subsystems.intake.isNoteDetected()) {
-//                        Route2And3ACommand().schedule();
-//                    } else {
-//                        new Route3Command().schedule();
-//                    }
-//                }),
-                Commands.either(Route2And3ACommand(), new Route3Command(),  Subsystems.intake::isNoteDetected),
+                Commands.either(
+                        Route2And3ACommand(),
+                        new Route3Command(),
+                        Subsystems.intake::isNoteDetected),
 
                 //
                 // Fourth route runs and gets the note we dropped
@@ -97,6 +94,10 @@ public class DropShot extends AutoPathStrategy {
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
                 Tab.DoShotCommand(fieldShotProfile),
                 Commands.print("@@@@ Finished DropShot @@@@"));
+    }
+
+    private Command createAutoCommand(String pathName) {
+        return new PathPlannerAuto(pathName);
     }
 
     public static void registerAutoPaths(PathRegistry pathRegistry) {
@@ -114,8 +115,8 @@ public class DropShot extends AutoPathStrategy {
     Command Route2And3ACommand() {
         return Commands.sequence(
                 writeLog("DropShot", "~~~ Running the 2 + 3a routes ~~~"),
-                RouteCommand("DropShot2"),
-                RouteCommand("DropShot3a"));
+                RouteCommand("DropShot2", true),
+                RouteCommand("DropShot3a", true));
     }
 
 
@@ -125,10 +126,10 @@ public class DropShot extends AutoPathStrategy {
      * @param pathName the name of the path to run
      * @return the command to run the path, then feed the note to the shooter, then shoot, then pickup the note
      */
-    Command RouteCommand(String pathName) {
+    Command RouteCommand(String pathName, boolean createNewPaths) {
         return Commands.sequence(
                 writeLog("DropShot", "!!!!! RUNNING ROUTE COMMAND: " + pathName),
-                this.runAutoPath(pathName),
+                createNewPaths ? createAutoCommand(pathName) : this.runAutoPath(pathName),
                 writeLog("DropShot3", "Finished drive portion of : " + pathName),
                 Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(fieldShotProfile)),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
@@ -145,7 +146,8 @@ public class DropShot extends AutoPathStrategy {
         Route3Command() {
             addCommands(
                     writeLog("DropShot", "!!!!! RUNNING ROUTE COMMAND: " + pathName),
-                    Subsystems.autoManager.getAutoPath(pathName),
+//                    Subsystems.autoManager.getAutoPath(pathName),
+                    createAutoCommand(pathName),
                     writeLog("DropShot3", "Finished drive portion of : " + pathName),
                     Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(fieldShotProfile)),
                     Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),

@@ -51,7 +51,7 @@ public class Subsystems {
 
     private static Subsystems instance;
 
-    private Subsystems() {
+    public Subsystems() {
         swerveSubsystem = TunerConstants.DriveTrain;
         visionSubsystem = new VisionSubsystem(
                 Stream.of(

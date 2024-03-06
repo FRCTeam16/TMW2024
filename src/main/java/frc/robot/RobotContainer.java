@@ -339,6 +339,8 @@ public class RobotContainer {
                 .onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
 
 
+
+
         feedNoteToShooter.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter));
 
         ampAim.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PositionForAmp));
@@ -384,6 +386,12 @@ public class RobotContainer {
         SmartDashboard.setDefaultNumber("DeflectDelay", 0.75);
 
         SmartDashboard.putData("Center Note in intake", new CenterNoteIntakeCommand());
+
+        SmartDashboard.putData("TestCmd",
+                Commands.sequence(
+                    Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PositionForAmp),
+                    new TeleopShoot().ignoringDisable(true)).ignoringDisable(true)
+        );
     }
 
     public Command getAutonomousCommand() {

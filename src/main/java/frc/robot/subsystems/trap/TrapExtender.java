@@ -202,6 +202,10 @@ public class TrapExtender implements Lifecycle, Sendable {
         }
     }
 
+    public boolean isExtended() {
+        return motor.getPosition().getValue() < -50;
+    }
+
     public enum TrapPosition {
         Zero(0.188),
         Up(-72.0),

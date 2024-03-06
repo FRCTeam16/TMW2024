@@ -1,47 +1,35 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.trap.Trap;
 import frc.robot.subsystems.util.BSLogger;
 
 public class TeleopShoot extends Command {
-    private Command command;
 
     @Override
     public void initialize() {
-        BSLogger.log("TeleopShoot", "CHECKING STATE");
-        boolean inPose = Subsystems.trap.getTrapState() == Trap.TrapState.AmpShotExtend;
-        BSLogger.log("TeleopShoot", "Subsystems.trap.getTrapState() == Trap.TrapState.AmpShotExtend = " + inPose);
+        boolean noteDetected = Subsystems.intake.isNoteDetected();
+//        boolean inPose = Subsystems.trap.getTrapState() == Trap.TrapState.AmpShotExtend;
+//        boolean inPose = Subsystems.poseManager.getLastPose() == PoseManager.Pose.PositionForAmp;
+        boolean inPose = Subsystems.trap.getExtender().isExtended();
 
-        if (!Subsystems.intake.isNoteDetected()) {
-            command = Commands.sequence(
-                    Commands.runOnce(Subsystems.shooter::runShooter),
-                    Commands.runOnce(Subsystems.shooter::shoot));
-        } else if (Subsystems.trap.getTrapState() == Trap.TrapState.AmpShotExtend) {
-            command = Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireAmpShot);
+        BSLogger.log("TeleopShoot", "Note? %b | Pose? %b".formatted(noteDetected, inPose));
+
+        if (!noteDetected || !inPose) {
+            BSLogger.log("TeleopShoot", "Running shooter");
+            Subsystems.shooter.runShooter();
+            Subsystems.shooter.shoot();
         } else {
-            command = Commands.sequence(
-                    Commands.runOnce(Subsystems.shooter::runShooter),
-                    Commands.runOnce(Subsystems.shooter::shoot));
+            BSLogger.log("TeleopShoot", "Running FireAmp");
+            Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireAmpShot).asProxy().schedule();
         }
-        command.initialize();
     }
 
-    @Override
-    public void execute() {
-        command.execute();
-    }
 
     @Override
     public boolean isFinished() {
-        return command.isFinished();
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        command.end(interrupted);
+        return true;
     }
 }
