@@ -16,13 +16,13 @@ public class ClimbPoseCommands {
         return Commands.sequence(
                 Commands.runOnce(() -> BSLogger.log("ClimbManager", "StartClimbPose")),
                 Commands.parallel(
-                        Subsystems.trap.moveToStateCmd(Trap.TrapState.Climb),
                         Commands.runOnce(Subsystems.shooter::stopShooter),
                         Commands.runOnce(Subsystems.shooter::stopFeeder),
                         Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Up),
                         Subsystems.climber.moveToStateCmd(Climber.ClimberPosition.UP)),
-                new WaitCommand(0.25),
-                Subsystems.intake.moveToStateCmd(Intake.IntakeState.Climb));
+                Subsystems.intake.moveToStateCmd(Intake.IntakeState.Climb),
+                new WaitCommand(0.5),
+                Subsystems.trap.moveToStateCmd(Trap.TrapState.Climb));
     }
 
     public static Command rotateTrapArmsUp() {

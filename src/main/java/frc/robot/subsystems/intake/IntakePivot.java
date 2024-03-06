@@ -263,7 +263,7 @@ public class IntakePivot implements Lifecycle, Sendable {
         Pickup(-23.0),
 //        AMPShot(-8.5);
         AMPShot(0.145),
-        Climb(0.177);
+        Climb(0.150);
 
         private final double setpoint;
 

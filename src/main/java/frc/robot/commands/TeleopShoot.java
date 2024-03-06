@@ -5,12 +5,17 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.trap.Trap;
+import frc.robot.subsystems.util.BSLogger;
 
 public class TeleopShoot extends Command {
     private Command command;
 
     @Override
     public void initialize() {
+        BSLogger.log("TeleopShoot", "CHECKING STATE");
+        boolean inPose = Subsystems.trap.getTrapState() == Trap.TrapState.AmpShotExtend;
+        BSLogger.log("TeleopShoot", "Subsystems.trap.getTrapState() == Trap.TrapState.AmpShotExtend = " + inPose);
+
         if (!Subsystems.intake.isNoteDetected()) {
             command = Commands.sequence(
                     Commands.runOnce(Subsystems.shooter::runShooter),

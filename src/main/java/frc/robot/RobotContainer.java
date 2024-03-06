@@ -30,6 +30,7 @@ import frc.robot.subsystems.pose.ClimbManager;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.trap.Trap;
 import frc.robot.subsystems.trap.TrapPivot;
+import frc.robot.subsystems.util.GameInfo;
 import frc.robot.subsystems.vision.VisionTypes;
 
 import java.util.Objects;
@@ -122,6 +123,7 @@ public class RobotContainer {
 //    private final VisionAlignmentHelper trapAlignHelper = new VisionAlignmentHelper();
 //    private boolean useVisionTrapAligment = false; // horizontal input for trap alignment
 
+    final boolean isRedAlliance;
 
     public RobotContainer() {
         configureBindings();
@@ -129,10 +131,22 @@ public class RobotContainer {
         alignController.setTolerance(0.05);
         SmartDashboard.putData("AlignPID", alignController);
         SmartDashboard.setDefaultNumber("AlignPIDFactor", 200);
+
+        isRedAlliance = GameInfo.isRedAlliance();
     }
 
     public static boolean isUseVisionAlignment() {
         return useVisionAlignment;
+    }
+
+    public double supplySwerveX() {
+        double base = -right.getY();
+        return (isRedAlliance) ? -1 * base : base;
+    }
+
+    public double supplySwerveY() {
+        double base = -right.getX();
+        return isRedAlliance ? -1 * base : base;
     }
 
     /**
@@ -184,15 +198,15 @@ public class RobotContainer {
         drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
                 drivetrain.applyRequest(() -> drive
                         .withDeadband(0.02 * MaxSpeed)
-                        .withVelocityX(OIUtil.deadband(-right.getY(), 0.05) * MaxSpeed)
-                        .withVelocityY(OIUtil.deadband(-right.getX(), 0.05) * MaxSpeed)
+                        .withVelocityX(OIUtil.deadband(supplySwerveX(), 0.05) * MaxSpeed)
+                        .withVelocityY(OIUtil.deadband(supplySwerveY(), 0.05) * MaxSpeed)
                         .withRotationalRate(supplySwerveRotate().in(RadiansPerSecond))));
 
         robotCentric.whileTrue(
                 drivetrain.applyRequest(() -> robotCentricDrive
                         .withDeadband(0.02 * MaxSpeed)
-                        .withVelocityX(OIUtil.deadband(-right.getY(), 0.05) * MaxSpeed)
-                        .withVelocityY(OIUtil.deadband(-right.getX(), 0.05) * MaxSpeed)
+                        .withVelocityX(OIUtil.deadband(supplySwerveY(), 0.05) * MaxSpeed)
+                        .withVelocityY(OIUtil.deadband(supplySwerveY(), 0.05) * MaxSpeed)
                         .withRotationalRate(supplySwerveRotate().in(RadiansPerSecond))));
 
 
