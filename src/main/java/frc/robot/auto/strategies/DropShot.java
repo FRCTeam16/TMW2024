@@ -7,6 +7,7 @@ import edu.wpi.first.math.proto.Geometry2D;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Subsystems;
 import frc.robot.auto.PathRegistry;
@@ -78,11 +79,14 @@ public class DropShot extends AutoPathStrategy {
                 // If we have a note, then we run DS2 and DS3a, otherwise we run DS3
                 //
                 writeLog("DropShot", () -> "********************** NOTE DETECTED: " + Subsystems.intake.isNoteDetected()),
-                Commands.either(
-                        Route2And3ACommand(),
-                        RouteCommand("DropShot3"),
-                        () -> Subsystems.intake.isNoteDetected()
-                ),
+//                Commands.runOnce(() -> {
+//                    if (Subsystems.intake.isNoteDetected()) {
+//                        Route2And3ACommand().schedule();
+//                    } else {
+//                        new Route3Command().schedule();
+//                    }
+//                }),
+                Commands.either(Route2And3ACommand(), new Route3Command(),  Subsystems.intake::isNoteDetected),
 
                 //
                 // Fourth route runs and gets the note we dropped
@@ -134,6 +138,24 @@ public class DropShot extends AutoPathStrategy {
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup),
                 writeLog("DropShot", "!!!!! FINISHED ROUTE COMMAND: " + pathName)
         );
+    }
+
+    class Route3Command extends SequentialCommandGroup {
+        private final String pathName = "DropShot3";
+        Route3Command() {
+            addCommands(
+                    writeLog("DropShot", "!!!!! RUNNING ROUTE COMMAND: " + pathName),
+                    Subsystems.autoManager.getAutoPath(pathName),
+                    writeLog("DropShot3", "Finished drive portion of : " + pathName),
+                    Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(fieldShotProfile)),
+                    Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
+                    Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(fieldShotProfile)),
+                    new WaitCommand(0.25),
+                    Tab.DoShotCommand(fieldShotProfile),
+                    Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup),
+                    writeLog("DropShot", "!!!!! FINISHED ROUTE COMMAND: " + pathName)
+            );
+        }
     }
 
     Command DoShotCommand(VisionAimManager.ShootingProfile profile) {

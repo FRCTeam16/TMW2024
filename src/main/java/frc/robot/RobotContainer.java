@@ -21,14 +21,14 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.CenterNoteIntakeCommand;
 import frc.robot.commands.RunWithDisabledInstantCommand;
+import frc.robot.commands.TeleopShoot;
 import frc.robot.commands.ZeroAndSetOffsetCommand;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.RotationController;
+import frc.robot.subsystems.pose.ClimbManager;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.trap.Trap;
-import frc.robot.subsystems.trap.TrapExtender;
 import frc.robot.subsystems.trap.TrapPivot;
 import frc.robot.subsystems.vision.VisionTypes;
 
@@ -39,17 +39,17 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 public class RobotContainer {
     private static final double MaxSpeed = Constants.Swerve.kMaxSpeedMetersPerSecond;
     private static final double MaxAngularRate = Constants.Swerve.kMaxAngularVelocity;
-
+    //
+    // Vision integration
+    //
+    private static boolean useVisionAlignment = false; // twist alignment for auto-aiming
     private final Joystick left = new Joystick(0);
     private final Joystick right = new Joystick(1);
     private final CommandXboxController xboxController = new CommandXboxController(2);
     private final XboxController debugJoystick = new XboxController(3);
-
     private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
-
     @SuppressWarnings("unused")
     private final Subsystems subsystems = Subsystems.getInstance();
-
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.01).withRotationalDeadband(MaxAngularRate * 0.01)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
@@ -59,20 +59,16 @@ public class RobotContainer {
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
     private final SwerveStateTelemetry swerveStateTelemetry = new SwerveStateTelemetry(MaxSpeed);
-
     //
     // Left Joystick
     //
     private final JoystickButton intake = new JoystickButton(left, 1);
     private final JoystickButton eject = new JoystickButton(left, 2);
     private final JoystickButton feedIntake = new JoystickButton(left, 4);  // debug feed intake speeds
-
     private final JoystickButton unsafeRaiseClimber = new JoystickButton(left, 14);
     private final JoystickButton unsafeLowerClimber = new JoystickButton(left, 15);
     private final JoystickButton unsafeLowerTrap = new JoystickButton(left, 8);
     private final JoystickButton unsafeRaiseTrap = new JoystickButton(left, 9);
-
-
     //
     // Right Joystick
     //
@@ -80,16 +76,19 @@ public class RobotContainer {
     private final JoystickButton runVisionAlignAngle = new JoystickButton(right, 2);
     private final JoystickButton robotCentric = new JoystickButton(right, 5);
     private final JoystickButton bigShot = new JoystickButton(right, 3);
-    private final JoystickButton ampAim = new JoystickButton(right, 4);
-    private final JoystickButton bumpClimberDown = new JoystickButton(right,6);
-    private final JoystickButton bumpClimberUp = new JoystickButton(right,7);
 
-    private final POVButton subShot = new POVButton(right, 180);
+    private final JoystickButton bumpClimberDown = new JoystickButton(right, 6);
+    private final JoystickButton bumpClimberUp = new JoystickButton(right, 7);
+    private final Trigger subShot = new POVButton(right, 45)
+            .or(new POVButton(right, 90))
+            .or(new POVButton(right, 135))
+            .or(new POVButton(right, 180))
+            .or(new POVButton(right, 225))
+            .or(new POVButton(right, 270))
+            .or(new POVButton(right, 315));
     private final JoystickButton tryClearNote = new JoystickButton(right, 16);
-
-
     //
-    // Debug Controller 
+    // Debug Controller
     //
     private final Trigger debugLeftTrigger = new Trigger(() -> debugJoystick.getLeftTriggerAxis() > 0.1);
     private final Trigger debugRightTrigger = new Trigger(() -> debugJoystick.getRightTriggerAxis() > 0.1);
@@ -97,7 +96,6 @@ public class RobotContainer {
     private final Trigger debugAButton = new JoystickButton(debugJoystick, 1);
     private final Trigger debugBButton = new JoystickButton(debugJoystick, 2);
     private final Trigger debugXButton = new JoystickButton(debugJoystick, 3);
-
     //
     // Controller
     //
@@ -105,26 +103,21 @@ public class RobotContainer {
     private final Trigger stopShooter = xboxController.back();
     private final Trigger rightBumper = xboxController.rightBumper();
     private final Trigger leftBumper = xboxController.leftBumper();
-
     private final Trigger leftTrigger = xboxController.leftTrigger();
     private final Trigger rightTrigger = xboxController.rightTrigger();
-
-    private final Trigger feedNoteToShooter = xboxController.b();
-    private final Trigger startClimb = xboxController.x();
+    private final Trigger ampAim = xboxController.x();
+    private final Trigger feedNoteToShooter = xboxController.y();
+    private final Trigger startClimb = xboxController.povUp();
+    private final Trigger climbPull = xboxController.povDown();
 
 
     //
     // Miscellaneous
     //
     private final RotationController alignController = new RotationController(0.02, 0, 0);
-    Trigger povUp = xboxController.povUp();
-    Trigger povDown = xboxController.povDown();
+    //    Trigger povUp = xboxController.povUp();
+//    Trigger povDown = xboxController.povDown();
     MusicController music = new MusicController();
-
-    //
-    // Vision integration
-    //
-    private static boolean useVisionAlignment = false; // twist alignment for auto-aiming
 
 //    private final VisionAlignmentHelper trapAlignHelper = new VisionAlignmentHelper();
 //    private boolean useVisionTrapAligment = false; // horizontal input for trap alignment
@@ -136,6 +129,10 @@ public class RobotContainer {
         alignController.setTolerance(0.05);
         SmartDashboard.putData("AlignPID", alignController);
         SmartDashboard.setDefaultNumber("AlignPIDFactor", 200);
+    }
+
+    public static boolean isUseVisionAlignment() {
+        return useVisionAlignment;
     }
 
     /**
@@ -163,14 +160,9 @@ public class RobotContainer {
         return RadiansPerSecond.of(twist);
     }
 
-    public static boolean isUseVisionAlignment() {
-        return useVisionAlignment;
-    }
-
-
     /**
      * This method is used to supply the swerve horizontal value to the swerve drive
-     *
+     * <p>
      * Will be wired in if/when second limelight is added.  Will also need trap-specific AprilTag pipeline to use
      *
      * @return the swerve horizontal value
@@ -188,8 +180,6 @@ public class RobotContainer {
 //            }
 //        }
 //    }
-
-
     private void configureBindings() {
         drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
                 drivetrain.applyRequest(() -> drive
@@ -211,7 +201,6 @@ public class RobotContainer {
         //
         rightBumper.onTrue(Commands.runOnce(Subsystems.pivot::openLoopUp)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
         leftBumper.onTrue(Commands.runOnce(Subsystems.pivot::openLoopDown)).onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
-
 
 
         // Test Intake
@@ -253,7 +242,6 @@ public class RobotContainer {
             debugAButton.onTrue(Commands.runOnce(() -> Subsystems.trap.getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.Drive)));
 
 
-
             debugBButton.onTrue(Commands.runOnce(() -> Subsystems.trap.setFingerPosition(Trap.FingerPositions.Closed)));
             debugXButton.onTrue(Commands.runOnce(() -> Subsystems.trap.setFingerPosition(Trap.FingerPositions.Open)));
 
@@ -271,11 +259,10 @@ public class RobotContainer {
         }
 
 
-
         //
         // Vision Alignment
         //
-        runVisionAlignAngle.onTrue(
+        runVisionAlignAngle.whileTrue(
                         Commands.parallel(
                                 Commands.runOnce(() -> useVisionAlignment = true),
                                 Commands.runOnce(Subsystems.shooter::runShooter),
@@ -283,11 +270,9 @@ public class RobotContainer {
                 .onFalse(
                         Commands.parallel(
                                 Commands.runOnce(() -> useVisionAlignment = false),
-                                Commands.runOnce(Subsystems.shooter::runShooter),
+                                Commands.runOnce(Subsystems.shooter::runShooter),   // reset to default
                                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive)));
 
-        //
-        //
         //
         tryClearNote.whileTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.TryClearNote))
                 .onFalse(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
@@ -309,19 +294,19 @@ public class RobotContainer {
         //
 //        startClimb.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.StartClimb));
         startClimb.onTrue(
-                Commands.runOnce(() -> Subsystems.poseManager.getClimbManager().getNextPoseCommand().schedule()));
-
+                Subsystems.poseManager.getClimbManager().getPoseCommand(ClimbManager.ClimbPose.StartClimb));
+        climbPull.onTrue(
+                Subsystems.poseManager.getClimbManager().getPoseCommand(ClimbManager.ClimbPose.PullUp));
 
         unsafeLowerClimber.onTrue(Commands.runOnce(() -> Subsystems.climber.unsafeOpenLoopUp()))
                 .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
         unsafeRaiseClimber.onTrue(Commands.runOnce(() -> Subsystems.climber.unsafeOpenLoopDown()))
                 .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
 
-        xboxController.povLeft().onTrue(Commands.runOnce(() -> Subsystems.climber.setClimberPosition(Climber.ClimberPosition.DOWN)));
-        xboxController.povRight().onTrue(Commands.runOnce(() -> Subsystems.climber.setClimberPosition(Climber.ClimberPosition.UP)));
+//        climberDown.onTrue(Commands.runOnce(() -> Subsystems.climber.setClimberPosition(Climber.ClimberPosition.DOWN)));
+//        climberUp.onTrue(Commands.runOnce(() -> Subsystems.climber.setClimberPosition(Climber.ClimberPosition.UP)));
         bumpClimberUp.onTrue(Commands.runOnce(() -> Subsystems.climber.bumpSetpoint(0.5))); //TODO: change to a tested number
         bumpClimberDown.onTrue(Commands.runOnce(() -> Subsystems.climber.bumpSetpoint(-0.5)));
-        
 
 
         //
@@ -332,23 +317,13 @@ public class RobotContainer {
         unsafeRaiseTrap.onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().unsafeOpenLoopUp()))
                 .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
 
-        povUp.onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().setTrapPosition(TrapExtender.TrapPosition.Up)));
-        povDown.onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().setTrapPosition(TrapExtender.TrapPosition.Zero)));
-
-
 
         //
         // Shooter
         //
-        feed.onTrue(
-                Commands.either(
-                        Commands.sequence(
-                                Commands.runOnce(Subsystems.shooter::runShooter),
-                                Commands.runOnce(Subsystems.shooter::shoot)),
-                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireAmpShot),
-                        () -> !Subsystems.intake.isNoteDetected())
-        ).onFalse(Commands.parallel(
-                Commands.runOnce(Subsystems.shooter::stopFeeder)));
+        feed.onTrue(new TeleopShoot())
+                .onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
+
 
         feedNoteToShooter.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter));
 
@@ -402,10 +377,12 @@ public class RobotContainer {
     }
 
     public void teleopInit() {
+        useVisionAlignment = false;
         Subsystems.lifecycleSubsystems.stream().filter(Objects::nonNull).forEach(Lifecycle::teleopInit);
     }
 
     public void autoInit() {
+        useVisionAlignment = false;
         Subsystems.lifecycleSubsystems.stream().filter(Objects::nonNull).forEach(Lifecycle::autoInit);
     }
 

@@ -50,6 +50,10 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
         return Commands.runOnce(() -> setTrapState(state));
     }
 
+    public TrapState getTrapState() {
+        return state;
+    }
+
 
     public void setTrapState(TrapState state) {
         this.state = state;

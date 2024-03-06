@@ -22,6 +22,7 @@ public class ClimbManager {
         return lastPose;
     }
 
+
     public Command getNextPoseCommand() {
         BSLogger.log("ClimbManager", "getNextPose: poseIndex=" + poseIndex);
         if (poseIndex < climbPoses.size()) {
