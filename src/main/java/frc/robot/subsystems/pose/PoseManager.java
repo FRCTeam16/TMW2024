@@ -41,7 +41,7 @@ public class PoseManager {
         // Start climb
         StartClimb,
         TryClearNote,
-        ExtendClimbers, FireBigShot, SubShot, PrepareBloopShot
+        ExtendClimbers, FireBigShot, SubShot, FireShootOverSmiley, PrepareBloopShot
     }
 
     private Pose lastPose = Pose.StartingConfig;
@@ -68,6 +68,7 @@ public class PoseManager {
         registry.put(Pose.FireBigShot, PoseCommands::fireBigShot);
         registry.put(Pose.SubShot, PoseCommands::fireSubShot);
         registry.put(Pose.TryClearNote, PoseCommands::tryClearNote);
+        registry.put(Pose.FireShootOverSmiley, PoseCommands::fireShootOverSmiley);
     }
 
     public ClimbManager getClimbManager() {

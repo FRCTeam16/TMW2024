@@ -64,7 +64,8 @@ public class RobotContainer {
     // Left Joystick
     //
     private final JoystickButton intake = new JoystickButton(left, 1);
-    private final JoystickButton eject = new JoystickButton(left, 2);
+    private final JoystickButton bigShot = new JoystickButton(left, 2);
+
     private final JoystickButton feedIntake = new JoystickButton(left, 4);  // debug feed intake speeds
     private final JoystickButton unsafeRaiseClimber = new JoystickButton(left, 14);
     private final JoystickButton unsafeLowerClimber = new JoystickButton(left, 15);
@@ -76,7 +77,7 @@ public class RobotContainer {
     private final Trigger feed = new Trigger(right::getTrigger);
     private final JoystickButton runVisionAlignAngle = new JoystickButton(right, 2);
     private final JoystickButton robotCentric = new JoystickButton(right, 5);
-    private final JoystickButton bigShot = new JoystickButton(right, 3);
+    private final JoystickButton shootOverSmiley = new JoystickButton(right, 4);
 
     private final JoystickButton bumpClimberDown = new JoystickButton(right, 6);
     private final JoystickButton bumpClimberUp = new JoystickButton(right, 7);
@@ -110,6 +111,8 @@ public class RobotContainer {
     private final Trigger feedNoteToShooter = xboxController.y();
     private final Trigger startClimb = xboxController.povUp();
     private final Trigger climbPull = xboxController.povDown();
+
+    private final Trigger eject = xboxController.b();
 
 
     //
@@ -350,6 +353,10 @@ public class RobotContainer {
 
         bigShot.onTrue(
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireBigShot)
+        ).onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
+
+        shootOverSmiley.onTrue(
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireShootOverSmiley)
         ).onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
 
         subShot.onTrue(
