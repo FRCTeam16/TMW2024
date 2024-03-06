@@ -40,6 +40,7 @@ public class PoseManager {
         AutoShortShot,
         // Start climb
         StartClimb,
+        TryClearNote,
         ExtendClimbers, FireBigShot, SubShot, PrepareBloopShot
     }
 
@@ -66,6 +67,7 @@ public class PoseManager {
         registry.put(Pose.PrepareBloopShot, PoseCommands::prepareBloopShotPose);
         registry.put(Pose.FireBigShot, PoseCommands::fireBigShot);
         registry.put(Pose.SubShot, PoseCommands::fireSubShot);
+        registry.put(Pose.TryClearNote, PoseCommands::tryClearNote);
     }
 
     public ClimbManager getClimbManager() {

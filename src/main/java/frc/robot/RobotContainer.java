@@ -85,6 +85,8 @@ public class RobotContainer {
     private final JoystickButton bumpClimberUp = new JoystickButton(right,7);
 
     private final POVButton subShot = new POVButton(right, 180);
+    private final JoystickButton tryClearNote = new JoystickButton(right, 16);
+
 
     //
     // Debug Controller 
@@ -122,7 +124,7 @@ public class RobotContainer {
     //
     // Vision integration
     //
-    private boolean useVisionAlignment = false; // twist alignment for auto-aiming
+    private static boolean useVisionAlignment = false; // twist alignment for auto-aiming
 
 //    private final VisionAlignmentHelper trapAlignHelper = new VisionAlignmentHelper();
 //    private boolean useVisionTrapAligment = false; // horizontal input for trap alignment
@@ -159,6 +161,10 @@ public class RobotContainer {
             }
         }
         return RadiansPerSecond.of(twist);
+    }
+
+    public static boolean isUseVisionAlignment() {
+        return useVisionAlignment;
     }
 
 
@@ -271,14 +277,20 @@ public class RobotContainer {
         //
         runVisionAlignAngle.onTrue(
                         Commands.parallel(
-                                Commands.runOnce(() -> this.useVisionAlignment = true),
+                                Commands.runOnce(() -> useVisionAlignment = true),
                                 Commands.runOnce(Subsystems.shooter::runShooter),
                                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShooterAimVision)))
                 .onFalse(
                         Commands.parallel(
-                                Commands.runOnce(() -> this.useVisionAlignment = false),
+                                Commands.runOnce(() -> useVisionAlignment = false),
                                 Commands.runOnce(Subsystems.shooter::runShooter),
                                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive)));
+
+        //
+        //
+        //
+        tryClearNote.whileTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.TryClearNote))
+                .onFalse(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
 
 
         //
@@ -380,13 +392,9 @@ public class RobotContainer {
         SmartDashboard.putData("Set VisionAim State", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShooterAimVision));
 
         // Debug
-        SmartDashboard.putNumber("DebugFeederSpeeds", -0.3);
-
         SmartDashboard.setDefaultNumber("DeflectDelay", 0.75);
 
         SmartDashboard.putData("Center Note in intake", new CenterNoteIntakeCommand());
-
-
     }
 
     public Command getAutonomousCommand() {
@@ -419,6 +427,8 @@ public class RobotContainer {
         SmartDashboard.putNumber("Yaw/PigeonAngle", Subsystems.swerveSubsystem.getPigeon2().getAngle());
         SmartDashboard.putNumber("Yaw/PigeonYaw", Subsystems.swerveSubsystem.getPigeon2().getYaw().getValueAsDouble());
         SmartDashboard.putNumber("Yaw/SwerveYaw", Subsystems.swerveSubsystem.getYaw());
+
+        SmartDashboard.putBoolean("Debug/UseVisionAlignment", useVisionAlignment);
     }
 
 }

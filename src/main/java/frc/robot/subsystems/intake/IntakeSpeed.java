@@ -17,13 +17,10 @@ import frc.robot.subsystems.util.DoubleChanger;
 public class IntakeSpeed implements Lifecycle, Sendable {
     private final TalonFX intakeDrive;
 
-    //    private final DutyCycleOut intakeDrive_Request = new DutyCycleOut(0.0); // CTRE pheonix 6 API
-//    private final IntakeSpeeds intakeSpeeds = new IntakeSpeeds();
     private final VoltageOut intakeDrive_Request = new VoltageOut(0.0);
 
     private final IntakeSpeedVolts intakeSpeedVolts = new IntakeSpeedVolts();
 
-    private final Telemetry telemetry;
     private double intakeOpenLoopSpeed = 0;
 
 
@@ -31,8 +28,6 @@ public class IntakeSpeed implements Lifecycle, Sendable {
         this.intakeDrive = intakeDrive;
         intakeDrive.getConfigurator().apply(new TalonFXConfiguration());
         intakeDrive.setNeutralMode(NeutralModeValue.Coast);
-
-        telemetry = new Telemetry();
     }
 
     @Override
@@ -47,42 +42,26 @@ public class IntakeSpeed implements Lifecycle, Sendable {
 
     public void runIntakeFast() {
         intakeOpenLoopSpeed = this.intakeSpeedVolts.getFastSpeed();
-        telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
     }
 
     public void runIntakeFeedShooter() {
         intakeOpenLoopSpeed = this.intakeSpeedVolts.getFeedShooterIntakeSpeed();
-        telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
     }
-
-//    public void runIntakeSlow() {
-//        intakeOpenLoopSpeed = this.intakeSpeedVolts.getSlowSpeed();
-//        telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
-//    }
 
     public void runIntakeEject() {
         intakeOpenLoopSpeed = this.intakeSpeedVolts.getEjectSpeed();
-        telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
     }
 
     public void runAmpShot() {
         intakeOpenLoopSpeed = this.intakeSpeedVolts.getAmpShotSpeed();
-        telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
-    }
-
-    public void runCenterSpeed (int direction) {
-        intakeOpenLoopSpeed = direction * this.intakeSpeedVolts.getCenterSpeed();
-        telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
     }
 
     public void stopIntake() {
         intakeOpenLoopSpeed = 0.0;
-        telemetry.logIntakeSpeed(intakeOpenLoopSpeed);
     }
 
     public void runIntakeDebug(double value) {
         intakeOpenLoopSpeed = value;
-        telemetry.logIntakeSpeed(value);
     }
 
     void periodic() {
@@ -99,16 +78,26 @@ public class IntakeSpeed implements Lifecycle, Sendable {
             builder.addDoubleProperty("Intake/FeedNote", this.intakeSpeedVolts::getFeedShooterIntakeSpeed, this.intakeSpeedVolts::setFeedShooterIntakeSpeed);
             builder.addDoubleProperty("Intake/EjectSpeed", this.intakeSpeedVolts::getEjectSpeed, this.intakeSpeedVolts::setEjectSpeed);
             builder.addDoubleProperty("Intake/AmpShootSpeed", this.intakeSpeedVolts::getAmpShotSpeed, this.intakeSpeedVolts::setAmpShotSpeed);
-            builder.addDoubleProperty("Intake/CenterSpeed", this.intakeSpeedVolts::getCenterSpeed, this.intakeSpeedVolts::setCenterSpeed);
+            builder.addDoubleProperty("Intake/CenterSpeedIntake", this.intakeSpeedVolts::getCenterSpeedIntake, this.intakeSpeedVolts::setCenterSpeedIntake);
+            builder.addDoubleProperty("Intake/CenterSpeedEject", this.intakeSpeedVolts::getCenterSpeedEject, this.intakeSpeedVolts::setCenterSpeedEject);
         }
+    }
+
+    public void runCenterSpeedEject() {
+        intakeOpenLoopSpeed = this.intakeSpeedVolts.getCenterSpeedEject();
+    }
+
+    public void runCenterSpeedIntake() {
+        intakeOpenLoopSpeed = this.intakeSpeedVolts.getCenterSpeedIntake();
     }
 
     static class IntakeSpeedVolts {
         private double fastSpeed = 4.8;
 //        private double slowSpeed = -2;
         private double ejectSpeed = -6;
-        private double centerSpeed = 4.8;
-        private double feedShooterIntakeSpeed = -2; // FIXME feed is using slowSpeed
+        private double centerSpeedIntake = 4.8;
+        private double centerSpeedEject = -6.0;
+        private double feedShooterIntakeSpeed = -2;
         private double ampShotSpeed = -7.75;
 
         // Getter for fastSpeed
@@ -120,16 +109,6 @@ public class IntakeSpeed implements Lifecycle, Sendable {
         public void setFastSpeed(double fastSpeed) {
             this.fastSpeed = fastSpeed;
         }
-
-        // Getter for slowSpeed
-//        public double getSlowSpeed() {
-//            return slowSpeed;
-//        }
-
-        // Setter for slowSpeed
-//        public void setSlowSpeed(double slowSpeed) {
-//            this.slowSpeed = slowSpeed;
-//        }
 
         // Getter for ejectSpeed
         public double getEjectSpeed() {
@@ -161,12 +140,20 @@ public class IntakeSpeed implements Lifecycle, Sendable {
             this.ampShotSpeed = ampShotSpeed;
         }
 
-        public double getCenterSpeed() {
-            return centerSpeed;
+        public double getCenterSpeedEject() {
+            return centerSpeedEject;
         }
 
-        public void setCenterSpeed(double speed) {
-            this.centerSpeed = speed;
+        public void setCenterSpeedEject(double centerSpeedEject) {
+            this.centerSpeedEject = centerSpeedEject;
+        }
+
+        public double getCenterSpeedIntake() {
+            return centerSpeedIntake;
+        }
+
+        public void setCenterSpeedIntake(double centerSpeedIntake) {
+            this.centerSpeedIntake = centerSpeedIntake;
         }
     }
 

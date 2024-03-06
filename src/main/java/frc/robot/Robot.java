@@ -86,7 +86,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     DataLogManager.log("[AUTO INIT] Started at:" + Timer.getFPGATimestamp());
-    SmartDashboard.putNumber("Timing/AutoInit", Timer.getFPGATimestamp());
     autonomousCommand = robotContainer.getAutonomousCommand();
     DataLogManager.log("[AUTO] autoInit:: got robotCommand: " + Timer.getFPGATimestamp());
     robotContainer.autoInit();

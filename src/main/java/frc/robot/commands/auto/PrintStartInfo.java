@@ -16,7 +16,6 @@ public class PrintStartInfo extends Command {
     public void initialize() {
         DataLogManager.log("[AUTO] Starting: " + message);
         DataLogManager.log("[AUTO] Started at:" + Timer.getFPGATimestamp());
-        SmartDashboard.putNumber("Timing/PrintStartInfo", Timer.getFPGATimestamp());
     }
 
     @Override

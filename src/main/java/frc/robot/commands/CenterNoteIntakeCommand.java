@@ -25,35 +25,21 @@ public class CenterNoteIntakeCommand extends Command {
     public void execute() {
 
         // Modulo between states
-        SmartDashboard.putNumber("Debug/CenterNoteInIntakeCommand/Phase", phase);
+//        SmartDashboard.putNumber("Debug/CenterNoteInIntakeCommand/Phase", phase);
         if (phase % 2 == 0) {
             BSLogger.log("CenterNoteInIntakeCommand", "eject");
-            SmartDashboard.putNumber("Debug/CenterNoteInIntakeCommand/Eject", 1);
-            Subsystems.intake.getIntakeSpeed().runCenterSpeed(-1);
+//            SmartDashboard.putNumber("Debug/CenterNoteInIntakeCommand/Eject", 1);
+            Subsystems.intake.getIntakeSpeed().runCenterSpeedEject();
         } else {
             BSLogger.log("CenterNoteInIntakeCommand", "intake");
-            SmartDashboard.putNumber("Debug/CenterNoteInIntakeCommand/Eject", 0);
-            Subsystems.intake.getIntakeSpeed().runCenterSpeed(1);
+//            SmartDashboard.putNumber("Debug/CenterNoteInIntakeCommand/Eject", 0);
+            Subsystems.intake.getIntakeSpeed().runCenterSpeedIntake();
         }
 
         if (timer.hasElapsed(0.1)) {
             phase++;
             timer.reset();
         }
-
-        //
-//            if (phase != (NUM_PHASES - 1)) {
-//                if (timer.hasElapsed(0.1)) {
-//                    phase++;
-//                    timer.reset();
-//                }
-//            } else {
-//                BSLogger.log("CenterNoteInIntakeCommand", "looking for note at phase: " + phase);
-//                // At end try to suck in note one more time
-//                if (timer.hasElapsed(1.0) || Subsystems.intake.isNoteDetected()) {
-//                    phase++;
-//                timer.reset();
-//            }
 
     }
 

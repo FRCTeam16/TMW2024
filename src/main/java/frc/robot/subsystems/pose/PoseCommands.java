@@ -28,14 +28,16 @@ class PoseCommands {
 
     static Command moveToPickupPose() {
         return Commands.sequence(
-                Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeFast()),
-                Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive),
-                new WaitCommand(0.25),  // add wait for intake pivot to be in position
                 Commands.parallel(
-                        Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
-                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.IntakeFromFloor),
-                        Commands.runOnce(Subsystems.shooter::stopFeeder)
-
+                        Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive),
+                        Commands.runOnce(Subsystems.shooter::stopFeeder
+                        ),
+//                new WaitCommand(0.25),  // add wait for intake pivot to be in position
+                        Commands.parallel(
+                                Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeFast()),
+                                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
+                                Subsystems.intake.moveToStateCmd(Intake.IntakeState.IntakeFromFloor)
+                        )
                 )
         );
     }
@@ -132,10 +134,6 @@ class PoseCommands {
         );
     }
 
-    public static Command stepClimbPose() {
-        return Subsystems.poseManager.climbManager.getNextPoseCommand();
-    }
-
     public static Command prepareBloopShotPose() {
         return Commands.sequence(
                 Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive),
@@ -172,5 +170,14 @@ class PoseCommands {
                 Commands.runOnce(Subsystems.shooter::runShooter),
                 new WaitCommand(0.5),
                 Commands.runOnce(Subsystems.shooter::shoot));
+    }
+
+    public static Command tryClearNote() {
+        return Commands.sequence(
+                Subsystems.intake.moveToStateCmd(Intake.IntakeState.TryClearNote),
+                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Up),
+                Commands.runOnce(() -> Subsystems.shooter.runFeeder()),
+                Commands.runOnce(() -> Subsystems.shooter.getFeeder().setEnabled(true)
+                ));
     }
 }

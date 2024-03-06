@@ -182,7 +182,7 @@ public class TrapPivot implements Lifecycle, Sendable {
         AmpShot(0.211),
         AmpDeflect(0.35),
 
-        PreClimb(0.75),
+        PreClimb(0.50),
 
         Top(0.75),
         Score(0.75);

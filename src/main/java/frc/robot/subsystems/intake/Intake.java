@@ -43,7 +43,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         Climb,
 
         AmpAim,
-        TryShootAmp
+        TryClearNote, TryShootAmp
     }
 
     private IntakeState intakeState = IntakeState.StartingPosition;
@@ -108,6 +108,10 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
             }
             case StopFeed -> {
                 intakeSpeed.stopIntake();
+            }
+            case TryClearNote -> {
+                intakeSpeed.runIntakeEject();
+                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Pickup);
             }
             default -> {
                 DataLogManager.log("[Intake] Unhandled IntakeState: " + state.name());

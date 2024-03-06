@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.SerialPort.WriteBufferMode;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.Lifecycle;
 
@@ -107,10 +108,11 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
         }
 
         // Has Target
-        boolean visionLock = false;
-        if (Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo().hasTarget()) {
-            visionLock = Subsystems.pivot.isInPosition() && Subsystems.shooter.isAtSpeed();
-        }
+        boolean visionLock = RobotContainer.isUseVisionAlignment() &&
+                Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo().hasTarget() &&
+                Subsystems.pivot.isInPosition() &&
+                Subsystems.shooter.isAtSpeed();
+
 
         byte[] buffer = new byte[BUFFER_SIZE];
 
@@ -127,7 +129,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
 
         buffer[9] = (byte) robotState; // comm status
         buffer[10] = (byte) allianceColor;
-        buffer[11] = (byte) (Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo().hasTarget() ? 1 : 0);
+        buffer[11] = (byte) (visionLock ? 1 : 0);
         buffer[12] = (byte) partPresent;
         buffer[13] = (byte) 0;  // extra
         buffer[14] = (byte) 0;

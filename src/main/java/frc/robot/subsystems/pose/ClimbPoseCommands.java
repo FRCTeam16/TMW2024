@@ -21,6 +21,7 @@ public class ClimbPoseCommands {
                         Commands.runOnce(Subsystems.shooter::stopFeeder),
                         Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Up),
                         Subsystems.climber.moveToStateCmd(Climber.ClimberPosition.UP)),
+                new WaitCommand(0.25),
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.Climb));
     }
 
