@@ -13,32 +13,26 @@ import frc.robot.Subsystems;
 import frc.robot.subsystems.Lifecycle;
 
 public class LEDSubsystem extends SubsystemBase implements Lifecycle {
+    private static final double INITIAL_IGNORE_TIME = 1.0;
+    private static final double MOTOR_TEST_TIME = 4.0;
+    private static final double RESULTS_DISPLAY_TIME = 10.0;
+    private static final int NOCOMM_THRESHOLD = 4;
+    private static final int BUFFER_SIZE = 16;
     private boolean running = true;
     private Timer timer = new Timer();
     private SerialPort serial;
-
-    private enum DMSPhase {
-        Stopped, RunDriveMotors, RunSteerMotors, DisplayResults
-    }
     private DMSPhase currentPhase = DMSPhase.Stopped;
     private DMSStats driveDmsStatus = new DMSStats();
     private DMSStats steerDmsStatus = new DMSStats();
     private DriveInfo<Integer> driveStatus = new DriveInfo<Integer>(0);
     private DriveInfo<Integer> steerStatus = new DriveInfo<Integer>(0);
-
-    private static final double INITIAL_IGNORE_TIME = 1.0;
-    private static final double MOTOR_TEST_TIME = 4.0;
-    private static final double RESULTS_DISPLAY_TIME = 10.0;
-
     private int lastComm = 0;
     private int noCommCounter = 0;  // avoid intermittent counter by looking for a set number before reporting this
-    private static final int NOCOMM_THRESHOLD = 4;
-
     private int secondsToClimb = 30;
 
-    private static final int BUFFER_SIZE = 15;
-
-    /** Creates a new LEDSubsystem. */
+    /**
+     * Creates a new LEDSubsystem.
+     */
     public LEDSubsystem() {
         SmartDashboard.setDefaultNumber("LEDClimbTime", 30);
         try {
@@ -52,7 +46,6 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
             running = false;
         }
     }
-    
 
     /**
      * Called out of band by a scheduled periodic in main robot
@@ -90,7 +83,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
             noCommCounter = 0;
         }
         lastComm = robotState;
-      
+
 
         int allianceColor = 0;
         if (DriverStation.getAlliance().isPresent()) {
@@ -99,7 +92,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
             } else if (DriverStation.getAlliance().get() == Alliance.Blue) {
                 allianceColor = 2;
             }
-       }
+        }
 
         //
         // Calculate part present value
@@ -111,6 +104,12 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
             partPresent = 2;
         } else {
             // Future
+        }
+
+        // Has Target
+        boolean visionLock = false;
+        if (Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo().hasTarget()) {
+            visionLock = Subsystems.pivot.isInPosition() && Subsystems.shooter.isAtSpeed();
         }
 
         byte[] buffer = new byte[BUFFER_SIZE];
@@ -131,17 +130,17 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
         buffer[11] = (byte) (Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo().hasTarget() ? 1 : 0);
         buffer[12] = (byte) partPresent;
         buffer[13] = (byte) 0;  // extra
-        buffer[14] = (byte) 255;
+        buffer[14] = (byte) 0;
+        buffer[15] = (byte) 255;
 
         this.serial.write(buffer, buffer.length);
         this.serial.flush();
     }
-    
 
     public void begin() {
         timer.reset();
     }
-    
+
     public void startSubsystem() {
         running = true;
     }
@@ -166,11 +165,11 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
     public boolean isStopped() {
         return currentPhase == DMSPhase.Stopped;
     }
-    
+
     public void stopDMS() {
         System.out.println("*********************** STOPPING DMS ****************************");
         currentPhase = DMSPhase.Stopped;
-        
+
         driveStatus = new DriveInfo<Integer>(0);
         steerStatus = new DriveInfo<Integer>(0);
         timer.stop();
@@ -179,35 +178,36 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
     @Override
     public void periodic() {
 
-        int climbTimeFromDashboard = (int)SmartDashboard.getNumber("LEDClimbTime", 30);
+        int climbTimeFromDashboard = (int) SmartDashboard.getNumber("LEDClimbTime", 30);
         if (climbTimeFromDashboard != secondsToClimb) {
             secondsToClimb = climbTimeFromDashboard;
         }
 
         if (running) {
-            
+
             switch (currentPhase) {
                 case Stopped:
                     break;
                 case RunDriveMotors:
-                System.out.println("Running DMS: " + currentPhase + " | " + timer.get());
+                    System.out.println("Running DMS: " + currentPhase + " | " + timer.get());
                     runMotorTest();
                     break;
                 case RunSteerMotors:
-                System.out.println("Running DMS: " + currentPhase + " | " + timer.get());
+                    System.out.println("Running DMS: " + currentPhase + " | " + timer.get());
                     runSteerTest();
                     break;
                 case DisplayResults:
-                System.out.println("Running DMS: " + currentPhase + " | " + timer.get());
+                    System.out.println("Running DMS: " + currentPhase + " | " + timer.get());
                     displayResults();
                     break;
 
-            };
+            }
+            ;
         }
     }
 
     private void runMotorTest() {
-        /* 
+        /*
         final double now = timer.get();
         if (now < MOTOR_TEST_TIME) {
             Subsystems.swerveSubsystem.DMSDrive(.5);
@@ -223,7 +223,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
                 double velAvg = DMSStats.average(driveDmsStatus.velocity);
                 double ampAvg = DMSStats.average(driveDmsStatus.current);
                 System.out.println("Vel Avg: " + velAvg + " | Amp Avg: " + ampAvg);
-                
+
                 driveStatus = driveDmsStatus.calculateStatus();
                 DMSStats.print("[Drive Status]", driveStatus);
             }
@@ -264,10 +264,10 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
                 double velAvg = DMSStats.average(steerDmsStatus.velocity);
                 double ampAvg = DMSStats.average(steerDmsStatus.current);
                 System.out.println("Vel Avg: " + velAvg + " | Amp Avg: " + ampAvg);
-                
+
                 steerStatus = steerDmsStatus.calculateStatus();
                 DMSStats.print("[Steer Status]", steerStatus);
-            } 
+            }
         } else {
             // Stop motors
             Subsystems.swerveSubsystem.DMSDrive(0.0);
@@ -297,6 +297,10 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
         if (now > RESULTS_DISPLAY_TIME) {
             currentPhase = DMSPhase.Stopped;
         }
+    }
+
+    private enum DMSPhase {
+        Stopped, RunDriveMotors, RunSteerMotors, DisplayResults
     }
 
 }

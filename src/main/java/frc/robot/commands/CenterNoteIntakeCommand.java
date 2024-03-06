@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.util.BSLogger;
@@ -22,32 +23,38 @@ public class CenterNoteIntakeCommand extends Command {
 
     @Override
     public void execute() {
-        // Safety
-        if (phase == NUM_PHASES) {
-            return;
-        }
 
         // Modulo between states
+        SmartDashboard.putNumber("Debug/CenterNoteInIntakeCommand/Phase", phase);
         if (phase % 2 == 0) {
             BSLogger.log("CenterNoteInIntakeCommand", "eject");
-            Subsystems.intake.getIntakeSpeed().runIntakeEject();
+            SmartDashboard.putNumber("Debug/CenterNoteInIntakeCommand/Eject", 1);
+            Subsystems.intake.getIntakeSpeed().runCenterSpeed(-1);
         } else {
             BSLogger.log("CenterNoteInIntakeCommand", "intake");
-            Subsystems.intake.getIntakeSpeed().runIntakeFast();
+            SmartDashboard.putNumber("Debug/CenterNoteInIntakeCommand/Eject", 0);
+            Subsystems.intake.getIntakeSpeed().runCenterSpeed(1);
         }
-        if (phase != (NUM_PHASES - 1)) {
-            if (timer.hasElapsed(0.1)) {
-                phase++;
-                timer.reset();
-            }
-        } else {
-            BSLogger.log("CenterNoteInIntakeCommand", "looking for note");
-            if (timer.hasElapsed(1.0) || Subsystems.intake.isNoteDetected()) {
-                phase++;
-                timer.reset();
-            }
 
+        if (timer.hasElapsed(0.1)) {
+            phase++;
+            timer.reset();
         }
+
+        //
+//            if (phase != (NUM_PHASES - 1)) {
+//                if (timer.hasElapsed(0.1)) {
+//                    phase++;
+//                    timer.reset();
+//                }
+//            } else {
+//                BSLogger.log("CenterNoteInIntakeCommand", "looking for note at phase: " + phase);
+//                // At end try to suck in note one more time
+//                if (timer.hasElapsed(1.0) || Subsystems.intake.isNoteDetected()) {
+//                    phase++;
+//                timer.reset();
+//            }
+
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -147,5 +148,9 @@ public class ShooterHelper implements Sendable {
         builder.addBooleanProperty(this.name + "/OpenLoop", this::isOpenLoop, this::setOpenLoop);
         builder.addDoubleProperty(this.name + "/Open Loop Setpoint", this::getOpenLoopSetpoint, this::setOpenLoopSetpoint);
         builder.addDoubleProperty(this.name + "/Velocity Setpoint", this::getVelocitySetpoint, this::setVelocitySetpoint);
+    }
+
+    public boolean isAtSpeed() {
+        return (Math.abs(this.getVelocitySetpoint() - this.motor.getVelocity().getValue()) < 5);
     }
 }

@@ -72,6 +72,9 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
         return getFeeder().isNoteDetected();
     }
 
+    public boolean isAtSpeed() {
+        return upper.isAtSpeed() && lower.isAtSpeed();
+    }
 
     /**
      *  testing
