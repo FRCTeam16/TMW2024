@@ -29,6 +29,8 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
 
     private Optional<Timer> ampShotTimer = Optional.empty();
 
+    private static final double POST_NOTE_DETECT_TIME = 0.375;
+
 
     public enum IntakeState {
         StartingPosition,
@@ -139,7 +141,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         }
 
         // Check if we should override intake speed
-        if (postNoteDetectedTimer.isPresent() &&  postNoteDetectedTimer.get().hasElapsed(.5)) {
+        if (postNoteDetectedTimer.isPresent() &&  postNoteDetectedTimer.get().hasElapsed(POST_NOTE_DETECT_TIME)) {
             intakeSpeed.stopIntake();
             postNoteDetectedTimer.get().stop();
             postNoteDetectedTimer = Optional.empty();   // todo determine if optional<> approach is clearest
