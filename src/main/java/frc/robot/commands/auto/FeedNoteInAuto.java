@@ -18,7 +18,7 @@ public class FeedNoteInAuto extends SequentialCommandGroup {
                         new WaitIntakeHasNoteCommand(),
                         new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero)
                 ).withTimeout(1.0),
-                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter)
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter) 
         );
     }
 }

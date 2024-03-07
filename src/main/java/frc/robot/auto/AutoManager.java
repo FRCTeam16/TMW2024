@@ -77,6 +77,7 @@ public class AutoManager {
         registerStrategy("Under The Bridge", AutoStrategies.UnderTheBridge, UnderTheBridge::new);
         registerStrategy("Tab", AutoStrategies.Tab, Tab::new);
         registerStrategy("DropShot", AutoStrategies.DropShot, DropShot::new);
+        registerStrategy("CrossWing", AutoStrategies.CrossWing, CrossWingShot::new);
     }
 
     /**
@@ -113,7 +114,8 @@ public class AutoManager {
 
         // DropShot
         NamedCommands.registerCommand("BloopShot", new BloopShot());
-    }
+        
+        }
 
     /**
      * Registers the autonomous paths with the path registry
@@ -171,7 +173,9 @@ public class AutoManager {
         DebugTests2,
         DCL_BCL,
         UnderTheBridge,
-        DropShot, Tab
+        DropShot, 
+        Tab,
+        CrossWing
     }
 
 }
