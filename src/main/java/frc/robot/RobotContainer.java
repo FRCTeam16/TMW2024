@@ -47,7 +47,7 @@ public class RobotContainer {
     private final Joystick left = new Joystick(0);
     private final Joystick right = new Joystick(1);
     private final CommandXboxController xboxController = new CommandXboxController(2);
-    private final XboxController debugJoystick = new XboxController(3);
+//    private final XboxController debugJoystick = new XboxController(3);
     private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
     @SuppressWarnings("unused")
     private final Subsystems subsystems = Subsystems.getInstance();
@@ -92,12 +92,15 @@ public class RobotContainer {
     //
     // Debug Controller
     //
+    /*
     private final Trigger debugLeftTrigger = new Trigger(() -> debugJoystick.getLeftTriggerAxis() > 0.1);
     private final Trigger debugRightTrigger = new Trigger(() -> debugJoystick.getRightTriggerAxis() > 0.1);
     private final Trigger debugYButton = new JoystickButton(debugJoystick, 4);
     private final Trigger debugAButton = new JoystickButton(debugJoystick, 1);
     private final Trigger debugBButton = new JoystickButton(debugJoystick, 2);
     private final Trigger debugXButton = new JoystickButton(debugJoystick, 3);
+    */
+
     //
     // Controller
     //
@@ -241,7 +244,8 @@ public class RobotContainer {
         }
 
         // Test Trap
-        if (true) {
+        if (false) {
+            /*
             debugLeftTrigger
                     .onTrue(Commands.runOnce(() -> Subsystems.trap.getExtender().openLoopDown()))
                     .onFalse(Commands.runOnce(() -> Subsystems.trap.getExtender().stopOpenLoop()));
@@ -261,7 +265,7 @@ public class RobotContainer {
 
             debugBButton.onTrue(Commands.runOnce(() -> Subsystems.trap.setFingerPosition(Trap.FingerPositions.Closed)));
             debugXButton.onTrue(Commands.runOnce(() -> Subsystems.trap.setFingerPosition(Trap.FingerPositions.Open)));
-
+*/
         }
 
         // Test Trap
