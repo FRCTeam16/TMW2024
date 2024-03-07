@@ -2,7 +2,9 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Subsystems;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.vision.VisionTypes.TargetInfo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +46,11 @@ public class VisionSubsystem extends SubsystemBase implements Lifecycle {
             DataLogManager.log(message);
             throw new IllegalArgumentException(message);
         }
+    }
+
+    public boolean hasTarget(){
+        TargetInfo info = this.getDefaultLimelight().getTargetInfo();
+        return info.hasTarget() && Math.abs(info.xOffset()) < 2;
     }
 
 }

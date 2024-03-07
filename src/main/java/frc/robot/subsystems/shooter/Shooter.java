@@ -7,9 +7,12 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
+import frc.robot.Subsystems;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.VisionAimManager;
+import frc.robot.subsystems.vision.VisionSubsystem;
 
 /**
  * The Shooter class represents the shooter subsystem of the robot.
@@ -50,8 +53,8 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
     public void teleopInit() {
         upper.setOpenLoop(true);
         lower.setOpenLoop(true);
-        upper.setEnabled(false);
-        lower.setEnabled(false);
+        upper.setEnabled(true);
+        lower.setEnabled(true);
         feeder.setEnabled(false);
     }
 
@@ -100,6 +103,14 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
         feeder.receiveFromIntake();
     }
 
+    public static boolean isReadyToShoot(){
+         // Has Target
+        return  RobotContainer.isUseVisionAlignment() &&
+                Subsystems.visionSubsystem.hasTarget() &&
+                Subsystems.pivot.isInPosition() &&
+                Subsystems.shooter.isAtSpeed();
+    }
+
     public void shoot() {
         feeder.shoot();
     }
@@ -145,6 +156,9 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
             upper.initSendable(builder);
             lower.initSendable(builder);
             feeder.initSendable(builder);
+            builder.addBooleanProperty("isReadyToShoot", Shooter::isReadyToShoot, null); // good
+            builder.addBooleanProperty("isAtSpeed", this::isAtSpeed, null);
+            builder.addBooleanProperty("HasTarget", Subsystems.visionSubsystem::hasTarget, null);
         }
     }
 }

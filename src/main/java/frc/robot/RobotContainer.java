@@ -82,13 +82,8 @@ public class RobotContainer {
 
     private final JoystickButton bumpClimberDown = new JoystickButton(right, 6);
     private final JoystickButton bumpClimberUp = new JoystickButton(right, 7);
-    private final Trigger subShot = new POVButton(right, 45)
-            .or(new POVButton(right, 90))
-            .or(new POVButton(right, 135))
-            .or(new POVButton(right, 180))
-            .or(new POVButton(right, 225))
-            .or(new POVButton(right, 270))
-            .or(new POVButton(right, 315));
+    private final Trigger subShot = new POVButton(right, 0);
+            
     private final JoystickButton tryClearNote = new JoystickButton(right, 16);
     //
     // Debug Controller

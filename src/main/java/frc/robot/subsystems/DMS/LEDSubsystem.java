@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.shooter.Shooter;
 
 public class LEDSubsystem extends SubsystemBase implements Lifecycle {
     private static final double INITIAL_IGNORE_TIME = 1.0;
@@ -107,11 +108,8 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
             // Future
         }
 
-        // Has Target
-        boolean visionLock = RobotContainer.isUseVisionAlignment() &&
-                Subsystems.visionSubsystem.getDefaultLimelight().getTargetInfo().hasTarget() &&
-                Subsystems.pivot.isInPosition() &&
-                Subsystems.shooter.isAtSpeed();
+        // // Has Target
+        boolean visionLock = Shooter.isReadyToShoot();
 
 
         byte[] buffer = new byte[BUFFER_SIZE];

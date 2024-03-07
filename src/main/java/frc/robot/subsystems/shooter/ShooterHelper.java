@@ -148,6 +148,7 @@ public class ShooterHelper implements Sendable {
         builder.addBooleanProperty(this.name + "/OpenLoop", this::isOpenLoop, this::setOpenLoop);
         builder.addDoubleProperty(this.name + "/Open Loop Setpoint", this::getOpenLoopSetpoint, this::setOpenLoopSetpoint);
         builder.addDoubleProperty(this.name + "/Velocity Setpoint", this::getVelocitySetpoint, this::setVelocitySetpoint);
+        builder.addDoubleProperty(this.name + "/motorVelocity", this.motor.getVelocity()::getValue, null);
     }
 
     public boolean isAtSpeed() {

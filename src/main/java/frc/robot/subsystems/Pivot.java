@@ -216,23 +216,25 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     public void initSendable(SendableBuilder builder) {
         if (Constants.Dashboard.UseSendables) {
             builder.setSmartDashboardType(SUBSYSTEM_NAME);
+            builder.addDoubleProperty("Encoder/AbsolutePos", this::getPivotEncoderAbsolutePosition, null);
+            builder.addDoubleProperty("Encoder/Pos", this::getPivotEncoderPosition, null);    
+            builder.addDoubleProperty("Encoder/Offset", this::getPivotEncoderPositionOffset, null);
+            builder.addDoubleProperty("Goal", this::getPivotSetpoint, this::setPivotSetpoint);
+            builder.addDoubleProperty("Encoder/Angle", this::getPivotAngleDegrees, null);
+            builder.addBooleanProperty("Encoder/inposition", this::isInPosition, null);
 
             if (Constants.Dashboard.ConfigurationMode) {
+
                 builder.addBooleanProperty("OpenLoop", this::isOpenLoop, null);
                 builder.addDoubleProperty("Speed", this::getSpeed, null /*this::setSpeed*/);
-
                 builder.addDoubleProperty("Motor/Position", this::getMotorPosition, null);
                 builder.addDoubleProperty("Motor/Velocity", this::getMotorVelocity, null);
                 builder.addDoubleProperty("Motor/Voltage", this::getMotorVoltage, null);
                 builder.addDoubleProperty("Motor/SupplyCurrent", this::getMotorSupplyCurrent, null);
 
-                builder.addDoubleProperty("Encoder/Pos", this::getPivotEncoderPosition, null);
-                builder.addDoubleProperty("Encoder/AbsolutePos", this::getPivotEncoderAbsolutePosition, null);
-                builder.addDoubleProperty("Encoder/Offset", this::getPivotEncoderPositionOffset, null);
             }
 
-                builder.addDoubleProperty("Goal", this::getPivotSetpoint, this::setPivotSetpoint);
-                builder.addDoubleProperty("Encoder/Angle", this::getPivotAngleDegrees, null);
+                
         }
     }
 
