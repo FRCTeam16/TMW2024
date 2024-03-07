@@ -65,19 +65,19 @@ public class AutoManager {
      * Registers the autonomous strategies with the chooser and the lookup map
      */
     private void registerStrategies() {
-        registerStrategy("Debug Auto", AutoStrategies.DebugAuto, DebugAuto::new);
-        registerStrategy("Test Path", AutoStrategies.DebugTestPath, () -> new DebugPathAuto("TestStageLeft"));
-        registerStrategy("Test MultiPath", AutoStrategies.DebugTestMultipath,
-                () -> new DebugPathAuto("Multipoint Test"));
-        registerStrategy("Test Curly", AutoStrategies.DebugCurly, () -> new DebugPathAuto("TestCurly"));
-        registerStrategy("Test Wavy", AutoStrategies.DebugWavy, () -> new DebugPathAuto("TestWave"));
-        registerStrategy("Tests2", AutoStrategies.DebugTests2, () -> new DebugPathAuto("Test2"));
-        registerStrategy("DCL-BCL", AutoStrategies.DCL_BCL, () -> new DebugPathAuto("DCL_BCL"));
+        // registerStrategy("Debug Auto", AutoStrategies.DebugAuto, DebugAuto::new);
+        // registerStrategy("Test Path", AutoStrategies.DebugTestPath, () -> new DebugPathAuto("TestStageLeft"));
+        // registerStrategy("Test MultiPath", AutoStrategies.DebugTestMultipath,
+                // () -> new DebugPathAuto("Multipoint Test"));
+        // registerStrategy("Test Curly", AutoStrategies.DebugCurly, () -> new DebugPathAuto("TestCurly"));
+        // registerStrategy("Test Wavy", AutoStrategies.DebugWavy, () -> new DebugPathAuto("TestWave"));
+        // registerStrategy("Tests2", AutoStrategies.DebugTests2, () -> new DebugPathAuto("Test2"));
+        // registerStrategy("DCL-BCL", AutoStrategies.DCL_BCL, () -> new DebugPathAuto("DCL_BCL"));
 
-        registerStrategy("Under The Bridge", AutoStrategies.UnderTheBridge, UnderTheBridge::new);
+        // registerStrategy("Under The Bridge", AutoStrategies.UnderTheBridge, UnderTheBridge::new);
         registerStrategy("Tab", AutoStrategies.Tab, Tab::new);
         registerStrategy("DropShot", AutoStrategies.DropShot, DropShot::new);
-        registerStrategy("CrossWing", AutoStrategies.CrossWing, CrossWingShot::new);
+        // registerStrategy("CrossWing", AutoStrategies.CrossWing, CrossWingShot::new);
     }
 
     /**

@@ -32,7 +32,8 @@ public class CrossWingShot extends AutoPathStrategy {
 //                        Subsystems.swerveSubsystem.applyRequest(() -> pointWheels)
             ),
 
-            Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShortShot),
+            //Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShortShot), // old code setup
+            Subsystems.poseManager.getPoseCommand(PoseManager.Pose.AutoShortShot),
                 new WaitCommand(0.25),
                 Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2)),
                 Commands.parallel(
