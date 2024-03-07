@@ -30,6 +30,7 @@ import frc.robot.subsystems.pose.ClimbManager;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.trap.Trap;
 import frc.robot.subsystems.trap.TrapPivot;
+import frc.robot.subsystems.util.BSLogger;
 import frc.robot.subsystems.util.GameInfo;
 import frc.robot.subsystems.vision.VisionTypes;
 
@@ -129,7 +130,7 @@ public class RobotContainer {
 //    private final VisionAlignmentHelper trapAlignHelper = new VisionAlignmentHelper();
 //    private boolean useVisionTrapAligment = false; // horizontal input for trap alignment
 
-    final boolean isRedAlliance;
+    boolean isRedAlliance;
 
     public RobotContainer() {
         configureBindings();
@@ -138,7 +139,13 @@ public class RobotContainer {
         SmartDashboard.putData("AlignPID", alignController);
         SmartDashboard.setDefaultNumber("AlignPIDFactor", 200);
 
+        updateRedAllianceInfo();
+    }
+    
+
+    public void updateRedAllianceInfo() {
         isRedAlliance = GameInfo.isRedAlliance();
+        BSLogger.log("RobotContainer", "updateRedAllianceInfo = " + isRedAlliance);
     }
 
     public static boolean isUseVisionAlignment() {
@@ -410,6 +417,7 @@ public class RobotContainer {
     }
 
     public void teleopInit() {
+        updateRedAllianceInfo();
         useVisionAlignment = false;
         Subsystems.lifecycleSubsystems.stream().filter(Objects::nonNull).forEach(Lifecycle::teleopInit);
     }
