@@ -149,7 +149,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         //
         // Trying Amp Shot
         //
-        if (ampShotTimer.isPresent() && ampShotTimer.get().hasElapsed(0.375)) {
+        if (ampShotTimer.isPresent() && ampShotTimer.get().hasElapsed(0.5)) {
             ampShotTimer = Optional.empty();
             setIntakeState(IntakeState.StopFeed);
         } else if (IntakeState.TryShootAmp == intakeState && ampShotTimer.isEmpty()) {
