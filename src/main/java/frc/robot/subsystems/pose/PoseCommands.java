@@ -103,7 +103,7 @@ class PoseCommands {
         return Commands.sequence(
                 Commands.runOnce(() -> BSLogger.log("PoseCommands", "****** FIRE AMP SHOT POSE ******")),
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.TryShootAmp),
-                new WaitCommand(0.25),
+                new WaitCommand(0.2),
                 Subsystems.trap.moveToStateCmd(Trap.TrapState.AmpShotDeflectShot),
                 new WaitCommand(1.0),
                 Subsystems.trap.moveToStateCmd(Trap.TrapState.PivotDrive),
