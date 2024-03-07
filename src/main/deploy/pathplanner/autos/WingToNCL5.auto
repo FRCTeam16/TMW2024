@@ -1,0 +1,25 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 4.580019929270629,
+      "y": 6.117504542701393
+    },
+    "rotation": 7.907162702958316
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "WingShotToNCL5"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "CrossWingShot",
+  "choreoAuto": false
+}

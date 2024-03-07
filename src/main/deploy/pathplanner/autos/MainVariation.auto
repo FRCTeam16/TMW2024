@@ -14,13 +14,13 @@
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "ShootNote"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ShootNote"
+            "name": null
           }
         },
         {
