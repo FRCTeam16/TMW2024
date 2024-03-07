@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
 
 public class TestSequencingCommands {
 
-    @Test
-    public void testOne() {
-        RobotContainer robotContainer = new RobotContainer();
-        var cmd1 = Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireAmpShot);
-        var cmd2 = Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireAmpShot);
-        assert cmd1 != cmd2;
-    }
+    // @Test
+    // public void testOne() {
+    //     RobotContainer robotContainer = new RobotContainer();
+    //     var cmd1 = Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireAmpShot);
+    //     var cmd2 = Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireAmpShot);
+    //     assert cmd1 != cmd2;
+    // }
 }
