@@ -16,6 +16,8 @@ public class FeederHelper implements Sendable {
     private final String name;
     private final TalonFX motor;
     private final DigitalInput noteStopSensor;
+    private final DigitalInput slowSpeedSensor;
+    private boolean slowFeedMode = false;
 
     private final VoltageOut openLoopOut = new VoltageOut(0.0);
     private double openLoopSetpoint = 0.0;
@@ -23,14 +25,16 @@ public class FeederHelper implements Sendable {
 
     private Timer shooterTimer;
     private double feedShooterSpeed = -1.5; // WARNING: Must change Intake feed
+    private double slowFeedShooterSpeed = -1.5;
 
     boolean shooting = false;   // whether we are shooting
 
 
-    public FeederHelper(String parent, String name, TalonFX motor, DigitalInput noteStopSensor) {
+    public FeederHelper(String parent, String name, TalonFX motor, DigitalInput noteStopSensor, DigitalInput slowSpeedSensor) {
         this.name = name;
         this.motor = motor;
         this.noteStopSensor = noteStopSensor;
+        this.slowSpeedSensor = slowSpeedSensor;
 
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.withOpenLoopRamps(
@@ -100,13 +104,23 @@ public class FeederHelper implements Sendable {
     }
 
     public void receiveFromIntake() {
+        // drop out of shooting mode
         shooting = false;
-        if(!isNoteDetected()) {
-            this.openLoopSetpoint = this.feedShooterSpeed;
+
+        // while we have not tripped out sensor
+        if (!isNoteDetected()) {
             this.enabled = true;
-        }
-        else {
+            if (!isSlowSensorDetected()) {
+                this.openLoopSetpoint = slowFeedMode ? this.slowFeedShooterSpeed : this.feedShooterSpeed;  
+            } else {
+                // Switch to slow speed mode when we see the note
+                slowFeedMode = true;
+                this.openLoopSetpoint = this.slowFeedShooterSpeed;
+            }
+        } else {
+            // Turn off feed when we detect the note
             this.enabled = false;
+            this.slowFeedMode = false;
         }
     }
 
@@ -114,14 +128,36 @@ public class FeederHelper implements Sendable {
         return !noteStopSensor.get();
     }
 
+    public boolean isSlowSensorDetected() {
+        return !slowSpeedSensor.get();
+    }
+
+    public double getSlowFeedShooterSpeed() {
+        return slowFeedShooterSpeed;
+    }
+
+    public boolean isSlowFeedMode() {
+        return slowFeedMode;
+    }
+
+    public void setSlowFeedMode(boolean slowFeedMode) {
+        this.slowFeedMode = slowFeedMode;
+    }
+
+    public void setSlowFeedShooterSpeed(double slowFeedShooterSpeed) {
+        this.slowFeedShooterSpeed = slowFeedShooterSpeed;
+    }
+
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addBooleanProperty(name + "/Enabled", this::isEnabled, this::setEnabled);
         builder.addBooleanProperty(name + "/Note Detected", this::isNoteDetected, null);
         builder.addDoubleProperty(name + "/Open Loop Setpoint", this::getOpenLoopSetpoint, this::setOpenLoopSetpoint);
+        builder.addBooleanProperty(name + "/Slow Sensor", this::isSlowSensorDetected, null);
         if (Constants.Dashboard.ConfigurationMode || Constants.Dashboard.ShooterConfigMode) {
             builder.addDoubleProperty(name + "/Feed Note Speed", this::getFeedShooterSpeed, this::setFeedShooterSpeed);
             builder.addDoubleProperty(name + "/Shoot Speed", this::getShootingSpeed, this::setShootingSpeed);
+            builder.addDoubleProperty(name + "/Slow Feed Speed", this::getSlowFeedShooterSpeed, this::setSlowFeedShooterSpeed);
         }
     }
 }

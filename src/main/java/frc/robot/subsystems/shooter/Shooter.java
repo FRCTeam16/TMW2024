@@ -19,9 +19,10 @@ import frc.robot.subsystems.VisionAimManager;
 public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
     public static final int DEFAULT_VELOCITY_SETPOINT = 25;
     private final DigitalInput noteFeedStop = new DigitalInput(2);
+    private final DigitalInput slowFeedSensor = new DigitalInput(3);
     private final ShooterHelper upper = new ShooterHelper("ShooterSubsystem", "Upper",  new TalonFX(40));
     private final ShooterHelper lower =  new ShooterHelper("ShooterSubsystem", "Lower", new TalonFX(41));
-    private final FeederHelper feeder = new FeederHelper("ShooterSubsystem", "Feeder", new TalonFX(42), noteFeedStop);
+    private final FeederHelper feeder = new FeederHelper("ShooterSubsystem", "Feeder", new TalonFX(42), noteFeedStop, slowFeedSensor);
     public final VisionAimManager.ShootingProfile BloopProfile =
             new VisionAimManager.ShootingProfile(Pivot.PivotPosition.Horizontal.setpoint, 10, 10);
 
@@ -95,6 +96,7 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
      * Runs the feeder until a note is detected
      */
     public void feedNote() {
+        feeder.setSlowFeedMode(false);
         feeder.receiveFromIntake();
     }
 
