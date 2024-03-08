@@ -80,8 +80,9 @@ public class Tab extends AutoPathStrategy {
                 ),
                 this.runAutoPath("Tab3"),
                 // May need to check state here, auto command is dropping out
-                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
                 DoShotCommand(ForthShot),
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
+                
 
                 //
                 // Pickup, fifth shot
@@ -96,8 +97,9 @@ public class Tab extends AutoPathStrategy {
                         new WaitIntakeHasNoteCommand(),
                         new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero)
                 ).withTimeout(3.0),
-                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
-                DoShotCommand(FifthShot)
+                DoShotCommand(FifthShot),
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter)
+                
         );
     }
 
