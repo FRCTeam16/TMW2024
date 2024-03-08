@@ -176,8 +176,10 @@ class PoseCommands {
 
     public static Command tryClearNote() {
         return Commands.sequence(
+                Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive),
+                new WaitCommand(0.25),
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.TryClearNote),
-                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Up),
+                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Horizontal),
                 Commands.runOnce(() -> Subsystems.shooter.runFeeder()),
                 Commands.runOnce(() -> Subsystems.shooter.getFeeder().setEnabled(true)
                 ));
