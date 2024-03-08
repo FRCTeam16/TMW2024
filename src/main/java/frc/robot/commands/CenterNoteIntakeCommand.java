@@ -24,19 +24,23 @@ public class CenterNoteIntakeCommand extends Command {
     @Override
     public void execute() {
 
+        final double elapsedTime;
+
         // Modulo between states
 //        SmartDashboard.putNumber("Debug/CenterNoteInIntakeCommand/Phase", phase);
         if (phase % 2 == 0) {
             BSLogger.log("CenterNoteInIntakeCommand", "eject");
 //            SmartDashboard.putNumber("Debug/CenterNoteInIntakeCommand/Eject", 1);
             Subsystems.intake.getIntakeSpeed().runCenterSpeedEject();
+            elapsedTime = 0.08;
         } else {
             BSLogger.log("CenterNoteInIntakeCommand", "intake");
 //            SmartDashboard.putNumber("Debug/CenterNoteInIntakeCommand/Eject", 0);
             Subsystems.intake.getIntakeSpeed().runCenterSpeedIntake();
+            elapsedTime = 0.1;
         }
 
-        if (timer.hasElapsed(0.1)) {
+        if (timer.hasElapsed(elapsedTime)) {
             phase++;
             timer.reset();
         }
