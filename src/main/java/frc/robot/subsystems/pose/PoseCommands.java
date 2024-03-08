@@ -191,8 +191,7 @@ class PoseCommands {
                         Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(Shooter.ShootOverSmileyProfile)),
                         Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive)
                 ),
-                Commands.runOnce(Subsystems.shooter::runShooter),
-                new WaitCommand(0.25),
+                new WaitCommand(1.5),
                 Commands.runOnce((Subsystems.shooter::shoot)
                 ));
     }

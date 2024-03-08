@@ -1,6 +1,7 @@
 package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -12,7 +13,7 @@ import frc.robot.Subsystems;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.VisionAimManager;
-import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.subsystems.util.BSLogger;
 
 /**
  * The Shooter class represents the shooter subsystem of the robot.
@@ -36,7 +37,7 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
             new VisionAimManager.ShootingProfile(50, 25, 25);
 
     public static final VisionAimManager.ShootingProfile ShootOverSmileyProfile =
-            new VisionAimManager.ShootingProfile(16.5, 61, 61);
+            new VisionAimManager.ShootingProfile(15.75, 65, 61);
 
 
     public Shooter(){
@@ -51,11 +52,7 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void teleopInit() {
-        upper.setOpenLoop(true);
-        lower.setOpenLoop(true);
-        upper.setEnabled(true);
-        lower.setEnabled(true);
-        feeder.setEnabled(false);
+        runShooter();
     }
 
     @Override
@@ -123,7 +120,7 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     public void runShooter() {
-        DataLogManager.log("[Shooter] runShooter");
+        BSLogger.log("Shooter", "runShooter");
         upper.setOpenLoop(false);
         lower.setOpenLoop(false);
         lower.setVelocitySetpoint(DEFAULT_VELOCITY_SETPOINT);
@@ -131,8 +128,8 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
         upper.setEnabled(true);
         lower.setEnabled(true);
     }
-    public void stopShooter(){
-        DataLogManager.log("[Shooter] stopShooter");
+    public void stopShooter() {
+        BSLogger.log("Shooter", "stopShooter");
         upper.setOpenLoop(false);
         lower.setOpenLoop(false);
         lower.setVelocitySetpoint(0);
