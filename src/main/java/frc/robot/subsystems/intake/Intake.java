@@ -69,6 +69,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
     public void autoInit() {
         intakeSpeed.autoInit();
         intakePivot.autoInit();
+        intakeState = IntakeState.StartingPosition;
     }
 
     public boolean isNoteDetected() {

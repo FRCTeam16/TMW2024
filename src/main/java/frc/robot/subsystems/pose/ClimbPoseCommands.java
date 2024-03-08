@@ -21,7 +21,7 @@ public class ClimbPoseCommands {
                         Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Up),
                         Subsystems.climber.moveToStateCmd(Climber.ClimberPosition.UP)),
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.Climb),
-                new WaitCommand(1.0),
+                new WaitCommand(1.5),
                 Subsystems.trap.moveToStateCmd(Trap.TrapState.Climb));
     }
 

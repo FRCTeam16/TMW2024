@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.intake.IntakePivot.IntakePosition;
 import frc.robot.subsystems.shooter.Shooter;
 
 public class LEDSubsystem extends SubsystemBase implements Lifecycle {
@@ -99,11 +100,23 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
         //
         // Calculate part present value
         //
+        // int partPresent = 0;
+        // if (Subsystems.intake.isNoteDetected()) {
+        //     partPresent = 1;
+        // } else if (Subsystems.shooter.isNoteDetected()) {
+        //     partPresent = 2;
+        // } else {
+        //     // Future
+        // }
+
+        boolean intakeDown = Subsystems.intake.isInPosition(IntakePosition.Zero);
         int partPresent = 0;
-        if (Subsystems.intake.isNoteDetected()) {
+        if (Subsystems.intake.isNoteDetected() && !intakeDown) {
             partPresent = 1;
-        } else if (Subsystems.shooter.isNoteDetected()) {
+        } else if (Subsystems.intake.isNoteDetected() && intakeDown) {
             partPresent = 2;
+        } else if (Subsystems.shooter.isNoteDetected()) {
+            partPresent = 3;
         } else {
             // Future
         }
