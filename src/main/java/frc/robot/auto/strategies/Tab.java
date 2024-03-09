@@ -81,24 +81,25 @@ public class Tab extends AutoPathStrategy {
                 this.runAutoPath("Tab3"),
                 // May need to check state here, auto command is dropping out
                 DoShotCommand(ForthShot),
-                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
+                // Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
                 
 
                 //
                 // Pickup, fifth shot
                 //
-                Commands.parallel(
-                        writeLog("Tab", "****** Running Tab4"),
-                        Subsystems.pivot.setQueuedProfileCmd(FifthShot)
-                ),
-                this.runAutoPath("Tab4"),
-                Commands.parallel(
-                        writeLog("FeedNoteInAuto", "starting"),
-                        new WaitIntakeHasNoteCommand(),
-                        new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero)
-                ).withTimeout(3.0),
-                DoShotCommand(FifthShot),
-                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter)
+                // Commands.parallel(
+                //         writeLog("Tab", "****** Running Tab4"),
+                //         Subsystems.pivot.setQueuedProfileCmd(FifthShot)
+                // ),
+                // this.runAutoPath("Tab4"),
+                // Commands.parallel(
+                //         writeLog("FeedNoteInAuto", "starting"),
+                //         new WaitIntakeHasNoteCommand(),
+                //         new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero)
+                // ).withTimeout(3.0),
+                // DoShotCommand(FifthShot),
+                // Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter)
+                writeLog("Tab auto", "@@@ FINISHED AUTO @@@")
                 
         );
     }
