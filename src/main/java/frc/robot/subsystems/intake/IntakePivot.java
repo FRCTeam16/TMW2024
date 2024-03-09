@@ -41,7 +41,7 @@ public class IntakePivot implements Lifecycle, Sendable {
     //
     private final Telemetry telemetry;
     // the amount to offset the absolute encoder to make it show zero when we are in a Zero position
-    private final double zeroEncoderOffsetPosition = 0.364;
+    private final double zeroEncoderOffsetPosition = 0.271;
     private final double encoderToMotorRatio = -48;
     private boolean softLimitsEnabled = true;
     private boolean pivotOpenLoop = false;
