@@ -16,7 +16,7 @@ public class AmpShotController implements Sendable {
     private PIDController pid = new PIDController(25, 0, 0);
     private TrapezoidProfile.State goal;
 
-    private double clamp = 2;
+    private double clamp = 0.75;
 
     public AmpShotController(DutyCycleEncoder encoder, double setpoint) {
         this.encoder = encoder;

@@ -191,7 +191,7 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
 
     public enum ClimberPosition {
         DOWN(0),
-        UP(-315);
+        UP(-375);
 
         public final double setpoint;
 
