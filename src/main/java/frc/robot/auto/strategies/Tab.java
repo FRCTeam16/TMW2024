@@ -80,8 +80,8 @@ public class Tab extends AutoPathStrategy {
                 ),
                 this.runAutoPath("Tab3"),
                 // May need to check state here, auto command is dropping out
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
                 DoShotCommand(ForthShot),
-                // Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
                 
 
                 //
