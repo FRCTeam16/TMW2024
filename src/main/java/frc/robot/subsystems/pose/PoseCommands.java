@@ -68,7 +68,7 @@ class PoseCommands {
                         Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
                         Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote)
                 ),
-                new PrintCommand("Ignoring drive request since we in transition with note"),
+                new PrintCommand("Ignoring drive request since we are in transition with note"),
                 () -> !(Intake.IntakeState.RotateUpWhileFeedingNote.equals(Subsystems.intake.getIntakeState())));
 
     }

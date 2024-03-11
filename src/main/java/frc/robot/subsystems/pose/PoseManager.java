@@ -39,9 +39,13 @@ public class PoseManager {
         ShooterAimVision,
         AutoShortShot,
         // Start climb
-        StartClimb,
+        @Deprecated StartClimb,
         TryClearNote,
-        ExtendClimbers, FireBigShot, SubShot, FireShootOverSmiley, PrepareBloopShot
+        @Deprecated ExtendClimbers,
+        FireBigShot,
+        SubShot,
+        FireShootOverSmiley,
+        PrepareBloopShot
     }
 
     private Pose lastPose = Pose.StartingConfig;

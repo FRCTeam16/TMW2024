@@ -137,7 +137,7 @@ public class IntakePivot implements Lifecycle, Sendable {
 
     public void setPivotSetpoint(double pivotSetpoint) {
         if (pivotSetpoint < MINIMUM_LIMIT || pivotSetpoint > MAXIMUM_LIMIT) {
-            DataLogManager.log("[IntakePivot] Ignoring pivot setpoint request due to range violation, asked for: " + pivotSetpoint);
+            BSLogger.log("IntakePivot", "Ignoring pivot setpoint request due to range violation, asked for: " + pivotSetpoint);
             return;
         }
         setPivotOpenLoop(false);

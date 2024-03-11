@@ -11,6 +11,7 @@ import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.Constants;
 import frc.robot.Subsystems;
+import frc.robot.subsystems.util.BSLogger;
 import frc.robot.subsystems.util.VisionAlignmentHelper;
 import frc.robot.subsystems.vision.Pipeline;
 import frc.robot.subsystems.vision.VisionTypes;
@@ -68,7 +69,7 @@ public class VisionAlign extends VisionCommand {
         limelight.setCameraMode(VisionTypes.CameraMode.ImageProcessing);
         limelight.setPipelineIndex(this.visionPipeline.pipelineNumber);
         limelight.setLEDMode(VisionTypes.LEDMode.CurrentPipeline);
-        DataLogManager.log("[VisionAlign] starting");
+        BSLogger.log("VisionAlign", "starting with {" + visionPipeline + "} pipeline");
     }
 
     @Override
@@ -102,7 +103,7 @@ public class VisionAlign extends VisionCommand {
     public boolean isFinished() {
         boolean finished = this.helper.inPosition() && seenScans > 5;
         if (finished) {
-            DataLogManager.log("[VisionAlign] finished within threshold");
+            BSLogger.log("VisionAlign", "finished within threshold");
         }
         return finished;
     }
@@ -111,7 +112,8 @@ public class VisionAlign extends VisionCommand {
     public void end(boolean interrupted) {
         super.end(interrupted);
         if (interrupted) {
-            DataLogManager.log("[VisionAlign] ended due to interrupt");
+            BSLogger.log("VisionAlign", "ended due to interrupt");
+
         }
     }
 }

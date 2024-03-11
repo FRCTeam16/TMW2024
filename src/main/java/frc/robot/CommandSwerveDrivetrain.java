@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.subsystems.util.BSLogger;
 import frc.robot.subsystems.util.GameInfo;
 
 /**
@@ -101,7 +102,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         try {
             return Subsystems.autoManager.getAutoPath(pathName);
         } catch (Exception e) {
-            DataLogManager.log("!!! Error attempting to locate auto path %s: %s".formatted(pathName, e));
+            BSLogger.log("CommandServeDrivetrain", "!!! Error attempting to locate auto path %s: %s".formatted(pathName, e));
             return new PrintCommand("Cannot Locate path" + pathName);
         }
     }

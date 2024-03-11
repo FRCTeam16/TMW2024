@@ -5,6 +5,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.Constants;
 import frc.robot.Subsystems;
+import frc.robot.subsystems.util.BSLogger;
 import frc.robot.subsystems.util.VisionAlignmentHelper;
 import frc.robot.subsystems.vision.Pipeline;
 import frc.robot.subsystems.vision.VisionTypes;
@@ -46,7 +47,7 @@ public class VisionRotate extends VisionCommand {
         limelight.setCameraMode(VisionTypes.CameraMode.ImageProcessing);
         limelight.setPipelineIndex(this.visionPipeline.pipelineNumber);
         limelight.setLEDMode(VisionTypes.LEDMode.CurrentPipeline);
-        DataLogManager.log("[VisionAlign] starting");
+        BSLogger.log("VisionRotate", "starting with pipeline " + this.visionPipeline);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class VisionRotate extends VisionCommand {
     public boolean isFinished() {
         boolean finished = this.helper.inPosition() && seenScans > 5;
         if (finished) {
-            DataLogManager.log("[VisionRotate] finished within threshold");
+            BSLogger.log("VisionRotate", "finished within threshold");
         }
         return finished;
     }
@@ -77,7 +78,7 @@ public class VisionRotate extends VisionCommand {
     public void end(boolean interrupted) {
         super.end(interrupted);
         if (interrupted) {
-            DataLogManager.log("[VisionRotate] ended due to interrupt");
+            BSLogger.log("VisionRotate", "ended due to interrupt");
         }
     }
 

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.config.RobotConfiguration;
 import frc.robot.config.BuildConstants;
 import frc.robot.subsystems.PowerTelemetry;
+import frc.robot.subsystems.util.BSLogger;
 import frc.robot.subsystems.vision.VisionTypes;
 
 public class Robot extends TimedRobot {
@@ -31,10 +32,10 @@ public class Robot extends TimedRobot {
 
     // Log Startup Message
     //noinspection ConstantValue
-    DataLogManager.log(
+    BSLogger.log("Robot",
             String.format("""
                             *********************************
-                            *** Deployed Code Informatiom ***
+                            *** Deployed Code Information ***
                             Project Name: %s
                             Branch: %s
                             Dirty: %s
@@ -85,16 +86,17 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    DataLogManager.log("[AUTO INIT] Started at:" + Timer.getFPGATimestamp());
+    BSLogger.log("Robot", "autoInit:: Started at:" + Timer.getFPGATimestamp());
     autonomousCommand = robotContainer.getAutonomousCommand();
-    DataLogManager.log("[AUTO] autoInit:: got robotCommand: " + Timer.getFPGATimestamp());
+    BSLogger.log("Robot", "autoInit:: got robotCommand: " + Timer.getFPGATimestamp());
     robotContainer.autoInit();
-    DataLogManager.log("[AUTO] autoInit:: robot container autoInit finished: " + Timer.getFPGATimestamp());
+    BSLogger.log("Robot", "autoInit:: robot container autoInit finished: " + Timer.getFPGATimestamp());
 
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
+      BSLogger.log("Robot", "autoInit:: scheduled command at: " + Timer.getFPGATimestamp());
     }
-    DataLogManager.log("[AUTO] autoInit:: scheduled command: " + Timer.getFPGATimestamp());
+    BSLogger.log("Robot", "autoInit:: finished at: " + Timer.getFPGATimestamp());
   }
 
   @Override

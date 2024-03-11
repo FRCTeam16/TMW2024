@@ -86,13 +86,13 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     public void openLoopUp() {
-        DataLogManager.log("[" + SUBSYSTEM_NAME + "] openLoopUp");
+        BSLogger.log( SUBSYSTEM_NAME, "openLoopUp");
         openLoop = true;
         speed = SmartDashboard.getNumber(SUBSYSTEM_NAME + "/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
     }
 
     public void openLoopDown() {
-        DataLogManager.log("[" + SUBSYSTEM_NAME + "] openLoopDown");
+        BSLogger.log(SUBSYSTEM_NAME, "openLoopDown");
         openLoop = true;
         speed = -SmartDashboard.getNumber(SUBSYSTEM_NAME + "/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
     }
@@ -117,7 +117,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     private void setPivotSetpoint(double setpoint) {
         BSLogger.log("Pivot", "Setting pivot setpoint to " + String.valueOf(setpoint));
         if (setpoint >= 80.0001 || setpoint <= -0.0001) {
-            DataLogManager.log("[" + SUBSYSTEM_NAME + "] INVALID SETPOINT REQUESTED, IGNORING");
+            BSLogger.log(SUBSYSTEM_NAME, "INVALID SETPOINT REQUESTED, IGNORING");
             return;
         }
         queuedProfile = null;
@@ -165,7 +165,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     public void periodic() {
 
         if (this.getPivotAngleDegrees() > EncoderConstants.MAX_ANGLE || this.getPivotAngleDegrees() < EncoderConstants.MIN_ANGLE) {
-            DataLogManager.log("[" + SUBSYSTEM_NAME + "] SOFT LIMIT BREAK, setting output to 0");
+            BSLogger.log(SUBSYSTEM_NAME, "SOFT LIMIT BREAK, setting output to 0");
             motor.setControl(openLoopOut.withOutput(0));
             return;
         }

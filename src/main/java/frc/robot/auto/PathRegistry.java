@@ -6,6 +6,7 @@ import java.util.Map;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.DataLogManager;
+import frc.robot.subsystems.util.BSLogger;
 
 /**
  * Registry for paths to be used in autonomous mode
@@ -21,7 +22,7 @@ public class PathRegistry {
 
     public void registerPath(String pathName) {
         if (!pathMap.containsKey(pathName)) {
-            DataLogManager.log("[PathRegistry] Registering path " + pathName);
+            BSLogger.log("PathRegistry", "Registering path " + pathName);
             try {
                 pathMap.put(pathName, new PathPlannerAuto(pathName));
             } catch (Exception e) {
@@ -34,8 +35,7 @@ public class PathRegistry {
 
     public PathPlannerAuto getPath(String pathName) {
         if (!pathMap.containsKey(pathName)) {
-            DataLogManager.log(
-                    "[PathRegistry] Path " + pathName + " was not registered, please register for performance reasons");
+            BSLogger.log("PathRegistry", "Path " + pathName + " was not registered, please register for performance reasons");
             registerPath(pathName);
         }
         return pathMap.get(pathName);

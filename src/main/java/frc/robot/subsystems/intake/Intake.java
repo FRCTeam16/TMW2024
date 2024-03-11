@@ -117,7 +117,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
                 intakePivot.setIntakePosition(IntakePivot.IntakePosition.Pickup);
             }
             default -> {
-                DataLogManager.log("[Intake] Unhandled IntakeState: " + state.name());
+                BSLogger.log("Intake", "Unhandled IntakeState: " + state.name());
             }
         }
 

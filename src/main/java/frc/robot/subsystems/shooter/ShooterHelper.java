@@ -10,6 +10,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.util.BSLogger;
 import frc.robot.subsystems.util.PIDHelper;
 
 public class ShooterHelper implements Sendable {
@@ -72,7 +73,7 @@ public class ShooterHelper implements Sendable {
     private void setMotorPID() {
         StatusCode code = this.motor.getConfigurator().apply(config);
         if (!code.isOK()) {
-            DataLogManager.log("ShooterHelper(" + this.name + ") problem: " + code.getDescription());
+            BSLogger.log("ShooterHelper", "Problem setting PID: " + code.getDescription());
         }
     }
 
@@ -114,7 +115,7 @@ public class ShooterHelper implements Sendable {
 
     public void setVelocitySetpoint(double velocitySetpoint) {
         if (Math.abs(velocitySetpoint) >= 100) {
-            DataLogManager.log("[ShooterHelper] IGNORING BIG VELOCITY REQUEST: " + velocitySetpoint);
+            BSLogger.log("ShooterHelper", "IGNORING BIG VELOCITY REQUEST: " + velocitySetpoint);
         }
         this.velocitySetpoint = velocitySetpoint;
     }

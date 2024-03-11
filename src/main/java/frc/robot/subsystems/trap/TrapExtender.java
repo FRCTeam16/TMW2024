@@ -150,7 +150,7 @@ public class TrapExtender implements Lifecycle, Sendable {
     public void updatePIDFromDashboard() {
         pidHelper.updateConfiguration(configuration.Slot0);
         StatusCode result = motor.getConfigurator().apply(configuration);
-        DataLogManager.log("[TrapExtender] update PID info from dash, result: " + result);
+        BSLogger.log("TrapExtender", "update PID info from dash, result: " + result);
     }
 
     public Command updateClosedLoopFromDashbboardCommand() {

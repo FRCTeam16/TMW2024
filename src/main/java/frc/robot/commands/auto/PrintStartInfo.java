@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.util.BSLogger;
 
 public class PrintStartInfo extends Command {
     private final String message;
@@ -14,8 +15,8 @@ public class PrintStartInfo extends Command {
 
     @Override
     public void initialize() {
-        DataLogManager.log("[AUTO] Starting: " + message);
-        DataLogManager.log("[AUTO] Started at:" + Timer.getFPGATimestamp());
+        BSLogger.log("PrintStartInfo", "[AUTO] Starting: " + message);
+        BSLogger.log("PrintStartInfo", "[AUTO] Started at:" + Timer.getFPGATimestamp());
     }
 
     @Override
