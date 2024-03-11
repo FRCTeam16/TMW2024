@@ -9,7 +9,6 @@ import frc.robot.auto.PathRegistry;
 import frc.robot.commands.auto.EnableShooterCommand;
 import frc.robot.commands.auto.InitializeAutoState;
 import frc.robot.commands.auto.PrintStartInfo;
-import frc.robot.commands.auto.WaitShooterHasNote;
 import frc.robot.subsystems.VisionAimManager;
 import frc.robot.subsystems.pose.PoseManager;
 

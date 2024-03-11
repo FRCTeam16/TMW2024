@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.subsystems.util.BSLogger;
 
 /**

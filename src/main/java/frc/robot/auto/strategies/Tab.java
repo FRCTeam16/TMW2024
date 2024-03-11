@@ -9,7 +9,6 @@ import frc.robot.auto.PathRegistry;
 import frc.robot.commands.auto.*;
 import frc.robot.subsystems.VisionAimManager;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakePivot;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.util.BSLogger;
 

@@ -2,7 +2,6 @@ package frc.robot.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
-import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.subsystems.util.BSLogger;
 
 import java.io.*;
