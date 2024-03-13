@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.async.AsyncManager;
 import frc.robot.auto.AutoManager;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
@@ -44,6 +45,7 @@ public class Subsystems {
     //
     public static PoseManager poseManager;
     public static RotationController rotationController;
+    public static AsyncManager asyncManager;
 
     // Warning: This must be created after everything else to ensure all subsystems
     // are registered
@@ -84,7 +86,12 @@ public class Subsystems {
 
     private void createUtilitySubsystems() {
         poseManager = new PoseManager();
+
         rotationController = new RotationController();
+
+        asyncManager = new AsyncManager();
+        asyncManager.start();
+
         autoManager = new AutoManager();
         autoManager.initialize();
     }

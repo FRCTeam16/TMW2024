@@ -5,6 +5,10 @@ import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Power;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -78,7 +82,12 @@ public class FeederHelper implements Sendable {
         else if (enabled) {
             out = openLoopSetpoint;
         }
-        motor.setControl(openLoopOut.withOutput(out));
+        openLoopSetpoint = out;
+        applyOpenLoop();
+    }
+
+    public void applyOpenLoop() {
+        motor.setControl(openLoopOut.withOutput(openLoopSetpoint));
     }
 
     public void shoot() {
@@ -103,6 +112,9 @@ public class FeederHelper implements Sendable {
         this.shootingSpeed = shootingSpeed;
     }
 
+    /**
+     * Handles the feed note command logic
+     */
     public void receiveFromIntake() {
         // drop out of shooting mode
         shooting = false;

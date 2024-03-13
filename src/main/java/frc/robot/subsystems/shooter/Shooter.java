@@ -1,7 +1,6 @@
 package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -94,10 +93,10 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
     /**
      * Runs the feeder until a note is detected
      */
-    public void feedNote() {
-        feeder.setSlowFeedMode(false);
-        feeder.receiveFromIntake();
-    }
+//    public void feedNote() {
+//        feeder.setSlowFeedMode(false);
+//        feeder.receiveFromIntake();
+//    }
 
     public static boolean isReadyToShoot(){
          // Has Target
@@ -157,4 +156,5 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
             builder.addBooleanProperty("HasTarget", Subsystems.visionSubsystem::hasTarget, null);
         }
     }
+
 }
