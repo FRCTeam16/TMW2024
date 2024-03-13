@@ -190,7 +190,6 @@ public class IntakePivot implements Lifecycle, Sendable {
 //            }
 
             if (IntakePosition.MotorPreAMPShot == pivotCurrentPosition) {
-                BSLogger.log("IntakePivot", "Trying motor control");
                 double grossThreshold = 0.25;
                 double currentPosition = pivotDrive.getPosition().getValue();
                 if ((currentPosition < IntakePosition.MotorPreAMPShot.setpoint - grossThreshold) &&
