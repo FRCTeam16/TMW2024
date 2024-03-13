@@ -65,8 +65,8 @@ public class IntakePivot implements Lifecycle, Sendable {
         motionMagicConfig.setkS(0);
         motionMagicConfig.setkG(0);
         motionMagicConfig.setVelocity(50);
-        motionMagicConfig.setAcceleration(120);
-        motionMagicConfig.setJerk(2000);
+        motionMagicConfig.setAcceleration(160);
+        motionMagicConfig.setJerk(375);
 
         pidHelper.updateConfiguration(pivotConfiguration.Slot0);
         pivotConfiguration.Slot0.withGravityType(GravityTypeValue.Arm_Cosine);
@@ -189,6 +189,16 @@ public class IntakePivot implements Lifecycle, Sendable {
 //                pivotDrive.getConfigurator().apply(pivotConfiguration.Slot0);
 //            }
 
+            if (IntakePosition.MotorPreAMPShot == pivotCurrentPosition) {
+                BSLogger.log("IntakePivot", "Trying motor control");
+                double grossThreshold = 0.25;
+                double currentPosition = pivotDrive.getPosition().getValue();
+                if ((currentPosition < IntakePosition.MotorPreAMPShot.setpoint - grossThreshold) &&
+                (currentPosition > IntakePosition.MotorPreAMPShot.setpoint + grossThreshold)) {
+                    BSLogger.log("IntakePivot", "Flipping to fine grained control");
+                    setIntakePosition(IntakePosition.AMPShot);
+                }
+            }
             if (IntakePosition.AMPShot == pivotCurrentPosition || IntakePosition.Climb == pivotCurrentPosition) {
                 pivotDrive.setControl(voltageOut.withOutput(ampShotPIDController.calculate()));
             } else {
@@ -260,7 +270,7 @@ public class IntakePivot implements Lifecycle, Sendable {
         Zero(0),
         Vertical(-7),
         Pickup(-23.0),
-//        AMPShot(-8.5);
+        MotorPreAMPShot(-8.5),
         AMPShot(0.145),
         Climb(0.150);
 
