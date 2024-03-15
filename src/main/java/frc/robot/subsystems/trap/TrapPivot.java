@@ -29,7 +29,7 @@ public class TrapPivot implements Lifecycle, Sendable {
     // Encoder handling
     //
     private final DutyCycleEncoder encoder = new DutyCycleEncoder(5);
-    private final double zeroEncoderOffsetPosition = 0.881;
+    private final double zeroEncoderOffsetPosition = 0.716;
     private final PIDController pid;
     private boolean openLoop = true;
     private boolean softLimitsEnabled = false;

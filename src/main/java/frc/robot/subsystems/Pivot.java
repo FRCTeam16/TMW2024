@@ -49,7 +49,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         motor.setNeutralMode(NeutralModeValue.Coast);
 
         pidHelper.initialize(0.02, 0, 0, 0, 0, 0);
-        pid = new PIDController(0, 0, 0);
+        pid = new PIDController(0.02, 0, 0);
         pidHelper.updatePIDController(pid);
 
         encoder.setPositionOffset(EncoderConstants.ZERO_OFFSET);

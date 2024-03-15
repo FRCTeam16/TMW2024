@@ -44,7 +44,8 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         Climb,
 
         AmpAim,
-        TryClearNote, TryShootAmp
+        TryClearNote,
+        TryShootAmp
     }
 
     private IntakeState intakeState = IntakeState.StartingPosition;
@@ -101,7 +102,10 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
             case FeedNote -> {
                 intakeSpeed.runIntakeFeedShooter();
             }
-            case AmpAim, TryShootAmp -> {
+            case AmpAim -> {
+                intakePivot.setIntakePosition(IntakePivot.IntakePosition.MotorPreAMPShot);
+            }
+            case TryShootAmp -> {
                 intakePivot.setIntakePosition(IntakePivot.IntakePosition.AMPShot);
             }
             case Climb -> {
