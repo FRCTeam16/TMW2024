@@ -44,6 +44,8 @@ public class AsyncManager {
         private final double period;
         private double lastRun = Timer.getFPGATimestamp();
 
+        int counter = 0;
+
         AsyncWorkThread(double period) {
             this.period = period;
         }
@@ -51,6 +53,9 @@ public class AsyncManager {
         @Override
         public void run() {
             while (running.get()) {
+//                if (counter++ % 1000 == 0) {
+//                    BSLogger.log("AsyncWorkThread", "COUNTER: " + counter);
+//                }
                 if (Timer.getFPGATimestamp() - lastRun > period) {
                     synchronized (tasks) {
                         for (AsyncTask task : tasks) {
