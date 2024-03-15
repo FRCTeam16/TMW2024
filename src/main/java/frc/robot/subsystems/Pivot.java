@@ -289,7 +289,8 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     private static class EncoderConstants {
-        static final double ZERO_OFFSET = 0.3285406832135171;
+//        static final double ZERO_OFFSET = 0.3285406832135171;
+        static final double ZERO_OFFSET = 0.353;
         static final double MIN_ANGLE = -1.0;
         static final double MAX_ANGLE = 81.75;      // 0.12004950300123758
     }
