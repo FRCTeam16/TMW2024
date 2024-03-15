@@ -134,7 +134,7 @@ public class Tab extends AutoPathStrategy {
     static Command doShootCmd() {
         return Commands.parallel(
                 writeLog("doShootCmd", "shooting"),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2))
+                Subsystems.shooter.shootCmd()
         );
     }
 }

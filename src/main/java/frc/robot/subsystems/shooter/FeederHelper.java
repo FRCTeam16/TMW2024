@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -36,6 +37,7 @@ public class FeederHelper implements Sendable {
         this.noteStopSensor = noteStopSensor;
         this.slowSpeedSensor = slowSpeedSensor;
 
+
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.withOpenLoopRamps(
                 new OpenLoopRampsConfigs().withDutyCycleOpenLoopRampPeriod(0.0))
@@ -63,6 +65,14 @@ public class FeederHelper implements Sendable {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public void enableBreakMode() {
+        this.motor.setNeutralMode(NeutralModeValue.Brake);
+    }
+
+    public void enableCoastMode() {
+        this.motor.setNeutralMode(NeutralModeValue.Coast);
     }
 
     public void periodic() {
@@ -106,6 +116,7 @@ public class FeederHelper implements Sendable {
     public void receiveFromIntake() {
         // drop out of shooting mode
         shooting = false;
+        this.enableBreakMode();
 
         // while we have not tripped out sensor
         if (!isNoteDetected()) {
@@ -121,6 +132,7 @@ public class FeederHelper implements Sendable {
             // Turn off feed when we detect the note
             this.enabled = false;
             this.slowFeedMode = false;
+// FIXME           this.enableCoastMode();
         }
     }
 

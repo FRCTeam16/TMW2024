@@ -5,7 +5,10 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Subsystems;
@@ -107,8 +110,17 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
                 Subsystems.shooter.isAtSpeed();
     }
 
-    public void shoot() {
+    void shoot() {
         feeder.shoot();
+    }
+
+    public Command shootCmd() {
+        return Commands.sequence(
+                Commands.runOnce(feeder::enableCoastMode),
+                Commands.runOnce(this::shoot),
+                new WaitCommand(0.2),
+                Commands.runOnce(feeder::enableBreakMode)
+        );
     }
 
     public void runShooterOpenLoop(){
