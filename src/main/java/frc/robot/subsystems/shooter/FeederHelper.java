@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Power;
 import edu.wpi.first.units.Units;
@@ -69,6 +70,14 @@ public class FeederHelper implements Sendable {
         return enabled;
     }
 
+    public void enableBreakMode() {
+        this.motor.setNeutralMode(NeutralModeValue.Brake);
+    }
+
+    public void enableCoastMode() {
+        this.motor.setNeutralMode(NeutralModeValue.Coast);
+    }
+
     public void periodic() {
         double out = 0;
         if (shooting) {
@@ -118,6 +127,7 @@ public class FeederHelper implements Sendable {
     public void receiveFromIntake() {
         // drop out of shooting mode
         shooting = false;
+        this.enableBreakMode();
 
         // while we have not tripped out sensor
         if (!isNoteDetected()) {
@@ -133,6 +143,7 @@ public class FeederHelper implements Sendable {
             // Turn off feed when we detect the note
             this.enabled = false;
             this.slowFeedMode = false;
+// FIXME           this.enableCoastMode();
         }
     }
 

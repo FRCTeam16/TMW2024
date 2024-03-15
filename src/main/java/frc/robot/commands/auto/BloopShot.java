@@ -13,7 +13,7 @@ public class BloopShot extends Command {
     public void initialize() {
         BSLogger.log("BloopShot", "starting");
         timer.start();
-        Subsystems.shooter.shoot();
+        Subsystems.shooter.shootCmd().asProxy().schedule();
     }
 
     @Override

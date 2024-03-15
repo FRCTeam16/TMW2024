@@ -40,7 +40,7 @@ public class UnderTheBridge extends AutoPathStrategy {
                 //
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.AutoShortShot),
                 new WaitCommand(0.25),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2)),
+                Subsystems.shooter.shootCmd(),
                 Commands.parallel(
                         new EnableShooterCommand(false),
                         Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive)
@@ -75,7 +75,7 @@ public class UnderTheBridge extends AutoPathStrategy {
                     new EnableShooterCommand()
                 ),
                 new WaitCommand(0.5),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2)),
+                Subsystems.shooter.shootCmd(),
 
                 ///
                 // UTB 3
@@ -94,7 +94,7 @@ public class UnderTheBridge extends AutoPathStrategy {
                         new EnableShooterCommand()
                 ),
                 new WaitCommand(0.5),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2)),
+                Subsystems.shooter.shootCmd(),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup),
 
 
@@ -116,7 +116,7 @@ public class UnderTheBridge extends AutoPathStrategy {
                         new EnableShooterCommand()
                 ),
                 new WaitCommand(0.5),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2))
+                Subsystems.shooter.shootCmd()
         );
     }
 
