@@ -96,10 +96,10 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
     /**
      * Runs the feeder until a note is detected
      */
-//    public void feedNote() {
-//        feeder.setSlowFeedMode(false);
-//        feeder.receiveFromIntake();
-//    }
+    @Deprecated public void feedNote() {
+        feeder.setSlowFeedMode(false);
+        feeder.receiveFromIntake();
+    }
 
     public static boolean isReadyToShoot(){
          // Has Target

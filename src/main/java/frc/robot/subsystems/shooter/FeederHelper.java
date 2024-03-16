@@ -3,6 +3,7 @@ package frc.robot.subsystems.shooter;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -33,6 +34,11 @@ public class FeederHelper implements Sendable {
     private double slowFeedShooterSpeed = -1.5;
 
     boolean shooting = false;   // whether we are shooting
+
+    private VelocityVoltage velocityVoltage = new VelocityVoltage(0);
+    boolean velocityMode = false;
+
+    private VelocityControl velocityControl = new VelocityControl();
 
 
     public FeederHelper(String parent, String name, TalonFX motor, DigitalInput noteStopSensor, DigitalInput slowSpeedSensor) {
@@ -78,25 +84,40 @@ public class FeederHelper implements Sendable {
         this.motor.setNeutralMode(NeutralModeValue.Coast);
     }
 
+    public void setVelocityMode(boolean velocityMode) {
+        this.velocityMode = velocityMode;
+    }
+
     public void periodic() {
-        double out = 0;
-        if (shooting) {
-            if( shooterTimer.get() < .125) {
-                out = -12;
-            } else {
-                openLoopSetpoint = 0.0;
-                shooting = false;
+        if (!velocityMode) {
+            double out = 0;
+            if (shooting) {
+                if (shooterTimer.get() < .125) {
+                    out = -12;
+                } else {
+                    openLoopSetpoint = 0.0;
+                    shooting = false;
+                }
+            } else if (enabled) {
+                out = openLoopSetpoint;
             }
+            openLoopSetpoint = out;
+            applyOpenLoop();
+        } else {
+            // handled by command
+//            applyVelocity();
         }
-        else if (enabled) {
-            out = openLoopSetpoint;
-        }
-        openLoopSetpoint = out;
-        applyOpenLoop();
     }
 
     public void applyOpenLoop() {
         motor.setControl(openLoopOut.withOutput(openLoopSetpoint));
+    }
+
+    public void applyVelocity() {
+        motor.setControl(
+                velocityVoltage.withVelocity(this.velocityControl.velocitySetpoint)
+                        .withFeedForward(velocityControl.feedForward)
+        );
     }
 
     public void shoot() {
@@ -143,7 +164,31 @@ public class FeederHelper implements Sendable {
             // Turn off feed when we detect the note
             this.enabled = false;
             this.slowFeedMode = false;
-// FIXME           this.enableCoastMode();
+        }
+    }
+
+    public void receiveFromIntakeVelocity() {
+        // drop out of shooting mode
+        velocityMode = true;
+        shooting = false;
+        this.enableBreakMode();
+
+        // while we have not tripped out sensor
+        if (!isNoteDetected()) {
+            this.enabled = true;
+            if (!isSlowSensorDetected()) {
+                this.velocityControl.velocitySetpoint = slowFeedMode ? this.velocityControl.slowFeedVelocity : this.velocityControl.feedVelocity;
+            } else {
+                // Switch to slow speed mode when we see the note
+                slowFeedMode = true;
+                this.velocityControl.velocitySetpoint = this.velocityControl.slowFeedVelocity;
+            }
+        } else {
+            // Turn off feed when we detect the note
+            this.openLoopSetpoint = 0.0;
+            this.velocityMode = false;
+            this.enabled = false;
+            this.slowFeedMode = false;
         }
     }
 
@@ -171,6 +216,13 @@ public class FeederHelper implements Sendable {
         this.slowFeedShooterSpeed = slowFeedShooterSpeed;
     }
 
+    class VelocityControl {
+        double velocitySetpoint;
+        double slowFeedVelocity;
+        double feedVelocity;
+        double feedForward;
+    }
+
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addBooleanProperty(name + "/Enabled", this::isEnabled, this::setEnabled);
@@ -181,6 +233,11 @@ public class FeederHelper implements Sendable {
             builder.addDoubleProperty(name + "/Feed Note Speed", this::getFeedShooterSpeed, this::setFeedShooterSpeed);
             builder.addDoubleProperty(name + "/Shoot Speed", this::getShootingSpeed, this::setShootingSpeed);
             builder.addDoubleProperty(name + "/Slow Feed Speed", this::getSlowFeedShooterSpeed, this::setSlowFeedShooterSpeed);
+
+            builder.addDoubleProperty(name + "/Velocity/Setpoint", () -> velocityControl.velocitySetpoint, (v) -> velocityControl.velocitySetpoint = v);
+            builder.addDoubleProperty(name + "/Velocity/Feed Forward", () -> velocityControl.feedForward, (v) -> velocityControl.feedForward = v);
+            builder.addDoubleProperty(name + "/Velocity/Slow Feed", () -> velocityControl.slowFeedVelocity, (v) -> velocityControl.slowFeedVelocity = v);
+            builder.addDoubleProperty(name + "/Velocity/Feed", () -> velocityControl.feedVelocity, (v) -> velocityControl.feedVelocity = v);
         }
     }
 }

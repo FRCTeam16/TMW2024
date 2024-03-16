@@ -49,7 +49,7 @@ class PoseCommands {
                         Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
                         Subsystems.intake.moveToStateCmd(Intake.IntakeState.FeedNote)
                 ),
-                new FeedNoteToShooterCommand().withTimeout(2.0),
+                new FeedNoteToShooterCommandVelocity().withTimeout(2.0),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ReadyToShoot)
         );
     }
