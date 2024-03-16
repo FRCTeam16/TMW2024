@@ -22,19 +22,61 @@ public class Tab extends AutoPathStrategy {
     public static final VisionAimManager.ShootingProfile FifthShot = new VisionAimManager.ShootingProfile(31.5, 45, 32); // 98.8"
 
 
-    public Tab() {
+    public Tab(TabVersion version) {
+        if (TabVersion.OffsetStart == version) {
+            createTabOffsetStartCommands();
+        } else {
+            createTabStraightCommands();
+        }
+        createCommands();
+    }
+
+    static Command DoShotCommand(VisionAimManager.ShootingProfile profile) {
+        return new SequentialCommandGroup(
+                // Start point is that we expect the shooter to have a note
+                new WaitShooterHasNote().withTimeout(0.5),
+                Commands.runOnce(() -> Subsystems.intake.setIntakeState(Intake.IntakeState.IntakeFromFloor)),
+                writeLog("DoShotCommand", "If shooter has note then we will try shot"),
+                Commands.sequence(
+                        Commands.parallel(
+                                writeLog("DoShotCommand", "Setting shooter and pivot profiles"),
+                                new EnableShooterCommand(),
+                                Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(profile)),
+                                Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))
+                        ),
+                        new WaitPivotInPosition().withTimeout(0.5),
+                        writeLog("DoShotCommand", "******* WILL BE FIRING NEXT *******"),
+//                        new WaitCommand(0.5),
+                        doShootCmd()
+                ).unless(() -> !Subsystems.shooter.isNoteDetected()),
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup)
+        ).beforeStarting(() -> BSLogger.log("DoShotCommand", "starting"))
+                .finallyDo(() -> BSLogger.log("DoShotCommand", "ending"));
+    }
+
+    public static void registerAutoPaths(PathRegistry pathRegistry) {
+        pathRegistry.registerPaths("Tab", "Tab1a", "Tab2", "Tab3", "Tab4");
+    }
+
+    static Command doShootCmd() {
+        return Commands.parallel(
+                writeLog("doShootCmd", "shooting"),
+                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2))
+        );
+    }
+
+
+    void createTabOffsetStartCommands() {
         addCommands(
                 Commands.parallel(
-                        new PrintStartInfo("Tab"),
+                        new PrintStartInfo("Tab Offset"),
                         new InitializeAutoState(Degrees.of(0)),
                         new EnableShooterCommand()
-//                        Subsystems.swerveSubsystem.applyRequest(() -> pointWheels)
                 ),
 
                 //
                 // First Shot
                 //
-
                 writeLog("Tab", "First Shot"),
                 Commands.parallel(
                         Subsystems.poseManager.getPoseCommand(PoseManager.Pose.AutoShortShot),
@@ -53,7 +95,49 @@ public class Tab extends AutoPathStrategy {
                         writeLog("Tab", "****** Running Tab"),
                         Subsystems.pivot.setQueuedProfileCmd(SecondShot)
                 ),
-                this.runAutoPath("Tab"),
+                this.runAutoPath("Tab")
+        );
+    }
+
+    void createTabStraightCommands() {
+        addCommands(
+                Commands.parallel(
+                        new PrintStartInfo("Tab Straight"),
+                        new InitializeAutoState(Degrees.of(0)),
+                        new EnableShooterCommand(),
+                        new RotateToAngle(-15).withThreshold(5).withTimeout(0.5)
+                ),
+
+                //
+                // First Shot
+                //
+                writeLog("Tab", "First Shot"),
+                Commands.parallel(
+                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.AutoShortShot),
+                        new WaitCommand(0.25)
+                ),
+                doShootCmd(),
+                Commands.parallel(
+                        new EnableShooterCommand(false),
+                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive)
+                ),
+
+                //
+                // Run and pickup, second shot
+                //
+                Commands.parallel(
+                        writeLog("Tab", "****** Running Tab1a"),
+                        Subsystems.pivot.setQueuedProfileCmd(SecondShot)
+                ),
+                this.runAutoPath("Tab1a")
+        );
+    }
+
+    /**
+     * Expected start staight is we are at second shot position
+     */
+    void createCommands() {
+        addCommands(
                 Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(SecondShot)),
                 new RotateToAngle(-30).withThreshold(5).withTimeout(0.5),
                 DoShotCommand(SecondShot),
@@ -81,7 +165,7 @@ public class Tab extends AutoPathStrategy {
                 // May need to check state here, auto command is dropping out
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
                 DoShotCommand(ForthShot),
-                
+
 
                 //
                 // Pickup, fifth shot
@@ -99,42 +183,12 @@ public class Tab extends AutoPathStrategy {
                 // DoShotCommand(FifthShot),
                 // Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter)
                 writeLog("Tab auto", "@@@ FINISHED AUTO @@@")
-                
+
         );
     }
 
-    static Command DoShotCommand(VisionAimManager.ShootingProfile profile) {
-        return new SequentialCommandGroup(
-                // Start point is that we expect the shooter to have a note
-                new WaitShooterHasNote().withTimeout(0.5),
-                Commands.runOnce(() -> Subsystems.intake.setIntakeState(Intake.IntakeState.IntakeFromFloor)),
-                writeLog("DoShotCommand", "If shooter has note then we will try shot"),
-                Commands.sequence(
-                        Commands.parallel(
-                                writeLog("DoShotCommand", "Setting shooter and pivot profiles"),
-                                new EnableShooterCommand(),
-                                Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(profile)),
-                                Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))
-                        ),
-                        new WaitPivotInPosition().withTimeout(0.5),
-                        writeLog("DoShotCommand", "******* WILL BE FIRING NEXT *******"),
-//                        new WaitCommand(0.5),
-                        doShootCmd()
-                ).unless(() -> !Subsystems.shooter.isNoteDetected()),
-                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup)
-        ).beforeStarting(() -> BSLogger.log("DoShotCommand", "starting"))
-                .finallyDo(() -> BSLogger.log("DoShotCommand", "ending"));
-    }
-
-
-    public static void registerAutoPaths(PathRegistry pathRegistry) {
-        pathRegistry.registerPaths("Tab", "Tab2", "Tab3", "Tab4");
-    }
-
-    static Command doShootCmd() {
-        return Commands.parallel(
-                writeLog("doShootCmd", "shooting"),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2))
-        );
+    public enum TabVersion {
+        StraightStart,
+        OffsetStart
     }
 }

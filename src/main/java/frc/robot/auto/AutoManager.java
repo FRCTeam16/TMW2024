@@ -75,7 +75,8 @@ public class AutoManager {
         // registerStrategy("DCL-BCL", AutoStrategies.DCL_BCL, () -> new DebugPathAuto("DCL_BCL"));
 
         // registerStrategy("Under The Bridge", AutoStrategies.UnderTheBridge, UnderTheBridge::new);
-        registerStrategy("Tab", AutoStrategies.Tab, Tab::new);
+        registerStrategy("Tab", AutoStrategies.Tab, () -> new Tab(Tab.TabVersion.OffsetStart));
+        registerStrategy("TabStraight", AutoStrategies.Tab, () -> new Tab(Tab.TabVersion.StraightStart));
         registerStrategy("DropShot", AutoStrategies.DropShot, DropShot::new);
         // registerStrategy("CrossWing", AutoStrategies.CrossWing, CrossWingShot::new);
     }
