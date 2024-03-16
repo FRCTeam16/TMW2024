@@ -131,6 +131,7 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
 
     public void runShooter() {
         BSLogger.log("Shooter", "runShooter");
+        feeder.setEnabled(true);
         upper.setOpenLoop(false);
         lower.setOpenLoop(false);
         lower.setVelocitySetpoint(DEFAULT_VELOCITY_SETPOINT);

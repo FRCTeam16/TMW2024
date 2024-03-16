@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.util.BSLogger;
+import frc.robot.subsystems.util.Counter;
 
 public class FeedNoteToShooterCommandVelocity extends Command {
     public FeedNoteToShooterCommandVelocity() {
@@ -35,7 +36,8 @@ public class FeedNoteToShooterCommandVelocity extends Command {
         if (interrupted) {
             BSLogger.log("FeedNoteToShooterCommand", "STOPPED DUE TO INTERRUPT");
         }
-        Subsystems.shooter.getFeeder().setVelocityMode(true);
+        Subsystems.shooter.getFeeder().setOpenLoopSetpoint(0.0);
+        Subsystems.shooter.getFeeder().setVelocityMode(false);
         Subsystems.asyncManager.unregister("FeedNoteToShooterCommand");
     }
 }
