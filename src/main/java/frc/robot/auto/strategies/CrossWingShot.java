@@ -34,7 +34,7 @@ public class CrossWingShot extends AutoPathStrategy {
             //Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShortShot), // old code setup
             Subsystems.poseManager.getPoseCommand(PoseManager.Pose.AutoShortShot),
                 new WaitCommand(0.25),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2)),
+                Subsystems.shooter.shootCmd(),
                 Commands.parallel(
                         new EnableShooterCommand(false),
                         Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive)
@@ -53,8 +53,8 @@ public class CrossWingShot extends AutoPathStrategy {
                     new EnableShooterCommand()
                 ),
                 new WaitCommand(0.5),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2)),
-                
+                Subsystems.shooter.shootCmd(),
+
                 this.runAutoPath("WingToNCL5"),
                 this.runAutoPath("NCL5ToWing"), // WING SHOT ( 2 )
         

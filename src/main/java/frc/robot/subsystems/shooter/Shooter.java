@@ -1,11 +1,13 @@
 package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Subsystems;
@@ -94,7 +96,7 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
     /**
      * Runs the feeder until a note is detected
      */
-    public void feedNote() {
+    @Deprecated public void feedNote() {
         feeder.setSlowFeedMode(false);
         feeder.receiveFromIntake();
     }
@@ -107,8 +109,20 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
                 Subsystems.shooter.isAtSpeed();
     }
 
-    public void shoot() {
+    void shoot() {
         feeder.shoot();
+    }
+
+    public Command shootCmd() {
+        Command cmd = Commands.sequence(
+                Commands.runOnce(feeder::enableCoastMode),
+                Commands.runOnce(this::shoot),
+                new WaitCommand(0.2),
+                Commands.runOnce(feeder::enableBreakMode)
+        );
+        cmd.addRequirements(Subsystems.shooter);
+        return cmd;
+
     }
 
     public void runShooterOpenLoop(){
@@ -120,6 +134,7 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
 
     public void runShooter() {
         BSLogger.log("Shooter", "runShooter");
+        feeder.setEnabled(true);
         upper.setOpenLoop(false);
         lower.setOpenLoop(false);
         lower.setVelocitySetpoint(DEFAULT_VELOCITY_SETPOINT);
@@ -157,4 +172,5 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
             builder.addBooleanProperty("HasTarget", Subsystems.visionSubsystem::hasTarget, null);
         }
     }
+
 }

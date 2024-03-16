@@ -106,7 +106,7 @@ public class DropShot extends AutoPathStrategy {
     static Command fire() {
         return Commands.parallel(
                 writeLog("DropShot", "!!! FIRE !!!"),
-                Commands.runOnce(Subsystems.shooter::shoot).andThen(new WaitCommand(0.2))
+                Subsystems.shooter.shootCmd()
         );
     }
 

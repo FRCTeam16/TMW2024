@@ -20,7 +20,7 @@ public class DebugAuto extends SequentialCommandGroup {
             new PrintCommand("DEBUG AUTO"),
             Subsystems.poseManager.getPoseCommand(PoseManager.Pose.AutoShortShot),
             new WaitCommand(2.0),
-            Commands.runOnce(Subsystems.shooter::shoot),
+            Subsystems.shooter.shootCmd(),
             new WaitCommand(1.0),
             new EnableShooterCommand(false),
             new PrintCommand("Shooter Enabled finsihed"),

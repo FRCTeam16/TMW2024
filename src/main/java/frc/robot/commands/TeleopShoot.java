@@ -1,6 +1,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.util.BSLogger;
@@ -10,20 +12,20 @@ public class TeleopShoot extends Command {
     @Override
     public void initialize() {
         boolean noteDetected = Subsystems.intake.isNoteDetected();
-//        boolean inPose = Subsystems.trap.getTrapState() == Trap.TrapState.AmpShotExtend;
-//        boolean inPose = Subsystems.poseManager.getLastPose() == PoseManager.Pose.PositionForAmp;
         boolean inPose = Subsystems.trap.getExtender().isExtended();
 
         BSLogger.log("TeleopShoot", "Note? %b | Pose? %b".formatted(noteDetected, inPose));
 
+        final Command fireCommand;
         if (!noteDetected || !inPose) {
             BSLogger.log("TeleopShoot", "Running shooter");
-            Subsystems.shooter.runShooter();
-            Subsystems.shooter.shoot();
+            fireCommand = Subsystems.shooter.shootCmd();
+
         } else {
             BSLogger.log("TeleopShoot", "Running FireAmp");
-            Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireAmpShot).asProxy().schedule();
+            fireCommand = Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireAmpShot);
         }
+        fireCommand.asProxy().schedule();
     }
 
 

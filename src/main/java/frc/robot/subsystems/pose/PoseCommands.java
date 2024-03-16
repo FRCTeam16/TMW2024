@@ -49,7 +49,7 @@ class PoseCommands {
                         Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
                         Subsystems.intake.moveToStateCmd(Intake.IntakeState.FeedNote)
                 ),
-                new FeedNoteToShooterCommand().withTimeout(2.0),
+                new FeedNoteToShooterCommandVelocity().withTimeout(2.0),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ReadyToShoot)
         );
     }
@@ -157,8 +157,7 @@ class PoseCommands {
                 ),
                 Commands.runOnce(Subsystems.shooter::runShooter),
                 new WaitCommand(0.25),
-                Commands.runOnce((Subsystems.shooter::shoot)
-                ));
+                Subsystems.shooter.shootCmd());
     }
 
     public static Command fireSubShot() {
@@ -171,7 +170,7 @@ class PoseCommands {
                 ),
                 Commands.runOnce(Subsystems.shooter::runShooter),
                 new WaitCommand(0.5),
-                Commands.runOnce(Subsystems.shooter::shoot));
+                Subsystems.shooter.shootCmd());
     }
 
     public static Command tryClearNote() {
@@ -194,7 +193,6 @@ class PoseCommands {
                         Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive)
                 ),
                 new WaitCommand(1.5),
-                Commands.runOnce((Subsystems.shooter::shoot)
-                ));
+                Subsystems.shooter.shootCmd());
     }
 }
