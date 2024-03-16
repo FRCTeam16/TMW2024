@@ -1,5 +1,6 @@
 package frc.robot.auto.strategies;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -9,12 +10,22 @@ import frc.robot.auto.PathRegistry;
 import frc.robot.commands.auto.*;
 import frc.robot.subsystems.VisionAimManager;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakePivot;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.util.BSLogger;
 
 import static edu.wpi.first.units.Units.Degrees;
 
 public class Tab extends AutoPathStrategy {
+
+    private PathPlannerAuto tab1 = new PathPlannerAuto("Tab");
+    private PathPlannerAuto tab1a = new PathPlannerAuto("Tab1a");
+    private PathPlannerAuto tab2 = new PathPlannerAuto("Tab2");
+    private PathPlannerAuto tab3 = new PathPlannerAuto("Tab3");
+    private PathPlannerAuto tab4 = new PathPlannerAuto("Tab4");
+
+
+    public static final VisionAimManager.ShootingProfile TabStraightFirst = new VisionAimManager.ShootingProfile(41.5, 30, 26); // 87"
 
     public static final VisionAimManager.ShootingProfile SecondShot = new VisionAimManager.ShootingProfile(41.5, 30, 26); // 87"
     public static final VisionAimManager.ShootingProfile ThirdShot = new VisionAimManager.ShootingProfile(47.5, 22, 22); // 55"
@@ -95,7 +106,7 @@ public class Tab extends AutoPathStrategy {
                         writeLog("Tab", "****** Running Tab"),
                         Subsystems.pivot.setQueuedProfileCmd(SecondShot)
                 ),
-                this.runAutoPath("Tab")
+                tab1
         );
     }
 
@@ -105,7 +116,7 @@ public class Tab extends AutoPathStrategy {
                         new PrintStartInfo("Tab Straight"),
                         new InitializeAutoState(Degrees.of(0)),
                         new EnableShooterCommand(),
-                        new RotateToAngle(-15).withThreshold(5).withTimeout(0.5)
+                        new RotateToAngle(-18).withThreshold(5).withTimeout(0.5)
                 ),
 
                 //
@@ -129,7 +140,7 @@ public class Tab extends AutoPathStrategy {
                         writeLog("Tab", "****** Running Tab1a"),
                         Subsystems.pivot.setQueuedProfileCmd(SecondShot)
                 ),
-                this.runAutoPath("Tab1a")
+                tab1a
         );
     }
 
@@ -150,7 +161,8 @@ public class Tab extends AutoPathStrategy {
                         writeLog("Tab", "****** Running Tab2"),
                         Subsystems.pivot.setQueuedProfileCmd(ThirdShot)
                 ),
-                this.runAutoPath("Tab2"),
+
+                tab2,
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),  // trying this to make sure we are in a good state, try to prevent feed through
                 DoShotCommand(ThirdShot),
 
@@ -161,7 +173,7 @@ public class Tab extends AutoPathStrategy {
                         writeLog("Tab", "****** Running Tab3"),
                         Subsystems.pivot.setQueuedProfileCmd(ForthShot)
                 ),
-                this.runAutoPath("Tab3"),
+                tab3,
                 // May need to check state here, auto command is dropping out
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
                 DoShotCommand(ForthShot),
@@ -170,17 +182,17 @@ public class Tab extends AutoPathStrategy {
                 //
                 // Pickup, fifth shot
                 //
-                // Commands.parallel(
-                //         writeLog("Tab", "****** Running Tab4"),
-                //         Subsystems.pivot.setQueuedProfileCmd(FifthShot)
-                // ),
-                // this.runAutoPath("Tab4"),
-                // Commands.parallel(
-                //         writeLog("FeedNoteInAuto", "starting"),
-                //         new WaitIntakeHasNoteCommand(),
-                //         new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero)
-                // ).withTimeout(3.0),
-                // DoShotCommand(FifthShot),
+                 Commands.parallel(
+                         writeLog("Tab", "****** Running Tab4"),
+                         Subsystems.pivot.setQueuedProfileCmd(FifthShot)
+                 ),
+                 tab4,
+                 Commands.parallel(
+                         writeLog("FeedNoteInAuto", "starting"),
+                         new WaitIntakeHasNoteCommand(),
+                         new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero)
+                 ).withTimeout(3.0),
+                 DoShotCommand(FifthShot),
                 // Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter)
                 writeLog("Tab auto", "@@@ FINISHED AUTO @@@")
 
