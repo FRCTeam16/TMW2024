@@ -114,6 +114,7 @@ public class FeederHelper implements Sendable {
     }
 
     public void shoot() {
+        velocityMode = false;
         shooting = true;
         openLoopSetpoint = shootingSpeed;
         shooterTimer.reset();
@@ -227,7 +228,7 @@ public class FeederHelper implements Sendable {
 
     class VelocityControl {
         double velocitySetpoint = 0.0;
-        double slowFeedVelocity = -4.0;
-        double feedVelocity = -40.0;
+        double slowFeedVelocity = -2.0;
+        double feedVelocity = -30.0;
     }
 }

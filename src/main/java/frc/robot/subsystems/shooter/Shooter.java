@@ -114,12 +114,15 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     public Command shootCmd() {
-        return Commands.sequence(
+        Command cmd = Commands.sequence(
                 Commands.runOnce(feeder::enableCoastMode),
                 Commands.runOnce(this::shoot),
                 new WaitCommand(0.2),
                 Commands.runOnce(feeder::enableBreakMode)
         );
+        cmd.addRequirements(Subsystems.shooter);
+        return cmd;
+
     }
 
     public void runShooterOpenLoop(){

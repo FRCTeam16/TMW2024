@@ -8,7 +8,7 @@ import frc.robot.subsystems.util.Counter;
 
 public class FeedNoteToShooterCommandVelocity extends Command {
     public FeedNoteToShooterCommandVelocity() {
-//        addRequirements(Subsystems.shooter);
+        addRequirements(Subsystems.shooter);
     }
     @Override
     public void initialize() {
