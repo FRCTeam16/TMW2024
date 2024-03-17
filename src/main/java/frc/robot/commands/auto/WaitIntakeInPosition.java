@@ -8,7 +8,7 @@ import frc.robot.subsystems.util.Counter;
 
 public class WaitIntakeInPosition extends Command {
     private final IntakePivot.IntakePosition position;
-    private final Counter seenCounter = new Counter().withThreshold(5);
+    private final Counter seenCounter = new Counter().withThreshold(10);
 
     @Override
     public void initialize() {
@@ -17,6 +17,7 @@ public class WaitIntakeInPosition extends Command {
 
     public WaitIntakeInPosition(IntakePivot.IntakePosition position) {
         this.position = position;
+        addRequirements(Subsystems.intake);
     }
 
     @Override

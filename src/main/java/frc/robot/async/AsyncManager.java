@@ -29,10 +29,12 @@ public class AsyncManager {
     }
 
     public void register(String taskName, Runnable runnable) {
+        BSLogger.log("AsyncManager", "Register: " + taskName);
         tasks.add(new AsyncTask(taskName, runnable));
     }
 
     public void unregister(String taskName) {
+        BSLogger.log("AsyncManager", "Unregister: " + taskName);
         tasks.removeIf(task -> task.getName().equals(taskName));
     }
 
@@ -69,6 +71,7 @@ public class AsyncManager {
                     lastRun = Timer.getFPGATimestamp();
                 }
             }
+            BSLogger.log("AsyncManager", "Existing async manager thread");
         }
     }
 }

@@ -8,7 +8,7 @@ import frc.robot.subsystems.util.Counter;
 
 public class FeedNoteToShooterCommandVelocity extends Command {
     public FeedNoteToShooterCommandVelocity() {
-        addRequirements(Subsystems.shooter);
+        addRequirements(Subsystems.shooter, Subsystems.intake);
     }
     @Override
     public void initialize() {
@@ -35,6 +35,8 @@ public class FeedNoteToShooterCommandVelocity extends Command {
     public void end(boolean interrupted) {
         if (interrupted) {
             BSLogger.log("FeedNoteToShooterCommand", "STOPPED DUE TO INTERRUPT");
+        } else {
+            BSLogger.log("FeedNoteToShooterCommand", "exited normally");
         }
         Subsystems.shooter.getFeeder().setOpenLoopSetpoint(0.0);
         Subsystems.shooter.getFeeder().setVelocityMode(false);

@@ -239,7 +239,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     public Command moveToPositionCmd(PivotPosition position) {
-        return Commands.runOnce(() -> this.setPivotPosition(position));
+        return Commands.runOnce(() -> this.setPivotPosition(position), Subsystems.pivot);
     }
 
     public Command setQueuedProfileCmd(VisionAimManager.ShootingProfile profile) {
@@ -274,7 +274,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     public enum PivotPosition {
         StartingPosition(0),
         Horizontal(0),
-        FeedPosition(21.0),
+        FeedPosition(23.0),
         Up(70),
         ShortShot(55),
         VisionAim(21),

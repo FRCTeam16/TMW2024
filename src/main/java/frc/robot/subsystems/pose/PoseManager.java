@@ -24,8 +24,6 @@ public class PoseManager {
         Drive,
         // Pose for actively picking up notes from the ground
         Pickup,
-        // Transitional pose for handling state transitions between pickup and decision point
-        NotePickedUp,
         // Transitional pose for feeding the note from the intake into the shooter
         FeedNoteToShooter,
         // Pose for when the robot is loaded and ready to shoot
@@ -59,7 +57,6 @@ public class PoseManager {
         registry.put(Pose.StartingConfig, PoseCommands::moveToStartingConfigPose);
         registry.put(Pose.Pickup, PoseCommands::moveToPickupPose);
         registry.put(Pose.Drive, PoseCommands::moveToDrivePose);
-        registry.put(Pose.NotePickedUp, PoseCommands::moveToNotePickedUpPose);
         registry.put(Pose.FeedNoteToShooter, PoseCommands::feedNoteToShooterPose);
         registry.put(Pose.ReadyToShoot, PoseCommands::readyToShootPose);
         registry.put(Pose.PositionForAmp, PoseCommands::positionForAmpPose);

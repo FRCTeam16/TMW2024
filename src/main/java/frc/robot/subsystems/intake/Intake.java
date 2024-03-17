@@ -154,7 +154,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
             intakeSpeed.stopIntake();
             postNoteDetectedTimer.get().stop();
             postNoteDetectedTimer = Optional.empty();   // todo determine if optional<> approach is clearest
-            Subsystems.poseManager.schedulePose(PoseManager.Pose.NotePickedUp);
+            setIntakeState(IntakeState.HoldNote);
         }
 
         //
@@ -245,7 +245,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     public Command moveToStateCmd(IntakeState state) {
-        return Commands.runOnce(() -> this.setIntakeState(state));
+        return Commands.runOnce(() -> this.setIntakeState(state), Subsystems.intake);
     }
 
 }

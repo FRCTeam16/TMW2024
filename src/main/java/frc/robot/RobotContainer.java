@@ -433,10 +433,6 @@ public class RobotContainer {
                                                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PositionForAmp),
                                                 new TeleopShoot().ignoringDisable(true)).ignoringDisable(true));
 
-                SmartDashboard.putData("Pose: Pickup", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup));
-                SmartDashboard.putData("Pose: Handoff",
-                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.NotePickedUp));
-
                 SmartDashboard.putData("Set VisionAim State",
                         Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShooterAimVision));
 

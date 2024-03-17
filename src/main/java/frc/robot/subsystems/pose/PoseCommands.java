@@ -46,17 +46,23 @@ class PoseCommands {
     static Command feedNoteToShooterPose() {
         return new SequentialCommandGroup(
                 Commands.parallel(
+                        Commands.runOnce(() -> BSLogger.log("feedNoteToShooterPose", "starting")),
                         Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
                         Subsystems.intake.moveToStateCmd(Intake.IntakeState.FeedNote)
                 ),
+                Commands.parallel(
+                    new WaitPivotInPosition(),
+                    new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero)
+                ).withTimeout(1.0),
                 new FeedNoteToShooterCommandVelocity().withTimeout(2.0),
-                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ReadyToShoot)
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ReadyToShoot),
+                Commands.runOnce(() -> BSLogger.log("feedNoteToShooterPose", "finished"))
         );
     }
 
     static Command readyToShootPose() {
         return Commands.parallel(
-                Commands.runOnce(Subsystems.pivot::moveToQueuedProfile),
+                Commands.runOnce(Subsystems.pivot::moveToQueuedProfile, Subsystems.pivot),
 //                Commands.runOnce(Subsystems.shooter::stopFeeder),
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote)
         );
@@ -71,13 +77,6 @@ class PoseCommands {
                 new PrintCommand("Ignoring drive request since we are in transition with note"),
                 () -> !(Intake.IntakeState.RotateUpWhileFeedingNote.equals(Subsystems.intake.getIntakeState())));
 
-    }
-
-
-    public static Command moveToNotePickedUpPose() {
-        return new ParallelCommandGroup(
-                Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote)
-        );
     }
 
     public static Command positionForAmpPose() {

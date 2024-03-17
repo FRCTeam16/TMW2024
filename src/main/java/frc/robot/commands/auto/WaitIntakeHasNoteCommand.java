@@ -6,6 +6,10 @@ import frc.robot.subsystems.util.BSLogger;
 
 public class WaitIntakeHasNoteCommand extends Command {
 
+    public WaitIntakeHasNoteCommand() {
+        addRequirements(Subsystems.intake);
+    }
+
     @Override
     public void initialize() {
         BSLogger.log("WaitIntakeHasNoteCommand", "starting");
