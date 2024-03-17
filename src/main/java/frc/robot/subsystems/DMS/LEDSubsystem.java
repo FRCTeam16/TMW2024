@@ -1,6 +1,7 @@
 package frc.robot.subsystems.DMS;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -203,7 +204,6 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
                     break;
 
             }
-            ;
         }
     }
 
@@ -241,6 +241,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
             SmartDashboard.putNumber("DMS/Result/RR/Drive/Vel", driveDmsStatus.velocity.RR);
             SmartDashboard.putNumber("DMS/Result/RR/Drive/Amp", driveDmsStatus.current.RR);
 
+            Subsystems.swerveSubsystem.setControl(new SwerveRequest.PointWheelsAt().withModuleDirection(Rotation2d.fromDegrees(0)));
             currentPhase = DMSPhase.RunSteerMotors;
             timer.reset();
         }
@@ -268,7 +269,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
             }
         } else {
             // Stop motors
-            Subsystems.swerveSubsystem.setControl(new SwerveRequest.SwerveDriveBrake());
+            Subsystems.swerveSubsystem.setControl(new SwerveRequest.PointWheelsAt().withModuleDirection(Rotation2d.fromDegrees(0)));
 
             currentPhase = DMSPhase.DisplayResults;
             SmartDashboard.putNumber("DMS/Result/FL/Steer/Status", steerStatus.FL);

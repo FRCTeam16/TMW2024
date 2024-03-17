@@ -18,10 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.CenterNoteIntakeCommand;
-import frc.robot.commands.RunWithDisabledInstantCommand;
-import frc.robot.commands.TeleopShoot;
-import frc.robot.commands.ZeroAndSetOffsetCommand;
+import frc.robot.commands.*;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.RotationController;
@@ -421,6 +418,8 @@ public class RobotContainer {
 
                 SmartDashboard.putData("Play Lowrida", music.getPlayCommand());
                 SmartDashboard.putData("Stop Music", music.getPauseommand());
+
+                SmartDashboard.putData("Run DMS", new RunDMSCommand());
 
 
                 // Debug

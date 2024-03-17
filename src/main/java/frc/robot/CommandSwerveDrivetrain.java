@@ -43,9 +43,10 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         @Override
         public StatusCode apply(SwerveControlRequestParameters parameters, SwerveModule... modulesToApply) {
             for (int i = 0; i < modulesToApply.length; ++i) {
-                parameters.swervePositions[i].getAngle().rotateBy(Rotation2d.fromDegrees(10));
-                SwerveModuleState state = new SwerveModuleState(0,
-                        parameters.swervePositions[i].getAngle().rotateBy(Rotation2d.fromDegrees(1)));
+                double currentAngle = modulesToApply[i].getCurrentState().angle.getDegrees();
+                double targetAngle = (currentAngle + ((4 * (360.0 / 50.0)) % 360.0));
+
+                SwerveModuleState state = new SwerveModuleState(0, Rotation2d.fromDegrees(targetAngle));
                 modulesToApply[i].apply(state, SwerveModule.DriveRequestType.OpenLoopVoltage, SwerveModule.SteerRequestType.MotionMagic);
             }
             return StatusCode.OK;
