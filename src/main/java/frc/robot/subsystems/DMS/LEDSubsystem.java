@@ -1,5 +1,6 @@
 package frc.robot.subsystems.DMS;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -95,18 +96,6 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
                 allianceColor = 2;
             }
         }
-
-        //
-        // Calculate part present value
-        //
-        // int partPresent = 0;
-        // if (Subsystems.intake.isNoteDetected()) {
-        //     partPresent = 1;
-        // } else if (Subsystems.shooter.isNoteDetected()) {
-        //     partPresent = 2;
-        // } else {
-        //     // Future
-        // }
 
         boolean intakeDown = Subsystems.intake.isInPosition(IntakePosition.Zero);
         int partPresent = 0;
@@ -219,11 +208,10 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
     }
 
     private void runMotorTest() {
-        /*
+
         final double now = timer.get();
         if (now < MOTOR_TEST_TIME) {
-            Subsystems.swerveSubsystem.DMSDrive(.5);
-            Subsystems.swerveSubsystem.DMSSteer(0.0);
+            Subsystems.swerveSubsystem.setControl(Subsystems.swerveSubsystem.DMSDriveRequest);
 
             if (now > INITIAL_IGNORE_TIME) {
                 driveDmsStatus.addDriveCurrent(Subsystems.swerveSubsystem.getDriveOutputCurrent());
@@ -256,15 +244,13 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
             currentPhase = DMSPhase.RunSteerMotors;
             timer.reset();
         }
-        */
     }
 
     private void runSteerTest() {
-        /*
+
         final double now = timer.get();
         if (now < MOTOR_TEST_TIME) {
-            Subsystems.swerveSubsystem.DMSDrive(0.0);
-            Subsystems.swerveSubsystem.DMSSteer(0.5);
+            Subsystems.swerveSubsystem.setControl(Subsystems.swerveSubsystem.DMSSteerRequest);
 
             if (now > INITIAL_IGNORE_TIME) {
                 steerDmsStatus.addDriveCurrent(Subsystems.swerveSubsystem.getSteerOutputCurrent());
@@ -282,8 +268,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
             }
         } else {
             // Stop motors
-            Subsystems.swerveSubsystem.DMSDrive(0.0);
-            Subsystems.swerveSubsystem.DMSSteer(0.0);
+            Subsystems.swerveSubsystem.setControl(new SwerveRequest.SwerveDriveBrake());
 
             currentPhase = DMSPhase.DisplayResults;
             SmartDashboard.putNumber("DMS/Result/FL/Steer/Status", steerStatus.FL);
@@ -301,7 +286,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
 
             timer.reset();
         }
-        */
+
     }
 
     private void displayResults() {

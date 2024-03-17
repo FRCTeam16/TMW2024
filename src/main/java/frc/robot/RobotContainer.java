@@ -417,15 +417,11 @@ public class RobotContainer {
                 SmartDashboard.putData("Fix Intake Pivot Offset",
                                 Subsystems.intake.getIntakePivot().fixMotorPositionCmd().ignoringDisable(true));
 
-                SmartDashboard.putData("Pose: Pickup", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup));
-                SmartDashboard.putData("Pose: Handoff",
-                                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.NotePickedUp));
+
 
                 SmartDashboard.putData("Play Lowrida", music.getPlayCommand());
                 SmartDashboard.putData("Stop Music", music.getPauseommand());
 
-                SmartDashboard.putData("Set VisionAim State",
-                                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShooterAimVision));
 
                 // Debug
                 SmartDashboard.setDefaultNumber("DeflectDelay", 0.75);
@@ -436,6 +432,14 @@ public class RobotContainer {
                                 Commands.sequence(
                                                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PositionForAmp),
                                                 new TeleopShoot().ignoringDisable(true)).ignoringDisable(true));
+
+                SmartDashboard.putData("Pose: Pickup", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup));
+                SmartDashboard.putData("Pose: Handoff",
+                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.NotePickedUp));
+
+                SmartDashboard.putData("Set VisionAim State",
+                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShooterAimVision));
+
         }
 
         public Command getAutonomousCommand() {

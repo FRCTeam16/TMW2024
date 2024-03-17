@@ -76,7 +76,7 @@ public class AutoManager {
 
         // registerStrategy("Under The Bridge", AutoStrategies.UnderTheBridge, UnderTheBridge::new);
         registerStrategy("Tab", AutoStrategies.Tab, () -> new Tab(Tab.TabVersion.OffsetStart));
-        registerStrategy("TabStraight", AutoStrategies.Tab, () -> new Tab(Tab.TabVersion.StraightStart));
+        registerStrategy("TabStraight", AutoStrategies.TabStraight, () -> new Tab(Tab.TabVersion.StraightStart));
         registerStrategy("DropShot", AutoStrategies.DropShot, DropShot::new);
         // registerStrategy("CrossWing", AutoStrategies.CrossWing, CrossWingShot::new);
     }
@@ -175,6 +175,7 @@ public class AutoManager {
         UnderTheBridge,
         DropShot, 
         Tab,
+        TabStraight,
         CrossWing
     }
 

@@ -64,7 +64,7 @@ public class AsyncManager {
                     }
                     double now = Timer.getFPGATimestamp();
                     if ((now - lastRun) > period * 2) {
-                        BSLogger.log("AsyncManager", "Async tasks are running behind");
+//                        BSLogger.log("AsyncManager", "Async tasks are running behind");
                     }
                     lastRun = Timer.getFPGATimestamp();
                 }

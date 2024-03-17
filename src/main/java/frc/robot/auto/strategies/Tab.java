@@ -18,19 +18,16 @@ import static edu.wpi.first.units.Units.Degrees;
 
 public class Tab extends AutoPathStrategy {
 
+    public static final VisionAimManager.ShootingProfile TabStraightFirst = new VisionAimManager.ShootingProfile(41.5, 30, 26); // 87"
+    public static final VisionAimManager.ShootingProfile SecondShot = new VisionAimManager.ShootingProfile(41.5, 30, 26); // 87"
+    public static final VisionAimManager.ShootingProfile ThirdShot = new VisionAimManager.ShootingProfile(47.5, 22, 22); // 55"
+    public static final VisionAimManager.ShootingProfile ForthShot = new VisionAimManager.ShootingProfile(43.5, 31, 27); // 76.5"
+    public static final VisionAimManager.ShootingProfile FifthShot = new VisionAimManager.ShootingProfile(31.5, 45, 32); // 98.8"
     private PathPlannerAuto tab1 = new PathPlannerAuto("Tab");
     private PathPlannerAuto tab1a = new PathPlannerAuto("Tab1a");
     private PathPlannerAuto tab2 = new PathPlannerAuto("Tab2");
     private PathPlannerAuto tab3 = new PathPlannerAuto("Tab3");
     private PathPlannerAuto tab4 = new PathPlannerAuto("Tab4");
-
-
-    public static final VisionAimManager.ShootingProfile TabStraightFirst = new VisionAimManager.ShootingProfile(41.5, 30, 26); // 87"
-
-    public static final VisionAimManager.ShootingProfile SecondShot = new VisionAimManager.ShootingProfile(41.5, 30, 26); // 87"
-    public static final VisionAimManager.ShootingProfile ThirdShot = new VisionAimManager.ShootingProfile(47.5, 22, 22); // 55"
-    public static final VisionAimManager.ShootingProfile ForthShot = new VisionAimManager.ShootingProfile(43.5, 31, 27); // 76.5"
-    public static final VisionAimManager.ShootingProfile FifthShot = new VisionAimManager.ShootingProfile(31.5, 45, 32); // 98.8"
 
 
     public Tab(TabVersion version) {
@@ -46,7 +43,7 @@ public class Tab extends AutoPathStrategy {
         return new SequentialCommandGroup(
                 // Start point is that we expect the shooter to have a note
                 new WaitShooterHasNote().withTimeout(0.5),
-                Commands.runOnce(() -> Subsystems.intake.setIntakeState(Intake.IntakeState.IntakeFromFloor)),
+                Subsystems.intake.moveToStateCmd(Intake.IntakeState.MoveIntakeToFloorWithoutIntaking),
                 writeLog("DoShotCommand", "If shooter has note then we will try shot"),
                 Commands.sequence(
                         Commands.parallel(
@@ -66,7 +63,7 @@ public class Tab extends AutoPathStrategy {
     }
 
     public static void registerAutoPaths(PathRegistry pathRegistry) {
-        pathRegistry.registerPaths("Tab", "Tab1a", "Tab2", "Tab3", "Tab4");
+//        pathRegistry.registerPaths("Tab", "Tab1a", "Tab2", "Tab3", "Tab4");
     }
 
     static Command doShootCmd() {
@@ -161,7 +158,6 @@ public class Tab extends AutoPathStrategy {
                         writeLog("Tab", "****** Running Tab2"),
                         Subsystems.pivot.setQueuedProfileCmd(ThirdShot)
                 ),
-
                 tab2,
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),  // trying this to make sure we are in a good state, try to prevent feed through
                 DoShotCommand(ThirdShot),
@@ -178,21 +174,16 @@ public class Tab extends AutoPathStrategy {
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
                 DoShotCommand(ForthShot),
 
-
                 //
                 // Pickup, fifth shot
                 //
-                 Commands.parallel(
-                         writeLog("Tab", "****** Running Tab4"),
-                         Subsystems.pivot.setQueuedProfileCmd(FifthShot)
-                 ),
-                 tab4,
-                 Commands.parallel(
-                         writeLog("FeedNoteInAuto", "starting"),
-                         new WaitIntakeHasNoteCommand(),
-                         new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero)
-                 ).withTimeout(3.0),
-                 DoShotCommand(FifthShot),
+                Commands.parallel(
+                        writeLog("Tab", "****** Running Tab4"),
+                        Subsystems.pivot.setQueuedProfileCmd(FifthShot)
+                ),
+                tab4,
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
+                DoShotCommand(FifthShot),
                 // Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter)
                 writeLog("Tab auto", "@@@ FINISHED AUTO @@@")
 

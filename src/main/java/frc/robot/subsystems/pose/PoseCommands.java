@@ -57,7 +57,7 @@ class PoseCommands {
     static Command readyToShootPose() {
         return Commands.parallel(
                 Commands.runOnce(Subsystems.pivot::moveToQueuedProfile),
-                Commands.runOnce(Subsystems.shooter::stopFeeder),
+//                Commands.runOnce(Subsystems.shooter::stopFeeder),
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote)
         );
     }

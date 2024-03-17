@@ -34,6 +34,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
     public enum IntakeState {
         StartingPosition,
         IntakeFromFloor,
+        MoveIntakeToFloorWithoutIntaking,
         HoldNote,
         FeedNote,
 
@@ -90,6 +91,10 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
             case StartingPosition, HoldNote -> {
                 intakeSpeed.stopIntake();
                 intakePivot.setIntakePosition(IntakePivot.IntakePosition.Zero);
+            }
+
+            case MoveIntakeToFloorWithoutIntaking -> {
+                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Pickup);
             }
 
             case IntakeFromFloor -> {

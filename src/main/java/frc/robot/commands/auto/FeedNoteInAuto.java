@@ -17,7 +17,7 @@ public class FeedNoteInAuto extends SequentialCommandGroup {
                         Commands.runOnce(() -> BSLogger.log("FeedNoteInAuto", "starting")),
                         new WaitIntakeHasNoteCommand(),
                         new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero)
-                ).withTimeout(1.0),
+                ).withTimeout(2.0),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter) 
         );
     }
