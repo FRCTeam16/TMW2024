@@ -239,7 +239,7 @@ public class IntakePivot implements Lifecycle, Sendable {
 
         ampShotPIDController.initSendable(builder);
 
-        if (Constants.Dashboard.ConfigurationMode) {
+        if (Constants.Dashboard.ConfigurationMode && Constants.Dashboard.IntakeConfigMode) {
             builder.addBooleanProperty("Pivot/OpenLoop", this::isPivotOpenLoop, this::setPivotOpenLoop);
             builder.addDoubleProperty("Pivot/UpSpeed", pivotOpenLoopSpeeds::getUpSpeed, pivotOpenLoopSpeeds::setUpSpeed);
             builder.addDoubleProperty("Pivot/DownSpeed", pivotOpenLoopSpeeds::getDownSpeed, pivotOpenLoopSpeeds::setDownSpeed);

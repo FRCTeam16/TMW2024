@@ -11,10 +11,11 @@ public final class Constants {
         // Whether to use the sendable system for real-time tuning
         public static final boolean ConfigurationMode = true;
         //TODO: add subsystem specific configModes
-        public static final boolean IntakeConfigMode = false;
-        public static final boolean ShooterConfigMode = false;
-        public static final boolean TrapConfigMode = false;
-        public static final boolean ClimberConfigMode = false;
+        public static final boolean PivotConfigMode = true;
+        public static final boolean IntakeConfigMode = true;
+        public static final boolean ShooterConfigMode = true;
+        public static final boolean TrapConfigMode = true;
+        public static final boolean ClimberConfigMode = true;
 
 
     }

@@ -215,7 +215,8 @@ public class FeederHelper implements Sendable {
         builder.addDoubleProperty(name + "/Open Loop Setpoint", this::getOpenLoopSetpoint, this::setOpenLoopSetpoint);
         builder.addBooleanProperty(name + "/Slow Sensor", this::isSlowSensorDetected, null);
         builder.addBooleanProperty(name + "/Slow Mode", this::isSlowFeedMode, this::setSlowFeedMode);
-        if (Constants.Dashboard.ConfigurationMode || Constants.Dashboard.ShooterConfigMode) {
+
+        if (Constants.Dashboard.ConfigurationMode && Constants.Dashboard.ShooterConfigMode) {
             builder.addDoubleProperty(name + "/Feed Note Speed", this::getFeedShooterSpeed, this::setFeedShooterSpeed);
             builder.addDoubleProperty(name + "/Shoot Speed", this::getShootingSpeed, this::setShootingSpeed);
             builder.addDoubleProperty(name + "/Slow Feed Speed", this::getSlowFeedShooterSpeed, this::setSlowFeedShooterSpeed);

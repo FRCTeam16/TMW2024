@@ -160,7 +160,7 @@ public class TrapPivot implements Lifecycle, Sendable {
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("TrapPivot/MotorPosition", () -> this.motor.getPosition().getValue(), null);
         builder.addDoubleProperty("TrapPivot/Encoder", this.encoder::get, null);
-        if (Constants.Dashboard.ConfigurationMode || Constants.Dashboard.TrapConfigMode) {
+        if (Constants.Dashboard.ConfigurationMode && Constants.Dashboard.TrapConfigMode) {
             builder.addDoubleProperty("TrapPivot/EncoderAbs", this.encoder::getAbsolutePosition, null);
             builder.addBooleanProperty("TrapPivot/OpenLoop", this::isOpenLoop, this::setOpenLoop);
             builder.addDoubleProperty("TrapPivot/UpSpeed", openLoopSpeeds::getUpSpeed, openLoopSpeeds::setUpSpeed);

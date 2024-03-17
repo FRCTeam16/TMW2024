@@ -73,7 +73,7 @@ public class IntakeSpeed implements Lifecycle, Sendable {
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Intake/IntakeSpeed", () -> this.intakeOpenLoopSpeed, null);
-        if (Constants.Dashboard.ConfigurationMode) {
+        if (Constants.Dashboard.ConfigurationMode && Constants.Dashboard.IntakeConfigMode) {
             builder.addDoubleProperty("Intake/FastSpeed", this.intakeSpeedVolts::getFastSpeed, this.intakeSpeedVolts::setFastSpeed);
             builder.addDoubleProperty("Intake/FeedNote", this.intakeSpeedVolts::getFeedShooterIntakeSpeed, this.intakeSpeedVolts::setFeedShooterIntakeSpeed);
             builder.addDoubleProperty("Intake/EjectSpeed", this.intakeSpeedVolts::getEjectSpeed, this.intakeSpeedVolts::setEjectSpeed);

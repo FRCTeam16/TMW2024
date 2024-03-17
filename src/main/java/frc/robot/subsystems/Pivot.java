@@ -223,7 +223,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
             builder.addDoubleProperty("Encoder/Angle", this::getPivotAngleDegrees, null);
             builder.addBooleanProperty("Encoder/inposition", this::isInPosition, null);
 
-            if (Constants.Dashboard.ConfigurationMode) {
+            if (Constants.Dashboard.ConfigurationMode && Constants.Dashboard.PivotConfigMode) {
 
                 builder.addBooleanProperty("OpenLoop", this::isOpenLoop, null);
                 builder.addDoubleProperty("Speed", this::getSpeed, null /*this::setSpeed*/);
@@ -243,7 +243,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     public Command setQueuedProfileCmd(VisionAimManager.ShootingProfile profile) {
-        return Commands.runOnce(() -> this.setQueuedProfileCmd(profile));
+        return Commands.runOnce(() -> this.queueNextProfile(profile));
     }
 
 
