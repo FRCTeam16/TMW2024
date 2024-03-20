@@ -121,5 +121,5 @@
     "rotation": 0,
     "velocity": 1.5
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

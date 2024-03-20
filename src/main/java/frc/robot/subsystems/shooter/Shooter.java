@@ -65,9 +65,6 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
         feeder.setEnabled(false);
     }
 
-    /**
-     * FIXME DEBUG
-     */
     public FeederHelper getFeeder() {
         return this.feeder;
     }

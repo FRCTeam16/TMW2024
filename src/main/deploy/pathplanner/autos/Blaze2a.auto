@@ -16,6 +16,12 @@
           "data": {
             "name": "BlazeShot"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blaze4"
+          }
         }
       ]
     }

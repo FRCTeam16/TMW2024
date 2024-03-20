@@ -116,7 +116,9 @@ public class AutoManager {
         NamedCommands.registerCommand("BloopShot", new BloopShot());
 
         // Blaze
-        NamedCommands.registerCommand("BlazeShot", CommonCommands.DoShotCommand(Blaze.shootingPositionProfile));
+        NamedCommands.registerCommand("BlazeQueuePivot", Subsystems.pivot.queueNextProfileCommand(Blaze.shootingPositionProfile));
+        NamedCommands.registerCommand("BlazeShot", CommonCommands.DoBlazeShotCommand(Blaze.shootingPositionProfile));
+
 
     }
 

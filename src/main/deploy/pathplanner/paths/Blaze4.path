@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.717629866493096,
+        "y": 2.891828463337495
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.4897553504068854,
+        "y": 1.9084611017491784
+      },
+      "isLocked": false,
+      "linkedName": "BlazeShoot"
+    },
+    {
+      "anchor": {
+        "x": 6.565753113759999,
+        "y": 1.5806719812197394
+      },
+      "prevControl": {
+        "x": 5.565753113759999,
+        "y": 1.5806719812197394
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Blaze",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

@@ -11,7 +11,7 @@
         "x": 6.82798441018355,
         "y": 1.7919138588942665
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "B1End"
     },
     {
@@ -66,8 +66,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 4.5,
+    "maxAcceleration": 4.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
@@ -82,5 +82,5 @@
     "rotation": 0,
     "velocity": 1.5
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

@@ -270,6 +270,10 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         }
     }
 
+    public Command queueNextProfileCommand(VisionAimManager.ShootingProfile profile) {
+        return Commands.runOnce(() -> this.queueNextProfile(profile));
+    }
+
 
     public enum PivotPosition {
         StartingPosition(0),
