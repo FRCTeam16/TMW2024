@@ -1,11 +1,11 @@
 package frc.robot.auto;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.pathplanner.lib.commands.PathPlannerAuto;
-
 import frc.robot.subsystems.util.BSLogger;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Registry for paths to be used in autonomous mode
@@ -13,31 +13,36 @@ import frc.robot.subsystems.util.BSLogger;
  * used
  */
 public class PathRegistry {
-    private final Map<String, PathPlannerAuto> pathMap;
+    private final Map<String, LinkedList<PathPlannerAuto>> pathMap;
 
     public PathRegistry() {
         pathMap = new HashMap<>();
     }
 
     public void registerPath(String pathName) {
-        if (!pathMap.containsKey(pathName)) {
-            BSLogger.log("PathRegistry", "Registering path " + pathName);
-            try {
-                pathMap.put(pathName, new PathPlannerAuto(pathName));
-            } catch (Exception e) {
-                String message = "[PathRegistry]Error while trying to register an auto path named %s: %s"
-                        .formatted(pathName, e);
-                throw new RuntimeException(message);
-            }
+        LinkedList<PathPlannerAuto> registeredPaths = pathMap.getOrDefault(pathName, new LinkedList<>());
+        registeredPaths.add(create(pathName));
+        pathMap.put(pathName, registeredPaths);
+    }
+
+    private PathPlannerAuto create(String pathName) {
+        try {
+            return new PathPlannerAuto(pathName);
+        } catch (Exception e) {
+            String message = "[PathRegistry]Error while trying to register an auto path named %s: %s"
+                    .formatted(pathName, e);
+            BSLogger.log("PathRegistry", message);
+            throw new RuntimeException(message);
         }
     }
 
     public PathPlannerAuto getPath(String pathName) {
-        if (!pathMap.containsKey(pathName)) {
-            BSLogger.log("PathRegistry", "Path " + pathName + " was not registered, please register for performance reasons");
-            registerPath(pathName);
+        if (pathMap.containsKey(pathName) && pathMap.get(pathName).peek() != null) {
+            return pathMap.get(pathName).pop();
+        } else {
+            BSLogger.log("PathRegistry", "Path %s not found, creating new".formatted(pathName));
+            return create(pathName);
         }
-        return pathMap.get(pathName);
     }
 
     public boolean hasPath(String pathName) {

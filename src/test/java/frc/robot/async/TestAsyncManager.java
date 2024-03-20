@@ -20,10 +20,9 @@ public class TestAsyncManager {
         asyncManager.register("test", () -> counter[0]++);
         asyncManager.start();
         try {
-            Thread.sleep(10);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             // expected
-//            e.printStackTrace();
         } finally {
             asyncManager.stop();
         }

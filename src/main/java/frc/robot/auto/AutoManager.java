@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Subsystems;
 import frc.robot.auto.strategies.*;
 import frc.robot.commands.auto.*;
@@ -68,7 +67,7 @@ public class AutoManager {
         // registerStrategy("Debug Auto", AutoStrategies.DebugAuto, DebugAuto::new);
         // registerStrategy("Test Path", AutoStrategies.DebugTestPath, () -> new DebugPathAuto("TestStageLeft"));
         // registerStrategy("Test MultiPath", AutoStrategies.DebugTestMultipath,
-                // () -> new DebugPathAuto("Multipoint Test"));
+        // () -> new DebugPathAuto("Multipoint Test"));
         // registerStrategy("Test Curly", AutoStrategies.DebugCurly, () -> new DebugPathAuto("TestCurly"));
         // registerStrategy("Test Wavy", AutoStrategies.DebugWavy, () -> new DebugPathAuto("TestWave"));
         // registerStrategy("Tests2", AutoStrategies.DebugTests2, () -> new DebugPathAuto("Test2"));
@@ -79,6 +78,7 @@ public class AutoManager {
         registerStrategy("TabStraight", AutoStrategies.TabStraight, () -> new Tab(Tab.TabVersion.StraightStart));
         registerStrategy("DropShot", AutoStrategies.DropShot, DropShot::new);
         // registerStrategy("CrossWing", AutoStrategies.CrossWing, CrossWingShot::new);
+        registerStrategy("Blaze", AutoStrategies.Blaze, Blaze::new);
     }
 
     /**
@@ -114,8 +114,11 @@ public class AutoManager {
 
         // DropShot
         NamedCommands.registerCommand("BloopShot", new BloopShot());
-        
-        }
+
+        // Blaze
+        NamedCommands.registerCommand("BlazeShot", CommonCommands.DoShotCommand(Blaze.shootingPositionProfile));
+
+    }
 
     /**
      * Registers the autonomous paths with the path registry
@@ -124,6 +127,7 @@ public class AutoManager {
         UnderTheBridge.registerAutoPaths(pathRegistry);
         Tab.registerAutoPaths(pathRegistry);
         DropShot.registerAutoPaths(pathRegistry);
+        Blaze.registerAutoPaths(pathRegistry);
     }
 
     // Register the strategy with the chooser and the lookup map
@@ -173,10 +177,10 @@ public class AutoManager {
         DebugTests2,
         DCL_BCL,
         UnderTheBridge,
-        DropShot, 
+        DropShot,
         Tab,
         TabStraight,
-        CrossWing
+        Blaze, CrossWing
     }
 
 }

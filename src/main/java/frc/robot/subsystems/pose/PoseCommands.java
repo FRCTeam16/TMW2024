@@ -48,11 +48,11 @@ class PoseCommands {
                 Commands.parallel(
                         Commands.runOnce(() -> BSLogger.log("feedNoteToShooterPose", "starting")),
                         Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
-                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.FeedNote)
+                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote)
                 ),
                 Commands.parallel(
-                    new WaitPivotInPosition(),
-                    new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero)
+                        new WaitPivotInPosition(),
+                        new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero)
                 ).withTimeout(1.0),
                 new FeedNoteToShooterCommandVelocity().withTimeout(2.0),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ReadyToShoot),

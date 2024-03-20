@@ -7,17 +7,27 @@ import frc.robot.subsystems.util.BSLogger;
 import frc.robot.subsystems.util.Counter;
 
 public class FeedNoteToShooterCommandVelocity extends Command {
+    private boolean intakeFeedStarted = false;
+
     public FeedNoteToShooterCommandVelocity() {
         addRequirements(Subsystems.shooter, Subsystems.intake);
     }
     @Override
     public void initialize() {
         BSLogger.log("FeedNoteToShooterCommand", "starting");
+        intakeFeedStarted = false;
         if (!Subsystems.shooter.isNoteDetected()) {
-            Subsystems.shooter.getFeeder().setSlowFeedMode(false);
-            Subsystems.intake.setIntakeState(Intake.IntakeState.FeedNote);
-            Subsystems.shooter.getFeeder().setVelocityMode(true);
+            Subsystems.shooter.getFeeder().startFeed();
             Subsystems.asyncManager.register("FeedNoteToShooterCommand", this::handleFeedingNote);
+            checkAndRunIntake();
+        }
+    }
+
+    private void checkAndRunIntake() {
+        if (!intakeFeedStarted && Subsystems.shooter.isAtSpeed()) {
+            BSLogger.log("FeedNoteToShooterCommandVelocity", "Checking motor speed: " + Subsystems.shooter.getFeeder().getMotorVelocity());
+            intakeFeedStarted = true;
+            Subsystems.intake.setIntakeState(Intake.IntakeState.FeedNote);
         }
     }
 
@@ -27,6 +37,7 @@ public class FeedNoteToShooterCommandVelocity extends Command {
     }
 
     void handleFeedingNote() {
+        checkAndRunIntake();
         Subsystems.shooter.getFeeder().receiveFromIntakeVelocity();
         Subsystems.shooter.getFeeder().applyVelocity();
     }

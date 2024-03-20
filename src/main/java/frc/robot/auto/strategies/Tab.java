@@ -3,16 +3,12 @@ package frc.robot.auto.strategies;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Subsystems;
 import frc.robot.auto.PathRegistry;
 import frc.robot.commands.auto.*;
 import frc.robot.subsystems.VisionAimManager;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakePivot;
 import frc.robot.subsystems.pose.PoseManager;
-import frc.robot.subsystems.util.BSLogger;
 
 import static edu.wpi.first.units.Units.Degrees;
 
@@ -37,30 +33,6 @@ public class Tab extends AutoPathStrategy {
             createTabStraightCommands();
         }
         createCommands();
-    }
-
-    static Command DoShotCommand(VisionAimManager.ShootingProfile profile) {
-        return new SequentialCommandGroup(
-                // Start point is that we expect the shooter to have a note
-                new WaitShooterHasNote().withTimeout(0.5),
-                Subsystems.intake.moveToStateCmd(Intake.IntakeState.MoveIntakeToFloorWithoutIntaking),
-                writeLog("DoShotCommand", "If shooter has note then we will try shot"),
-                //
-                Commands.sequence(
-                        Commands.parallel(
-                                writeLog("DoShotCommand", "Setting shooter and pivot profiles"),
-                                new EnableShooterCommand(),
-                                Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(profile)),
-                                Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))
-                        ),
-                        new WaitPivotInPosition().withTimeout(0.5),
-                        writeLog("DoShotCommand", "******* WILL BE FIRING NEXT *******"),
-//                        new WaitCommand(0.5),
-                        doShootCmd()
-                ).unless(() -> !Subsystems.shooter.isNoteDetected()),
-                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup)
-        ).beforeStarting(() -> BSLogger.log("DoShotCommand", "starting"))
-                .finallyDo(() -> BSLogger.log("DoShotCommand", "ending"));
     }
 
     public static void registerAutoPaths(PathRegistry pathRegistry) {
@@ -149,7 +121,7 @@ public class Tab extends AutoPathStrategy {
         addCommands(
                 Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(SecondShot)),
                 new RotateToAngle(-30).withThreshold(5).withTimeout(0.5),
-                DoShotCommand(SecondShot),
+                CommonCommands.DoShotCommand(SecondShot),
 
 
                 //
@@ -161,7 +133,7 @@ public class Tab extends AutoPathStrategy {
                 ),
                 tab2,
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),  // trying this to make sure we are in a good state, try to prevent feed through
-                DoShotCommand(ThirdShot),
+                CommonCommands.DoShotCommand(ThirdShot),
 
                 //
                 // Pickup, forth shot
@@ -173,7 +145,7 @@ public class Tab extends AutoPathStrategy {
                 tab3,
                 // May need to check state here, auto command is dropping out
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
-                DoShotCommand(ForthShot),
+                CommonCommands.DoShotCommand(ForthShot),
 
                 //
                 // Pickup, fifth shot
@@ -184,7 +156,7 @@ public class Tab extends AutoPathStrategy {
                 ),
                 tab4,
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
-                DoShotCommand(FifthShot),
+                CommonCommands.DoShotCommand(FifthShot),
                 // Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter)
                 writeLog("Tab auto", "@@@ FINISHED AUTO @@@")
 

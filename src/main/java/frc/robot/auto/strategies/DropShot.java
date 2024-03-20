@@ -90,7 +90,7 @@ public class DropShot extends AutoPathStrategy {
                 this.runAutoPath("DropShot4"),
                 writeLog("DropShot", "Finished DropShot4"),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
-                Tab.DoShotCommand(fieldShotProfile),
+                CommonCommands.DoShotCommand(fieldShotProfile),
                 Commands.print("@@@@ Finished DropShot @@@@"));
     }
 
@@ -133,7 +133,7 @@ public class DropShot extends AutoPathStrategy {
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
                 Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(fieldShotProfile)),
                 new WaitCommand(0.25),
-                Tab.DoShotCommand(fieldShotProfile),
+                CommonCommands.DoShotCommand(fieldShotProfile),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup),
                 writeLog("DropShot", "!!!!! FINISHED ROUTE COMMAND: " + pathName)
         );
@@ -151,7 +151,7 @@ public class DropShot extends AutoPathStrategy {
                     Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
                     Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(fieldShotProfile)),
                     new WaitCommand(0.25),
-                    Tab.DoShotCommand(fieldShotProfile),
+                    CommonCommands.DoShotCommand(fieldShotProfile),
                     Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup),
                     writeLog("DropShot", "!!!!! FINISHED ROUTE COMMAND: " + pathName)
             );

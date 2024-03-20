@@ -136,6 +136,13 @@ public class FeederHelper implements Sendable {
         this.shootingSpeed = shootingSpeed;
     }
 
+    public void startFeed() {
+        this.velocityControl.velocitySetpoint = this.velocityControl.feedVelocity;
+        this.setSlowFeedMode(false);
+        this.setVelocityMode(true);
+        this.setEnabled(true);
+        this.applyVelocity();
+    }
     /**
      * Handles the feed note command logic
      */
@@ -215,6 +222,7 @@ public class FeederHelper implements Sendable {
         builder.addDoubleProperty(name + "/Open Loop Setpoint", this::getOpenLoopSetpoint, this::setOpenLoopSetpoint);
         builder.addBooleanProperty(name + "/Slow Sensor", this::isSlowSensorDetected, null);
         builder.addBooleanProperty(name + "/Slow Mode", this::isSlowFeedMode, this::setSlowFeedMode);
+        builder.addDoubleProperty(name + "/Motor Velocity", this::getMotorVelocity, null);
 
         if (Constants.Dashboard.ConfigurationMode && Constants.Dashboard.ShooterConfigMode) {
             builder.addDoubleProperty(name + "/Feed Note Speed", this::getFeedShooterSpeed, this::setFeedShooterSpeed);
@@ -226,6 +234,11 @@ public class FeederHelper implements Sendable {
             builder.addDoubleProperty(name + "/Velocity/Feed", () -> velocityControl.feedVelocity, (v) -> velocityControl.feedVelocity = v);
         }
     }
+
+    public double getMotorVelocity() {
+        return motor.getVelocity().getValue();
+    }
+
 
     class VelocityControl {
         double velocitySetpoint = 0.0;

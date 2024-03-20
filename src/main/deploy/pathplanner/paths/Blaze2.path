@@ -1,0 +1,86 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 6.835268612861982,
+        "y": 1.8501874803217224
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.82798441018355,
+        "y": 1.7919138588942665
+      },
+      "isLocked": true,
+      "linkedName": "B1End"
+    },
+    {
+      "anchor": {
+        "x": 5.305586050391266,
+        "y": 1.69721922407465
+      },
+      "prevControl": {
+        "x": 5.9782657868834175,
+        "y": 1.41766400890908
+      },
+      "nextControl": {
+        "x": 4.744702444152004,
+        "y": 1.9303137097844736
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.717629866493096,
+        "y": 2.891828463337495
+      },
+      "prevControl": {
+        "x": 4.237763905288232,
+        "y": 2.4762260775808156
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "BlazeShoot"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Feed",
+      "waypointRelativePos": 0.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "FeedNote"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -36.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Blaze",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 1.5
+  },
+  "useDefaultConstraints": true
+}

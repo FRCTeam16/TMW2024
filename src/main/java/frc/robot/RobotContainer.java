@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
+import frc.robot.commands.auto.FeedNoteInAuto;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.RotationController;
@@ -435,6 +436,8 @@ public class RobotContainer {
                 SmartDashboard.putData("Set VisionAim State",
                         Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShooterAimVision));
 
+
+                SmartDashboard.putData("AutoFeedTest", new FeedNoteInAuto());
         }
 
         public Command getAutonomousCommand() {

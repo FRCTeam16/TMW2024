@@ -12,11 +12,11 @@ public final class Constants {
         public static final boolean ConfigurationMode = true;
 
 
-        public static final boolean PivotConfigMode = true;
+        public static final boolean PivotConfigMode = false;
         public static final boolean IntakeConfigMode = true;
         public static final boolean ShooterConfigMode = true;
-        public static final boolean TrapConfigMode = true;
-        public static final boolean ClimberConfigMode = true;
+        public static final boolean TrapConfigMode = false;
+        public static final boolean ClimberConfigMode = false;
 
 
     }

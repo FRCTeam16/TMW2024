@@ -1,0 +1,125 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 6.835268612861982,
+        "y": 1.8501874803217224
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.840173617503,
+        "y": 1.8549198887099414
+      },
+      "isLocked": true,
+      "linkedName": "B1End"
+    },
+    {
+      "anchor": {
+        "x": 8.051730460160123,
+        "y": 0.84
+      },
+      "prevControl": {
+        "x": 8.211982919085624,
+        "y": 0.8472842026784321
+      },
+      "nextControl": {
+        "x": 7.190126196112418,
+        "y": 0.8008361698160124
+      },
+      "isLocked": false,
+      "linkedName": "BlazeLinePickup"
+    },
+    {
+      "anchor": {
+        "x": 5.291017645034402,
+        "y": 1.4568405356863956
+      },
+      "prevControl": {
+        "x": 6.026722115556032,
+        "y": 0.946946348196157
+      },
+      "nextControl": {
+        "x": 4.531745314655021,
+        "y": 1.9830688834740855
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.717629866493096,
+        "y": 2.891828463337495
+      },
+      "prevControl": {
+        "x": 4.28579767541079,
+        "y": 2.2653870329923445
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "BlazeShoot"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.65,
+      "rotationDegrees": -50.0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Feed",
+      "waypointRelativePos": 1.8,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "FeedNote"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "StartIntake"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0.0,
+    "rotation": -36.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Blaze",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 1.5
+  },
+  "useDefaultConstraints": true
+}

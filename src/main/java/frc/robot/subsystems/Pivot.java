@@ -274,7 +274,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     public enum PivotPosition {
         StartingPosition(0),
         Horizontal(0),
-        FeedPosition(23.0),
+        FeedPosition(15.0),
         Up(70),
         ShortShot(55),
         VisionAim(21),
