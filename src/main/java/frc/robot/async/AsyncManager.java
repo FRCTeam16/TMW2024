@@ -2,19 +2,22 @@ package frc.robot.async;
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.util.BSLogger;
-import org.ejml.dense.row.CommonOps_FDRM;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReferenceArray;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AsyncManager {
     private final AsyncWorkThread thread = new AsyncWorkThread(0.005); // 5ms
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final List<AsyncTask> tasks = Collections.synchronizedList(new ArrayList<>());
+    private double lastOverrunReport = 0;
 
     public AsyncManager() {
         thread.setDaemon(true);
+        this.register("reportOverruns", this::reportOverruns);
     }
 
     public void start() {
@@ -42,11 +45,21 @@ public class AsyncManager {
         return tasks.size();
     }
 
+    void reportOverruns() {
+        int numOverruns = thread.overRun.get();
+        if ((numOverruns > 0) && (Timer.getFPGATimestamp() - lastOverrunReport > 1.0)) {
+            BSLogger.log("AsyncManager", "Overruns: " + numOverruns + " in the last second (of " + thread.numRuns.get() + " runs);");
+            lastOverrunReport = Timer.getFPGATimestamp();
+            thread.overRun.set(0);
+            thread.numRuns.set(0);
+        }
+    }
+
     class AsyncWorkThread extends Thread {
         private final double period;
-        private double lastRun = Timer.getFPGATimestamp();
-
-        int counter = 0;
+        AtomicInteger overRun = new AtomicInteger(0);
+        AtomicInteger numRuns = new AtomicInteger(0);
+        private double lastRun = 0;
 
         AsyncWorkThread(double period) {
             this.period = period;
@@ -55,21 +68,20 @@ public class AsyncManager {
         @Override
         public void run() {
             while (running.get()) {
-//                if (counter++ % 1000 == 0) {
-//                    BSLogger.log("AsyncWorkThread", "COUNTER: " + counter);
-//                }
-                if (Timer.getFPGATimestamp() - lastRun > period) {
+                double current = Timer.getFPGATimestamp();
+                // If the time since the last run is greater than the period, run the tasks
+                if ((current - lastRun) > period) {
                     synchronized (tasks) {
                         for (AsyncTask task : tasks) {
                             task.run();
                         }
                     }
-                    double now = Timer.getFPGATimestamp();
-                    if ((now - lastRun) > period * 2) {
-//                        BSLogger.log("AsyncManager", "Async tasks are running behind");
+                    if ((Timer.getFPGATimestamp() - lastRun) > period * 2) {
+                        overRun.incrementAndGet();
                     }
                     lastRun = Timer.getFPGATimestamp();
                 }
+                numRuns.incrementAndGet();
             }
             BSLogger.log("AsyncManager", "Existing async manager thread");
         }
