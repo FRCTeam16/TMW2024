@@ -148,7 +148,7 @@ public class TrapPivot implements Lifecycle, Sendable {
         if (openLoop) {
             motor.setControl(voltageOut.withOutput(openLoopSetpoint));
         } else {
-            if (pidHelper.updateValuesFromDashboard()) {
+            if (Constants.Dashboard.ClimberConfigMode && Constants.Dashboard.TrapConfigMode && pidHelper.updateValuesFromDashboard()) {
                 pidHelper.updatePIDController(pid);
             }
             final double output = pid.calculate(this.encoder.get(), goal.position);

@@ -159,7 +159,7 @@ public class TrapExtender implements Lifecycle, Sendable {
     public void periodic() {
         // Check whether to expire closed loop control request
         if (closedLoopSetTimer.hasElapsed(CLOSED_LOOP_TIMEOUT) && !openLoop) {
-            BSLogger.log("TrapExtend", "Exiting closed loop");
+            BSLogger.log("TrapExtend", "Exiting closed loop after elapsed time");
             openLoop = true;
             closedLoopSetTimer.stop();
         }

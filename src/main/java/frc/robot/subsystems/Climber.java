@@ -152,7 +152,7 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void periodic() {
-        if (pidHelper.updateValuesFromDashboard()) {
+        if (Constants.Dashboard.ClimberConfigMode && Constants.Dashboard.ClimberConfigMode && pidHelper.updateValuesFromDashboard()) {
             pidHelper.updateConfiguration(config.Slot0);
             climberDrive.getConfigurator().apply(config.Slot0);
         }

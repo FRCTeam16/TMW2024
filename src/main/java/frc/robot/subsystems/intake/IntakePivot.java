@@ -237,9 +237,10 @@ public class IntakePivot implements Lifecycle, Sendable {
         builder.addDoubleProperty("Pivot/EncoderAbsolutePosition", this.encoder::getAbsolutePosition, null);
         builder.addDoubleProperty("Pivot/EncoderOffset", this.encoder::getPositionOffset, null);
 
-        ampShotPIDController.initSendable(builder);
-
+        
         if (Constants.Dashboard.ConfigurationMode && Constants.Dashboard.IntakeConfigMode) {
+            ampShotPIDController.initSendable(builder);
+
             builder.addBooleanProperty("Pivot/OpenLoop", this::isPivotOpenLoop, this::setPivotOpenLoop);
             builder.addDoubleProperty("Pivot/UpSpeed", pivotOpenLoopSpeeds::getUpSpeed, pivotOpenLoopSpeeds::setUpSpeed);
             builder.addDoubleProperty("Pivot/DownSpeed", pivotOpenLoopSpeeds::getDownSpeed, pivotOpenLoopSpeeds::setDownSpeed);

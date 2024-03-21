@@ -128,15 +128,15 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
     public void initSendable(SendableBuilder builder) {
         if (Constants.Dashboard.UseSendables) {
             builder.setSmartDashboardType(SUBSYSTEM_NAME);
-            // TODO: expose finger values
+            
             pivot.initSendable(builder);
             extender.initSendable(builder);
 
-            builder.addDoubleProperty("Servo/finger1Angle", fingerLeft::getAngle, fingerLeft::setAngle);
-            builder.addDoubleProperty("Servo/finger2Angle", fingerRight::getAngle, fingerRight::setAngle);
+            // builder.addDoubleProperty("Servo/finger1Angle", fingerLeft::getAngle, fingerLeft::setAngle);
+            // builder.addDoubleProperty("Servo/finger2Angle", fingerRight::getAngle, fingerRight::setAngle);
 
-            SmartDashboard.putData("TrapSubsystem/Debug/FL", fingerLeft);
-            SmartDashboard.putData("TrapSubsystem/Debug/FR", fingerRight);
+            // SmartDashboard.putData("TrapSubsystem/Debug/FL", fingerLeft);
+            // SmartDashboard.putData("TrapSubsystem/Debug/FR", fingerRight);
         }
     }
 }

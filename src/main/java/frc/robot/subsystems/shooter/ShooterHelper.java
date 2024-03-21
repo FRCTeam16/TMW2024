@@ -127,17 +127,15 @@ public class ShooterHelper implements Sendable {
             if (openLoop) {
                 this.motor.setControl(openLoopOut.withOutput(direction() * openLoopSetpoint));
             } else {
-                if (pid.updateValuesFromDashboard()) {
-                    // this.setMotorPID();
-                }
+                // if (pid.updateValuesFromDashboard()) {
+                //     // this.setMotorPID();
+                // }
                 this.motor.setControl(velocityOut.withVelocity(direction() * velocitySetpoint).withFeedForward(pid.kF).withEnableFOC(true));
             }
         }
         else {
             this.motor.setControl(openLoopOut.withOutput(0));
         }
-
-        SmartDashboard.putNumber(parentName + "/" + name + "/ActualVelocity", this.motor.getVelocity().getValue());
     }
 
 

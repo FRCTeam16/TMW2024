@@ -173,7 +173,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         if (openLoop) {
             motor.setControl(openLoopOut.withOutput(speed));
         } else {
-            if (pidHelper.updateValuesFromDashboard()) {
+            if (Constants.Dashboard.ConfigurationMode && Constants.Dashboard.PivotConfigMode && pidHelper.updateValuesFromDashboard()) {
                 pidHelper.updatePIDController(pid);
             }
 
@@ -188,7 +188,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
                 if (result.isPresent()) {
                     VisionAimManager.ShootingProfile shootingProfile = result.get().shootingProfile();
                     this.setPivotSetpoint(shootingProfile.pivotAngle());
-                    Subsystems.shooter.applyShootingProfile(shootingProfile);   // FIXME: Investigate better integration?
+                    Subsystems.shooter.applyShootingProfile(shootingProfile);
                 }
             }
             final double output = pid.calculate(this.getPivotAngleDegrees(), goal.position);
@@ -231,10 +231,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
                 builder.addDoubleProperty("Motor/Velocity", this::getMotorVelocity, null);
                 builder.addDoubleProperty("Motor/Voltage", this::getMotorVoltage, null);
                 builder.addDoubleProperty("Motor/SupplyCurrent", this::getMotorSupplyCurrent, null);
-
             }
-
-                
         }
     }
 
