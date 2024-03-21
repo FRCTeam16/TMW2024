@@ -47,6 +47,12 @@
                 }
               },
               {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.25
+                }
+              },
+              {
                 "type": "named",
                 "data": {
                   "name": "FeedNote"
@@ -72,6 +78,12 @@
                 }
               },
               {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.25
+                }
+              },
+              {
                 "type": "named",
                 "data": {
                   "name": "FeedNote"
@@ -94,6 +106,12 @@
                 "type": "path",
                 "data": {
                   "pathName": "TabPath4"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.25
                 }
               },
               {

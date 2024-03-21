@@ -243,6 +243,6 @@ public class FeederHelper implements Sendable {
     class VelocityControl {
         double velocitySetpoint = 0.0;
         double slowFeedVelocity = -2.0;
-        double feedVelocity = -25.0;
+        double feedVelocity = -20.0;
     }
 }
