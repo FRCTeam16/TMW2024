@@ -143,6 +143,12 @@ public class FeederHelper implements Sendable {
         this.setEnabled(true);
         this.applyVelocity();
     }
+
+    public boolean isAtSpeed() {
+        return Math.abs(this.motor.getVelocity().getValueAsDouble()) > 1;
+    }
+
+
     /**
      * Handles the feed note command logic
      */

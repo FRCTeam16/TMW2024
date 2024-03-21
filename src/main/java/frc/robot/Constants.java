@@ -18,7 +18,6 @@ public final class Constants {
         public static final boolean TrapConfigMode = false;
         public static final boolean ClimberConfigMode = false;
 
-
     }
 
     public static final class OI {

@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.util.BSLogger;
-import frc.robot.subsystems.util.Counter;
 
 public class FeedNoteToShooterCommandVelocity extends Command {
     private boolean intakeFeedStarted = false;
@@ -24,7 +23,8 @@ public class FeedNoteToShooterCommandVelocity extends Command {
     }
 
     private void checkAndRunIntake() {
-        if (!intakeFeedStarted && Subsystems.shooter.isAtSpeed()) {
+        // BSLogger.log("FeedNoteToShooterCommand", "intakeStart? " + intakeFeedStarted + " | Shooter spped? " + Subsystems.shooter.isFeederAtSpeed());
+        if (!intakeFeedStarted && Subsystems.shooter.isFeederAtSpeed()) {
             BSLogger.log("FeedNoteToShooterCommandVelocity", "Checking motor speed: " + Subsystems.shooter.getFeeder().getMotorVelocity());
             intakeFeedStarted = true;
             Subsystems.intake.setIntakeState(Intake.IntakeState.FeedNote);
@@ -51,6 +51,7 @@ public class FeedNoteToShooterCommandVelocity extends Command {
         }
         Subsystems.shooter.getFeeder().setOpenLoopSetpoint(0.0);
         Subsystems.shooter.getFeeder().setVelocityMode(false);
+        Subsystems.shooter.stopFeeder();
         Subsystems.asyncManager.unregister("FeedNoteToShooterCommand");
     }
 }

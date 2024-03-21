@@ -55,6 +55,7 @@ class PoseCommands {
                         new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero)
                 ).withTimeout(1.0),
                 new FeedNoteToShooterCommandVelocity().withTimeout(2.0),
+                Commands.runOnce(Subsystems.shooter::stopFeeder, Subsystems.shooter),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ReadyToShoot),
                 Commands.runOnce(() -> BSLogger.log("feedNoteToShooterPose", "finished"))
         );

@@ -17,7 +17,6 @@ public class WaitIntakeInPosition extends Command {
 
     public WaitIntakeInPosition(IntakePivot.IntakePosition position) {
         this.position = position;
-        addRequirements(Subsystems.intake);
     }
 
     @Override

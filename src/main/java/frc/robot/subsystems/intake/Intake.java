@@ -169,33 +169,6 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
             intakeSpeed.runAmpShot();
         }
 
-
-//            if (tryShootAmp.isEmpty()) {
-//                tryShootAmp = Optional.of(new Timer());
-//                tryShootAmp.get().start();
-////                intakePivot.setIntakePosition(IntakePivot.IntakePosition.Vertical);
-//                var cfg = intakePivot.getMotionMagicConfigs();
-//                this.original_velocity = cfg.MotionMagicCruiseVelocity;
-//                cfg.MotionMagicCruiseVelocity = this.MM_Velocity;
-//                intakePivot.applyConfigs(cfg);
-//            } else {
-//                final double position = intakePivot.getCurrentPosition();
-//                final double elapsed = tryShootAmp.get().get();
-//                final double END = 1.0;
-//                if (position < shotPosition && elapsed < END) {
-//                    intakeSpeed.runAmpShot();
-//                } else if (elapsed > END) {
-//                    var cfg = intakePivot.getMotionMagicConfigs();
-//                    cfg.MotionMagicCruiseVelocity = original_velocity;
-//                    intakePivot.applyConfigs(cfg);
-//
-//                    intakeSpeed.stopIntake();
-//                    tryShootAmp = Optional.empty();
-//                    this.setIntakeState(IntakeState.HoldNote);
-//                }
-//            }
-
-
         intakeSpeed.periodic();
         intakePivot.periodic();
     }

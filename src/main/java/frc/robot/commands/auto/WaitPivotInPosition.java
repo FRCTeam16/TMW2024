@@ -7,7 +7,7 @@ import frc.robot.subsystems.util.BSLogger;
 public class WaitPivotInPosition extends Command {
 
     public WaitPivotInPosition() {
-        addRequirements(Subsystems.pivot);
+        // addRequirements(Subsystems.pivot);
     }
 
     @Override
