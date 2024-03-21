@@ -80,8 +80,8 @@ public class AsyncManager {
                         overRun.incrementAndGet();
                     }
                     lastRun = Timer.getFPGATimestamp();
+                    numRuns.incrementAndGet();
                 }
-                numRuns.incrementAndGet();
             }
             BSLogger.log("AsyncManager", "Existing async manager thread");
         }

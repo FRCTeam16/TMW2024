@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 1.75,
-        "y": 6.6
+        "y": 6.4
       },
       "prevControl": null,
       "nextControl": {
         "x": 1.8413545457642604,
-        "y": 6.64067366430758
+        "y": 6.440673664307581
       },
       "isLocked": true,
       "linkedName": "Tab3End"
@@ -38,8 +38,8 @@
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 25.0,
+    "velocity": 300.0,
+    "rotation": 27.0,
     "rotateFast": false
   },
   "reversed": false,
