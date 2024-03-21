@@ -16,6 +16,9 @@ import frc.robot.subsystems.util.BSLogger;
 
 public class CommonCommands {
     public static Command DoShotCommand(VisionAimManager.ShootingProfile profile) {
+        return DoShotCommand("Default", profile);
+    }
+    public static Command DoShotCommand(String name, VisionAimManager.ShootingProfile profile) {
         return new SequentialCommandGroup(
                 // Start point is that we expect the shooter to have a note
                 new WaitShooterHasNote().withTimeout(0.5),
@@ -29,14 +32,18 @@ public class CommonCommands {
                                 Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(profile)),
                                 Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))
                         ),
-                        new WaitPivotInPosition().withTimeout(0.5),
+                        Commands.parallel(
+                                new WaitPivotInPosition(),
+                                new WaitShooterAtSpeed(),
+                                new WaitCommand(0.25)
+                        ).withTimeout(0.5),
                         AutoPathStrategy.writeLog("DoShotCommand", "******* WILL BE FIRING NEXT *******"),
 //                        new WaitCommand(0.5),
-                        Tab.doShootCmd()
+                        CommonCommands.doShootCmd()
                 ).unless(() -> !Subsystems.shooter.isNoteDetected()),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup)
-        ).beforeStarting(() -> BSLogger.log("DoShotCommand", "starting"))
-                .finallyDo(() -> BSLogger.log("DoShotCommand", "ending"));
+        ).beforeStarting(() -> BSLogger.log("DoShotCommand", "starting: " + name))
+                .finallyDo(() -> BSLogger.log("DoShotCommand", "ending: " + name));
     }
 
     public static Command DoBlazeShotCommand(VisionAimManager.ShootingProfile profile) {

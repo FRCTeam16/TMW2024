@@ -9,6 +9,7 @@ import frc.robot.auto.PathRegistry;
 import frc.robot.commands.auto.*;
 import frc.robot.subsystems.VisionAimManager;
 import frc.robot.subsystems.pose.PoseManager;
+import frc.robot.subsystems.util.GameInfo;
 
 import static edu.wpi.first.units.Units.Degrees;
 
@@ -19,7 +20,8 @@ public class Tab extends AutoPathStrategy {
     public static final VisionAimManager.ShootingProfile ThirdShot = new VisionAimManager.ShootingProfile(47.5, 22, 22); // 55"
     public static final VisionAimManager.ShootingProfile ForthShot = new VisionAimManager.ShootingProfile(43.5, 31, 27); // 76.5"
     public static final VisionAimManager.ShootingProfile FifthShot = new VisionAimManager.ShootingProfile(31.5, 45, 32); // 98.8"
-    private PathPlannerAuto tab1 = new PathPlannerAuto("Tab");
+
+    //    private PathPlannerAuto tab1 = new PathPlannerAuto("Tab");
     private PathPlannerAuto tab1a = new PathPlannerAuto("Tab1a");
     private PathPlannerAuto tab2 = new PathPlannerAuto("Tab2");
     private PathPlannerAuto tab3 = new PathPlannerAuto("Tab3");
@@ -31,12 +33,12 @@ public class Tab extends AutoPathStrategy {
             createTabOffsetStartCommands();
         } else {
             createTabStraightCommands();
+            createCommands();
         }
-        createCommands();
     }
 
     public static void registerAutoPaths(PathRegistry pathRegistry) {
-//        pathRegistry.registerPaths("Tab", "Tab1a", "Tab2", "Tab3", "Tab4");
+        pathRegistry.registerPaths("Tab", "Tab1a", "Tab2", "Tab3", "Tab4", "XTab");
     }
 
     static Command doShootCmd() {
@@ -64,10 +66,7 @@ public class Tab extends AutoPathStrategy {
                         new WaitCommand(0.25)
                 ),
                 doShootCmd(),
-                Commands.parallel(
-                        new EnableShooterCommand(false),
-                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive)
-                ),
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive),
 
                 //
                 // Run and pickup, second shot
@@ -76,7 +75,7 @@ public class Tab extends AutoPathStrategy {
                         writeLog("Tab", "****** Running Tab"),
                         Subsystems.pivot.setQueuedProfileCmd(SecondShot)
                 ),
-                tab1
+                this.runAutoPath("XTab")
         );
     }
 
@@ -114,12 +113,20 @@ public class Tab extends AutoPathStrategy {
         );
     }
 
+    public static Command createTabShot2Rotate() {
+        return Commands.either(
+                new RotateToAngle(30).withThreshold(5),
+                new RotateToAngle(-30).withThreshold(5),
+                GameInfo::isBlueAlliance).withTimeout(0.5);
+    }
+
+
     /**
      * Expected start staight is we are at second shot position
      */
     void createCommands() {
         addCommands(
-                Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(SecondShot)),
+//                Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(SecondShot)),
                 new RotateToAngle(-30).withThreshold(5).withTimeout(0.5),
                 CommonCommands.DoShotCommand(SecondShot),
 

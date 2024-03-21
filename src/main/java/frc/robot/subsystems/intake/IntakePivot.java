@@ -259,6 +259,10 @@ public class IntakePivot implements Lifecycle, Sendable {
         return (Math.abs(getCurrentPosition() - position.setpoint) <= 0.15);
     }
 
+    public boolean isMotorInPosition(IntakePosition position) {
+        return (Math.abs(getCurrentPosition() - position.setpoint) <= 2.0);
+    }
+
     public Command fixMotorOffsetCmd() {
         BSLogger.log("IntakePivot", "fixMotorOffsetCmd");
         return Commands.none();

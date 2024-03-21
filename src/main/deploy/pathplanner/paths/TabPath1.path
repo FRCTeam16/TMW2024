@@ -127,7 +127,7 @@
     },
     {
       "name": "Feed",
-      "waypointRelativePos": 2.4,
+      "waypointRelativePos": 2.35,
       "command": {
         "type": "parallel",
         "data": {
@@ -136,23 +136,6 @@
               "type": "named",
               "data": {
                 "name": "FeedNote"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "Start Shooter",
-      "waypointRelativePos": 3.15,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "StartShooter"
               }
             }
           ]

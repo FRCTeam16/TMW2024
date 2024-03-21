@@ -22,7 +22,7 @@ public class WaitIntakeInPosition extends Command {
 
     @Override
     public boolean isFinished() {
-        if (Subsystems.intake.isInPosition(position)) {
+        if (Subsystems.intake.getIntakePivot().isMotorInPosition(position)) {
             seenCounter.increment();
         } else {
             seenCounter.reset();

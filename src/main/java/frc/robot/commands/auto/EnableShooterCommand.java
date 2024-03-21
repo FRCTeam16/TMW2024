@@ -9,7 +9,7 @@ public class EnableShooterCommand extends Command {
 
     public EnableShooterCommand() {
         this(true);
-        this.addRequirements(Subsystems.shooter, Subsystems.pivot);
+        this.addRequirements(Subsystems.shooter);
     }
 
     public EnableShooterCommand(boolean enable) {

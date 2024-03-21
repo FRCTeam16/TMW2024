@@ -1,0 +1,125 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.35,
+      "y": 5.515
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "TabPath1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "TabShot2Rotate"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "TabShot2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "TabPath2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "FeedNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "TabShot3"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "TabPath3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "FeedNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "TabShot4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "TabPath4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "FeedNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "TabShot5"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TabPath5"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "XTab",
+  "choreoAuto": false
+}

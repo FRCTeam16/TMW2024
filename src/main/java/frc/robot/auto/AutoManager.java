@@ -86,13 +86,11 @@ public class AutoManager {
      */
     private void registerNamedCommands() {
         NamedCommands.registerCommand("rotate45", new RotateToAngle(-45));
-        NamedCommands.registerCommand("StartIntake", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup));
         NamedCommands.registerCommand("StartShooter", new EnableShooterCommand());
         NamedCommands.registerCommand("StopShooter", new EnableShooterCommand(false));
         NamedCommands.registerCommand("StartAutoAim",
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShooterAimVision));
         NamedCommands.registerCommand("StartDrive", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
-        NamedCommands.registerCommand("FeedNote", new FeedNoteInAuto());
         NamedCommands.registerCommand("ShootNote", Subsystems.shooter.shootCmd());
 
         NamedCommands.registerCommand("WaitIntakeInPosition",
@@ -104,6 +102,11 @@ public class AutoManager {
                 Commands.waitUntil(Subsystems.shooter::isNoteDetected).withTimeout(1.0)
                         .andThen(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShooterAimVision)));
 
+        // Common
+        NamedCommands.registerCommand("StartIntake", Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup));
+        NamedCommands.registerCommand("FeedNote", new FeedNoteInAuto());
+
+
         // UTB
         NamedCommands.registerCommand("UTBSetThirdShotPivot",
                 Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Custom));
@@ -111,6 +114,13 @@ public class AutoManager {
                 Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(UnderTheBridge.SecondShotProfile)));
         NamedCommands.registerCommand("UTBSetThirdShotSpeed",
                 Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(UnderTheBridge.ThirdShotProfile)));
+
+        // Tab
+        NamedCommands.registerCommand("TabShot2Rotate", Tab.createTabShot2Rotate());
+        NamedCommands.registerCommand("TabShot2", CommonCommands.DoShotCommand("TabShot2", Tab.SecondShot));
+        NamedCommands.registerCommand("TabShot3", CommonCommands.DoShotCommand("TabShot3", Tab.ThirdShot));
+        NamedCommands.registerCommand("TabShot4", CommonCommands.DoShotCommand("TabShot4", Tab.ForthShot));
+        NamedCommands.registerCommand("TabShot5", CommonCommands.DoShotCommand("TabShot5", Tab.FifthShot));
 
         // DropShot
         NamedCommands.registerCommand("BloopShot", new BloopShot());
