@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 public class AmpShotController implements Sendable {
     private final DutyCycleEncoder encoder;
 
-    private PIDController pid = new PIDController(25, 0, 0);
+    private PIDController pid = new PIDController(30, 0, 8);
     private TrapezoidProfile.State goal;
 
     private double clamp = 0.75;

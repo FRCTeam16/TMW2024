@@ -88,7 +88,7 @@ class PoseCommands {
                         Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition)
                 ),
                 new WaitPivotInPosition().withTimeout(0.2),
-                new CenterNoteIntakeCommand(),
+//                new CenterNoteIntakeCommand(),
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.AmpAim),
                 Commands.parallel(
                         new WaitTrapExtendInPosition(),
@@ -103,7 +103,7 @@ class PoseCommands {
         return Commands.sequence(
                 Commands.runOnce(() -> BSLogger.log("PoseCommands", "****** FIRE AMP SHOT POSE ******")),
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.TryShootAmp),
-                new WaitCommand(0.2),
+                new WaitCommand(0.15),
                 Subsystems.trap.moveToStateCmd(Trap.TrapState.AmpShotDeflectShot),
                 new WaitCommand(1.0),
                 Subsystems.trap.moveToStateCmd(Trap.TrapState.PivotDrive),

@@ -442,6 +442,8 @@ public class RobotContainer {
 
 
                 SmartDashboard.putData("AutoFeedTest", new FeedNoteInAuto());
+
+                SmartDashboard.putData("Reset Intake Encodert", Subsystems.intake.resetEncoderCmd());
         }
 
         public Command getAutonomousCommand() {

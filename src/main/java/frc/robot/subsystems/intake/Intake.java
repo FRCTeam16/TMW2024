@@ -31,6 +31,8 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
     private static final double POST_NOTE_DETECT_TIME = 0.25;
 
 
+
+
     public enum IntakeState {
         StartingPosition,
         IntakeFromFloor,
@@ -132,6 +134,11 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         this.intakeState = state;
     }
 
+
+    public Command resetEncoderCmd() {
+        return this.runOnce(this.intakePivot::resetEncoder);
+    }
+
     public IntakeState getIntakeState() {
         return intakeState;
     }
@@ -160,7 +167,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
         //
         // Trying Amp Shot
         //
-        if (ampShotTimer.isPresent() && ampShotTimer.get().hasElapsed(0.5)) {
+        if (ampShotTimer.isPresent() && ampShotTimer.get().hasElapsed(0.25)) {
             ampShotTimer = Optional.empty();
             setIntakeState(IntakeState.StopFeed);
         } else if (IntakeState.TryShootAmp == intakeState && ampShotTimer.isEmpty()) {
@@ -216,6 +223,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
             }
         }
     }
+
 
     public Command moveToStateCmd(IntakeState state) {
         return Commands.runOnce(() -> this.setIntakeState(state), Subsystems.intake);
