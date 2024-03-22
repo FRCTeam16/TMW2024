@@ -414,8 +414,8 @@ public class RobotContainer {
                                 new RunWithDisabledInstantCommand(() -> Subsystems.swerveSubsystem.tareEverything()));
                 SmartDashboard.putData("Zero Gyro", new ZeroAndSetOffsetCommand(0).ignoringDisable(true));
 
-                SmartDashboard.putData("Update IntakeRotate PID", Subsystems.intake.getIntakePivot()
-                                .updatePIDFromDashbboardCommand().ignoringDisable(true));
+                SmartDashboard.putData("Update IntakeRotate PID/MM", Subsystems.intake.getIntakePivot().updatePIDFromDashbboardCommand());
+
                 SmartDashboard.putData("Fix Intake Pivot Offset",
                                 Subsystems.intake.getIntakePivot().fixMotorPositionCmd().ignoringDisable(true));
 

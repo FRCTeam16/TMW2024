@@ -221,12 +221,12 @@ public class IntakePivot implements Lifecycle, Sendable {
         motionMagicConfig.updateSlot0Config(pivotConfiguration.Slot0);
         motionMagicConfig.updateMotionMagicConfig(pivotConfiguration.MotionMagic);
         StatusCode result = pivotDrive.getConfigurator().apply(pivotConfiguration);
+        BSLogger.log("IntakePivot", "updatePIDFromDashboard result: " + result);
     }
 
     public Command updatePIDFromDashbboardCommand() {
-        return Commands.runOnce(this::updatePIDFromDashboard);
+        return Commands.runOnce(this::updatePIDFromDashboard).ignoringDisable(true);
     }
-    
 
     @Override
     public void initSendable(SendableBuilder builder) {
