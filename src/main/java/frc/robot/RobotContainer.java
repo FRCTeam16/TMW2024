@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
 import frc.robot.commands.auto.FeedNoteInAuto;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.RotationController;
 import frc.robot.subsystems.pose.ClimbManager;
@@ -249,14 +250,17 @@ public class RobotContainer {
                                                         () -> Subsystems.intake.getIntakePivot().holdPosition()));
                 }
                 // Test Climber
-                if (false) {
+                if (true) {
                         leftTrigger
-                                        .onTrue(Commands.runOnce(() -> Subsystems.climber.openLoopUp()))
-                                        .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
+                                .onTrue(Commands.runOnce(() -> Subsystems.climber.openLoopUp()))
+                                .onFalse(Commands.runOnce(() -> Subsystems.climber.holdPosition()));
 
                         rightTrigger
-                                        .onTrue(Commands.runOnce(() -> Subsystems.climber.openLoopDown()))
-                                        .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
+                                .onTrue(Commands.runOnce(() -> Subsystems.climber.openLoopDown()))
+                                .onFalse(Commands.runOnce(() -> Subsystems.climber.holdPosition()));
+
+                        SmartDashboard.putData("Climber Up", Subsystems.climber.moveToStateCmd(Climber.ClimberPosition.UP));
+                        SmartDashboard.putData("Climber Down", Subsystems.climber.moveToStateCmd(Climber.ClimberPosition.DOWN));
                 }
 
                 // Test Trap
@@ -297,7 +301,7 @@ public class RobotContainer {
                 }
 
                 // Test Trap
-                if (true) {
+                if (false) {
                         leftTrigger
                                         .onTrue(Commands.runOnce(() -> Subsystems.trap.getPivot().openLoopUp()))
                                         .onFalse(Commands.runOnce(() -> Subsystems.trap.getPivot().stopOpenLoop()));
@@ -350,9 +354,9 @@ public class RobotContainer {
                                 Subsystems.poseManager.getClimbManager().getPoseCommand(ClimbManager.ClimbPose.PullUp));
 
                 unsafeLowerClimber.onTrue(Commands.runOnce(() -> Subsystems.climber.unsafeOpenLoopUp()))
-                                .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
+                                .onFalse(Commands.runOnce(() -> Subsystems.climber.holdPosition()));
                 unsafeRaiseClimber.onTrue(Commands.runOnce(() -> Subsystems.climber.unsafeOpenLoopDown()))
-                                .onFalse(Commands.runOnce(() -> Subsystems.climber.stopOpenLoop()));
+                                .onFalse(Commands.runOnce(() -> Subsystems.climber.holdPosition()));
 
                 // climberDown.onTrue(Commands.runOnce(() ->
                 // Subsystems.climber.setClimberPosition(Climber.ClimberPosition.DOWN)));

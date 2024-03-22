@@ -10,7 +10,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.util.OpenLoopSpeedsConfig;
@@ -33,21 +32,26 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
     //
     // Open Loop Handling
     //
+
+    // Whether the climber is in open loop mode
     private boolean openLoop = false;
+    // Current open loop speed
     private double openLoopSpeed = 0.0;
+    // Current climber position
     private ClimberPosition currentPosition = ClimberPosition.DOWN;
     // Closed loop setpoint
     private double setpoint = 0.0;
     private boolean softLimitsEnabled = true;
 
     public Climber() {
-//    climberDrive.setNeutralMode(NeutralModeValue.Brake);
         pidHelper.initialize(2.0, 0, 0, 0, 0, 0);
         config = new TalonFXConfiguration()
                 .withSoftwareLimitSwitch(
                         new SoftwareLimitSwitchConfigs()
-                                .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold()).withForwardSoftLimitEnable(true)
-                                .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold()).withReverseSoftLimitEnable(true))
+                                .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold())
+                                .withForwardSoftLimitEnable(softLimitsEnabled)
+                                .withReverseSoftLimitThreshold(softLimits.reverseSoftLimitThreshold())
+                                .withReverseSoftLimitEnable(softLimitsEnabled))
                 .withHardwareLimitSwitch(
                         new HardwareLimitSwitchConfigs()
                                 .withForwardLimitEnable(false)
@@ -78,28 +82,28 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     public void openLoopUp() {
-        openLoop = true;
+        setOpenLoop(true);
         openLoopSpeed = climberOpenLoopSpeeds.getUpSpeed();
     }
 
     public void openLoopDown() {
-        openLoop = true;
+        setOpenLoop(true);
         openLoopSpeed = climberOpenLoopSpeeds.getDownSpeed();
     }
 
     public void unsafeOpenLoopUp() {
         softLimitsEnabled = false;
-        setSoftLimits(false);
+        configureSoftLimits(false);
         openLoopUp();
     }
 
     public void unsafeOpenLoopDown() {
         softLimitsEnabled = false;
-        setSoftLimits(false);
+        configureSoftLimits(false);
         openLoopDown();
     }
 
-    private void setSoftLimits(boolean enable) {
+    private void configureSoftLimits(boolean enable) {
         climberDrive.getConfigurator().apply(
                 new SoftwareLimitSwitchConfigs()
                         .withForwardSoftLimitThreshold(softLimits.forwardSoftLimitThreshold()).withForwardSoftLimitEnable(enable)
@@ -107,47 +111,47 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
     }
 
 
-    public void stopOpenLoop() {
+    /**
+     * Stop the climber from moving in open loop mode
+     */
+    public void holdPosition() {
         if (!softLimitsEnabled) {
             softLimitsEnabled = true;
-            setSoftLimits(true);
+            configureSoftLimits(true);
         }
         openLoop = true;
         openLoopSpeed = 0.0;
+        setpoint = climberDrive.getPosition().getValue();
     }
 
     public Command moveToStateCmd(ClimberPosition climberPosition) {
-        return Commands.runOnce(() -> setClimberPosition(climberPosition));
+        return this.runOnce(() -> setClimberPosition(climberPosition));
     }
 
     public ClimberPosition getClimberPosition() {
-        return  this.currentPosition;
+        return this.currentPosition;
     }
 
     public void setClimberPosition(ClimberPosition position) {
         this.currentPosition = position;
-        this.setClimberSetpoint(position.setpoint);
-    }
-
-    private void setClimberSetpoint(double setpoint) {
-        openLoop = false;
-        this.setpoint = setpoint;
+        this.setSetpoint(
+                switch (position) {
+                    case UP -> ClimberPositionValues.UP;
+                    case DOWN -> ClimberPositionValues.DOWN;
+                });
     }
 
     public double getSetpoint() {
         return setpoint;
     }
 
-    public void setSetpoint(double setpoint) {
+    private void setSetpoint(double setpoint) {
+        setOpenLoop(false);
         this.setpoint = setpoint;
     }
 
-    public void bumpSetpoint(double modifiedAmmt){
-      this.setpoint += modifiedAmmt;
-    }
-
-    public double getBumpAmmt(){
-      return this.setpoint - this.currentPosition.setpoint; 
+    public void bumpSetpoint(double modifiedAmmt) {
+        this.setpoint += modifiedAmmt;
     }
 
     @Override
@@ -158,9 +162,7 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
         }
 
         if (openLoop) {
-            climberDrive.setControl(openLoopOut.withOutput(openLoopSpeed)
-                    .withLimitForwardMotion(softLimitsEnabled)
-                    .withLimitReverseMotion(softLimitsEnabled));
+            climberDrive.setControl(openLoopOut.withOutput(openLoopSpeed));
         } else {
             climberDrive.setControl(positionOut.withPosition(this.setpoint));
         }
@@ -171,32 +173,36 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
         if (Constants.Dashboard.UseSendables) {
             builder.setSmartDashboardType(SUBSYSTEM_NAME);
             builder.addStringProperty("ClimberPosition", () -> this.getClimberPosition().name(), null);
+            builder.addBooleanProperty("OpenLoopEnabled", this::isOpenLoop, this::setOpenLoop);
             builder.addDoubleProperty("Setpoint", this::getSetpoint, this::setSetpoint);
             builder.addDoubleProperty("Encoder", () -> this.climberDrive.getPosition().getValue(), null);
             builder.addDoubleProperty("Velocity", () -> this.climberDrive.getVelocity().getValue(), null);
             builder.addDoubleProperty("Acceleration", () -> this.climberDrive.getAcceleration().getValue(), null);
-            builder.addDoubleProperty("OpenLoop/Speed", () -> this.openLoopSpeed, null);
+            builder.addDoubleProperty("OpenLoop/CurrentSpeed", () -> this.openLoopSpeed, null);
+            builder.addBooleanProperty("SoftLimitsEnabled", () -> this.softLimitsEnabled, (value) -> {
+                this.softLimitsEnabled = value;
+                this.configureSoftLimits(value);
+            });
 
             if (Constants.Dashboard.ConfigurationMode) {
-                builder.addBooleanProperty("Pivot/OpenLoopEnabled", this::isOpenLoop, this::setOpenLoop);
-                builder.addDoubleProperty("Pivot/UpSpeed", this.climberOpenLoopSpeeds::getUpSpeed, this.climberOpenLoopSpeeds::setUpSpeed);
-                builder.addDoubleProperty("Pivot/DownSpeed", this.climberOpenLoopSpeeds::getDownSpeed, this.climberOpenLoopSpeeds::setDownSpeed);
-                builder.addDoubleProperty("Pivot/BumpVal", ()->getBumpAmmt(), null);
-      }
+                builder.addDoubleProperty("OpenLoop/UpSpeed", this.climberOpenLoopSpeeds::getUpSpeed, this.climberOpenLoopSpeeds::setUpSpeed);
+                builder.addDoubleProperty("OpenLoop/DownSpeed", this.climberOpenLoopSpeeds::getDownSpeed, this.climberOpenLoopSpeeds::setDownSpeed);
+                builder.addDoubleProperty("Positions/UP", () -> ClimberPositionValues.UP, (value) -> ClimberPositionValues.UP = value);
+                builder.addDoubleProperty("Positions/DOWN", () -> ClimberPositionValues.DOWN, (value) -> ClimberPositionValues.DOWN = value);
+            }
         }
     }
 
 
-
-
     public enum ClimberPosition {
-        DOWN(0),
-        UP(-375);
+        DOWN, UP
+    }
 
-        public final double setpoint;
-
-        private ClimberPosition(double setpoint) {
-            this.setpoint = setpoint;
-        }
+    /**
+     * Allow for the position values to be changed on the dashboard
+     */
+    public static class ClimberPositionValues {
+        static double UP = 0.0;
+        static double DOWN = -320.0;
     }
 }
