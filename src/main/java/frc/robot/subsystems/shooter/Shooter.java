@@ -53,7 +53,7 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void teleopInit() {
-        runShooter();
+        //runShooter(); //switching initStart to first time intake is lowered
     }
 
     @Override

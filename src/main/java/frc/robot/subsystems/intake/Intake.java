@@ -23,6 +23,9 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
     private final IntakeSpeed intakeSpeed = new IntakeSpeed(new TalonFX(9));
     private final IntakePivot intakePivot = new IntakePivot(new TalonFX(10));
     private final DigitalInput noteDetector = new DigitalInput(0);
+    private boolean firstPartOfTeleop = false; 
+    // starts in false state, then changes to true through initTeleop then when sensor triggers, run shoot and turn off
+    // effectivly, it is whether or not first detect start should happen at any point in time
 
     private Optional<Timer> postNoteDetectedTimer = Optional.empty();
 
@@ -62,6 +65,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
 
     @Override
     public void teleopInit() {
+        firstPartOfTeleop = true;
         intakeSpeed.teleopInit();
         intakePivot.teleopInit();
     }
@@ -167,6 +171,11 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
             ampShotTimer = Optional.of(new Timer());
             ampShotTimer.get().start();
             intakeSpeed.runAmpShot();
+        }
+
+        if(isNoteDetected() && firstPartOfTeleop){
+            Subsystems.shooter.runShooter(); // delay shooter start untill part detected
+            firstPartOfTeleop = false;
         }
 
         intakeSpeed.periodic();
