@@ -40,7 +40,7 @@ public class IntakePivot implements Lifecycle, Sendable {
     //
     private final Telemetry telemetry;
     // the amount to offset the absolute encoder to make it show zero when we are in a Zero position
-    private final double zeroEncoderOffsetPosition = 0.271;
+//    private final double zeroEncoderOffsetPosition = 0.9343;
     private final double encoderToMotorRatio = -48;
     private boolean softLimitsEnabled = true;
     private boolean pivotOpenLoop = false;
@@ -51,12 +51,14 @@ public class IntakePivot implements Lifecycle, Sendable {
 
     private static final double MAXIMUM_LIMIT = 1;
     private static final double MINIMUM_LIMIT = -25;
+    private boolean encoderReset = false;   // flag to only allow call-once semantics for state initialization
+    private boolean encoderControl = false; // whether we are in fine grained encoder control
 
     public IntakePivot(TalonFX pivotDrive) {
         this.pivotDrive = pivotDrive;
         telemetry = new Telemetry();
 
-        encoder.setPositionOffset(zeroEncoderOffsetPosition);
+        encoder.reset();
 
         // kp = 0.25, ka = 0.01
         // kp 15, ka = 0.01
@@ -65,8 +67,8 @@ public class IntakePivot implements Lifecycle, Sendable {
         motionMagicConfig.setkS(0);
         motionMagicConfig.setkG(0);
         motionMagicConfig.setVelocity(50);
-        motionMagicConfig.setAcceleration(160);
-        motionMagicConfig.setJerk(375);
+        motionMagicConfig.setAcceleration(250);
+        motionMagicConfig.setJerk(500);
 
         pidHelper.updateConfiguration(pivotConfiguration.Slot0);
         pivotConfiguration.Slot0.withGravityType(GravityTypeValue.Arm_Cosine);
@@ -92,6 +94,8 @@ public class IntakePivot implements Lifecycle, Sendable {
 
         pivotDrive.getConfigurator().apply(pivotConfiguration);
     }
+
+
 
     @Override
     public void teleopInit() {
@@ -191,16 +195,18 @@ public class IntakePivot implements Lifecycle, Sendable {
 
             if (IntakePosition.MotorPreAMPShot == pivotCurrentPosition) {
                 double grossThreshold = 0.25;
-                double currentPosition = pivotDrive.getPosition().getValue();
-                if ((currentPosition < IntakePosition.MotorPreAMPShot.setpoint - grossThreshold) &&
-                (currentPosition > IntakePosition.MotorPreAMPShot.setpoint + grossThreshold)) {
+                double currentPosition= pivotDrive.getPosition().getValue();
+                if ((currentPosition > IntakePosition.MotorPreAMPShot.setpoint - grossThreshold) &&
+                (currentPosition < IntakePosition.MotorPreAMPShot.setpoint + grossThreshold)) {
                     BSLogger.log("IntakePivot", "Flipping to fine grained control");
                     setIntakePosition(IntakePosition.AMPShot);
                 }
             }
             if (IntakePosition.AMPShot == pivotCurrentPosition || IntakePosition.Climb == pivotCurrentPosition) {
+                encoderControl = true;
                 pivotDrive.setControl(voltageOut.withOutput(ampShotPIDController.calculate()));
             } else {
+                encoderControl = false;
                 pivotDrive.setControl(pivotMotionMagicDutyCycle.withPosition(pivotSetpoint)
                         .withLimitForwardMotion(softLimitsEnabled)
                         .withLimitReverseMotion(softLimitsEnabled));
@@ -221,12 +227,12 @@ public class IntakePivot implements Lifecycle, Sendable {
         motionMagicConfig.updateSlot0Config(pivotConfiguration.Slot0);
         motionMagicConfig.updateMotionMagicConfig(pivotConfiguration.MotionMagic);
         StatusCode result = pivotDrive.getConfigurator().apply(pivotConfiguration);
+        BSLogger.log("IntakePivot", "updatePIDFromDashboard result: " + result);
     }
 
     public Command updatePIDFromDashbboardCommand() {
-        return Commands.runOnce(this::updatePIDFromDashboard);
+        return Commands.runOnce(this::updatePIDFromDashboard).ignoringDisable(true);
     }
-    
 
     @Override
     public void initSendable(SendableBuilder builder) {
@@ -236,6 +242,7 @@ public class IntakePivot implements Lifecycle, Sendable {
         builder.addDoubleProperty("Pivot/EncoderPosition", this.encoder::get, null);
         builder.addDoubleProperty("Pivot/EncoderAbsolutePosition", this.encoder::getAbsolutePosition, null);
         builder.addDoubleProperty("Pivot/EncoderOffset", this.encoder::getPositionOffset, null);
+        builder.addBooleanProperty("Pivot/EncoderControl", () -> this.encoderControl, null);
 
         
         if (Constants.Dashboard.ConfigurationMode && Constants.Dashboard.IntakeConfigMode) {
@@ -264,19 +271,26 @@ public class IntakePivot implements Lifecycle, Sendable {
         return (Math.abs(getCurrentPosition() - position.setpoint) <= 2.0);
     }
 
-    public Command fixMotorOffsetCmd() {
-        BSLogger.log("IntakePivot", "fixMotorOffsetCmd");
-        return Commands.none();
+    void resetEncoder() {
+        BSLogger.log("IntakePivot", "resetEncoder");
+        this.encoder.reset();
+    }
+
+    public void resetEncoderOnce() {
+        if (!encoderReset) {
+            encoderReset = true;
+            resetEncoder();
+        }
     }
 
 
     public enum IntakePosition {
         Zero(0),
-        Vertical(-7),
-        Pickup(-23.0),
-        MotorPreAMPShot(-8.5),
-        AMPShot(0.145),
-        Climb(0.150);
+        Vertical(-9.833),
+        Pickup(-24.6),
+        MotorPreAMPShot(-9),
+        AMPShot(0.190),
+        Climb(0.11);
 
         private final double setpoint;
 

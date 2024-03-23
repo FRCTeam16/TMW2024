@@ -75,7 +75,9 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    Subsystems.intake.getIntakePivot().resetEncoderOnce();
+  }
 
   @Override
   public void disabledPeriodic() {
