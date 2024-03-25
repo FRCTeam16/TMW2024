@@ -9,9 +9,11 @@ import frc.robot.Subsystems;
 import frc.robot.auto.strategies.*;
 import frc.robot.commands.auto.*;
 import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.VisionAimManager;
 import frc.robot.subsystems.intake.IntakePivot;
 import frc.robot.subsystems.pose.PoseManager;
 
+import javax.naming.Name;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
@@ -116,11 +118,17 @@ public class AutoManager {
                 Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(UnderTheBridge.ThirdShotProfile)));
 
         // Tab
+        NamedCommands.registerCommand("FeedNoteTab2", new FeedNoteInAutoTabShot2());
         NamedCommands.registerCommand("TabShot2Rotate", Tab.createTabShot2Rotate());
         NamedCommands.registerCommand("TabShot2", CommonCommands.DoShotCommand("TabShot2", Tab.SecondShot));
         NamedCommands.registerCommand("TabShot3", CommonCommands.DoShotCommand("TabShot3", Tab.ThirdShot));
         NamedCommands.registerCommand("TabShot4", CommonCommands.DoShotCommand("TabShot4", Tab.ForthShot));
         NamedCommands.registerCommand("TabShot5", CommonCommands.DoShotCommand("TabShot5", Tab.FifthShot));
+
+        NamedCommands.registerCommand("TabQPose2", CommonCommands.queueTabShot2());
+        NamedCommands.registerCommand("TabFAS3", CommonCommands.feedAndShootAutoCmd(Tab.ThirdShot));
+        NamedCommands.registerCommand("TabFAS4", CommonCommands.feedAndShootAutoCmd(Tab.ForthShot));
+        NamedCommands.registerCommand("TabFAS5", CommonCommands.feedAndShootAutoCmd(Tab.FifthShot));
 
         // DropShot
         NamedCommands.registerCommand("BloopShot", new BloopShot());

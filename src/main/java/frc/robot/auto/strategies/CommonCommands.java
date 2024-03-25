@@ -5,10 +5,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Subsystems;
-import frc.robot.commands.auto.EnableShooterCommand;
-import frc.robot.commands.auto.WaitPivotInPosition;
-import frc.robot.commands.auto.WaitShooterAtSpeed;
-import frc.robot.commands.auto.WaitShooterHasNote;
+import frc.robot.commands.auto.*;
 import frc.robot.subsystems.VisionAimManager;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pose.PoseManager;
@@ -18,12 +15,13 @@ public class CommonCommands {
     public static Command DoShotCommand(VisionAimManager.ShootingProfile profile) {
         return DoShotCommand("Default", profile);
     }
+
     public static Command DoShotCommand(String name, VisionAimManager.ShootingProfile profile) {
         return new SequentialCommandGroup(
                 // Start point is that we expect the shooter to have a note
                 new WaitShooterHasNote().withTimeout(0.5),
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.MoveIntakeToFloorWithoutIntaking),
-                AutoPathStrategy.writeLog("DoShotCommand", "If shooter has note then we will try shot"),
+                AutoPathStrategy.writeLog("DoShotCommand", "Using profile: " + profile),
                 //
                 Commands.sequence(
                         Commands.parallel(
@@ -34,13 +32,12 @@ public class CommonCommands {
                         ),
                         Commands.parallel(
                                 new WaitPivotInPosition(),
-                                new WaitShooterAtSpeed(),
-                                new WaitCommand(0.25)
+                                new WaitShooterAtSpeed()
                         ).withTimeout(0.5),
                         AutoPathStrategy.writeLog("DoShotCommand", "******* WILL BE FIRING NEXT *******"),
 //                        new WaitCommand(0.5),
                         CommonCommands.doShootCmd()
-                ).unless(() -> !Subsystems.shooter.isNoteDetected()),
+                ),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup)
         ).beforeStarting(() -> BSLogger.log("DoShotCommand", "starting: " + name))
                 .finallyDo(() -> BSLogger.log("DoShotCommand", "ending: " + name));
@@ -59,9 +56,9 @@ public class CommonCommands {
                                 Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))
                         ),
                         Commands.parallel(
-                            new WaitPivotInPosition(),
-                            new WaitShooterAtSpeed(),
-                            new WaitCommand(0.25)
+                                new WaitPivotInPosition(),
+                                new WaitShooterAtSpeed(),
+                                new WaitCommand(0.25)
                         ).withTimeout(0.5),
                         AutoPathStrategy.writeLog("DoShotCommand", "******* WILL BE FIRING NEXT *******"),
 //                        new WaitCommand(0.5),
@@ -75,6 +72,19 @@ public class CommonCommands {
         return Commands.parallel(
                 Commands.runOnce(() -> BSLogger.log("doShootCmd", "shooting")),
                 Subsystems.shooter.shootCmd()
+        );
+    }
+
+    public static Command feedAndShootAutoCmd(VisionAimManager.ShootingProfile profile) {
+        return new FeedAndShootAuto(profile);
+    }
+
+    public static Command queueTabShot2() {
+        return Commands.sequence(
+                new EnableShooterCommand(),
+                Commands.parallel(
+                        Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(Tab.SecondShot), Subsystems.shooter)
+                )
         );
     }
 }

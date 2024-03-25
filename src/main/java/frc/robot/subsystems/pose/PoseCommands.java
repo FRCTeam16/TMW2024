@@ -44,10 +44,18 @@ class PoseCommands {
     }
 
     static Command feedNoteToShooterPose() {
+        return feedNoteToShooterWithPosition(Pivot.PivotPosition.FeedPosition);
+    }
+
+    static Command feedNoteToShooterCustomPivotPose() {
+        return feedNoteToShooterWithPosition(Pivot.PivotPosition.Custom);
+    }
+
+    static Command feedNoteToShooterWithPosition(Pivot.PivotPosition position) {
         return new SequentialCommandGroup(
                 Commands.parallel(
-                        Commands.runOnce(() -> BSLogger.log("feedNoteToShooterPose", "starting")),
-                        Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
+                        Commands.runOnce(() -> BSLogger.log("feedNoteToShooterPose", "starting with position: " + position)),
+                        Subsystems.pivot.moveToPositionCmd(position),
                         Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote)
                 ),
                 Commands.parallel(
@@ -57,7 +65,7 @@ class PoseCommands {
                 new FeedNoteToShooterCommandVelocity().withTimeout(2.0),
                 Commands.runOnce(Subsystems.shooter::stopFeeder, Subsystems.shooter),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ReadyToShoot),
-                Commands.runOnce(() -> BSLogger.log("feedNoteToShooterPose", "finished"))
+                Commands.runOnce(() -> BSLogger.log("feedNoteToShooterPose", "finished with position: " + position))
         );
     }
 
@@ -127,7 +135,7 @@ class PoseCommands {
     public static Command shortShotPose() {
         return Commands.sequence(
                 Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive),
-                new WaitCommand(0.25),  // add wait for intake pivot to be in position
+//                new WaitCommand(0.25),  // add wait for intake pivot to be in position
                 Commands.parallel(
                         Commands.runOnce(Subsystems.shooter::runShooter),
                         Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.ShortShot)

@@ -42,6 +42,7 @@ public class PoseManager {
         FireBigShot,
         SubShot,
         FireShootOverSmiley,
+        FeedNoteShooterCustomPivot,
         PrepareBloopShot
     }
 
@@ -58,6 +59,7 @@ public class PoseManager {
         registry.put(Pose.Pickup, PoseCommands::moveToPickupPose);
         registry.put(Pose.Drive, PoseCommands::moveToDrivePose);
         registry.put(Pose.FeedNoteToShooter, PoseCommands::feedNoteToShooterPose);
+        registry.put(Pose.FeedNoteShooterCustomPivot, PoseCommands::feedNoteToShooterCustomPivotPose);
         registry.put(Pose.ReadyToShoot, PoseCommands::readyToShootPose);
         registry.put(Pose.PositionForAmp, PoseCommands::positionForAmpPose);
         registry.put(Pose.FireAmpShot, PoseCommands::fireAmpShotPose);

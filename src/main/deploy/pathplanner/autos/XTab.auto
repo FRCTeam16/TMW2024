@@ -49,13 +49,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "FeedNote"
+                  "name": "TabFAS3"
                 }
               },
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "TabShot3"
+                  "waitTime": 0.5
                 }
               }
             ]
@@ -74,13 +74,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "FeedNote"
+                  "name": "TabFAS4"
                 }
               },
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "TabShot4"
+                  "waitTime": 0.7
                 }
               }
             ]
@@ -99,13 +99,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "FeedNote"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "TabShot5"
+                  "name": "TabFAS5"
                 }
               }
             ]

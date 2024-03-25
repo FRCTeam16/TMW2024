@@ -7,6 +7,7 @@ import frc.robot.Subsystems;
 import frc.robot.subsystems.VisionAimManager;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakePivot;
+import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.util.BSLogger;
 
 public class FeedAndShootAuto extends SequentialCommandGroup {
@@ -29,9 +30,11 @@ public class FeedAndShootAuto extends SequentialCommandGroup {
                         Commands.runOnce(() -> Subsystems.shooter.getFeeder().startFeed(), Subsystems.shooter)
                 ),
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.FeedNote),
-                new WaitCommand(0.5),
+                new WaitCommand(0.3),
                 Commands.parallel(
-                        Commands.runOnce(() -> BSLogger.log("FeedAndShootAuto", "finished"))
+                        Commands.runOnce(() -> BSLogger.log("FeedAndShootAuto", "finished")),
+                        Commands.runOnce(Subsystems.shooter::stopFeeder, Subsystems.shooter),
+                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup)
                 ));
     }
 }
