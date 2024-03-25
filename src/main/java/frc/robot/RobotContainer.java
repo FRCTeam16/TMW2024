@@ -18,12 +18,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.auto.strategies.Tab;
 import frc.robot.commands.*;
+import frc.robot.commands.auto.FeedAndShootAuto;
 import frc.robot.commands.auto.FeedNoteInAuto;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.RotationController;
+import frc.robot.subsystems.VisionAimManager;
 import frc.robot.subsystems.pose.ClimbManager;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.util.BSLogger;
@@ -68,6 +71,7 @@ public class RobotContainer {
         private final JoystickButton unsafeLowerClimber = new JoystickButton(left, 15);
         private final JoystickButton unsafeLowerTrap = new JoystickButton(left, 8);
         private final JoystickButton unsafeRaiseTrap = new JoystickButton(left, 9);
+
         //
         // Right Joystick
         //
@@ -443,7 +447,12 @@ public class RobotContainer {
 
                 SmartDashboard.putData("AutoFeedTest", new FeedNoteInAuto());
 
-                SmartDashboard.putData("Reset Intake Encodert", Subsystems.intake.resetEncoderCmd());
+                SmartDashboard.putData("Reset Intake Encoder", Subsystems.intake.resetEncoderCmd());
+
+                SmartDashboard.putData("Test FeedAndShoot3", new FeedAndShootAuto(Tab.ThirdShot));
+                SmartDashboard.putData("Test FeedAndShoot4", new FeedAndShootAuto(Tab.ForthShot));
+                SmartDashboard.putData("Test FeedAndShoot5", new FeedAndShootAuto(Tab.FifthShot));
+
         }
 
         public Command getAutonomousCommand() {

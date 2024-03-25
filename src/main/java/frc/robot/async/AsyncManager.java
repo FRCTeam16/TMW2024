@@ -47,8 +47,8 @@ public class AsyncManager {
 
     void reportOverruns() {
         int numOverruns = thread.overRun.get();
-        if ((numOverruns > 0) && (Timer.getFPGATimestamp() - lastOverrunReport > 1.0)) {
-            BSLogger.log("AsyncManager", "Overruns: " + numOverruns + " in the last second (of " + thread.numRuns.get() + " runs);");
+        if ((numOverruns > 0) && (Timer.getFPGATimestamp() - lastOverrunReport > 5.0)) {
+            BSLogger.log("AsyncManager", "Overruns: " + numOverruns + " in the last 5 seconds (of " + thread.numRuns.get() + " runs);");
             lastOverrunReport = Timer.getFPGATimestamp();
             thread.overRun.set(0);
             thread.numRuns.set(0);

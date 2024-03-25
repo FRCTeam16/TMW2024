@@ -29,6 +29,8 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
         AmpShotPivot,
         AmpShotDeflectShot,
 
+        TryClearNote,
+
         Climb,
         ScoreFromClimb, ;
     }
@@ -92,6 +94,8 @@ public class Trap extends SubsystemBase implements Lifecycle, Sendable {
             case ScoreFromClimb:
                 getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.Score);
                 break;
+            case TryClearNote:
+                getPivot().setTrapPosition(TrapPivot.TrapPivotPosition.Top);
         }
     }
 
