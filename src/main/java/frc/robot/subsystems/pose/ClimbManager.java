@@ -37,20 +37,14 @@ public class ClimbManager {
         BSLogger.log("ClimbManager", "getPoseCommand for : " + pose);
         return switch (pose) {
             case StartClimb -> ClimbPoseCommands.startClimbPose();
-//            case RotateTrapArmsUp -> ClimbPoseCommands.rotateTrapArmsUp();
             case PullUp -> ClimbPoseCommands.pullUp();
-//            case PutNoteInTrap -> ClimbPoseCommands.putNoteInTrap();
-            case RetractTrapArms -> ClimbPoseCommands.clearTrapArms();
             default -> Commands.print("Ignoring unhandled climb pose: " + pose);
         };
     }
 
     public enum ClimbPose {
         StartClimb,
-        RotateTrapArmsUp,
         PullUp,
-        PutNoteInTrap,
-        RetractTrapArms
     }
 
 }

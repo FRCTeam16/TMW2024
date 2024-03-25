@@ -27,7 +27,7 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
     private final OpenLoopSpeedsConfig climberOpenLoopSpeeds = new OpenLoopSpeedsConfig(6, -6);
     private final TalonFXConfiguration config;
 
-    private final SoftLimitValues softLimits = new SoftLimitValues(0, -320);
+    private final SoftLimitValues softLimits = new SoftLimitValues(0, -250);
 
     //
     // Open Loop Handling
@@ -202,7 +202,8 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
      * Allow for the position values to be changed on the dashboard
      */
     public static class ClimberPositionValues {
-        static double UP = 0.0;
-        static double DOWN = -320.0;
+        static double UP = -204;
+        static double DOWN = -25;
+        static double RESET = 0;
     }
 }
