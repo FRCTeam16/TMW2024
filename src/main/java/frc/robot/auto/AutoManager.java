@@ -120,7 +120,7 @@ public class AutoManager {
         // Tab
         NamedCommands.registerCommand("FeedNoteTab2", new FeedNoteInAutoTabShot2());
         NamedCommands.registerCommand("TabShot2Rotate", Tab.createTabShot2Rotate());
-        NamedCommands.registerCommand("TabShot2", CommonCommands.DoShotCommand("TabShot2", Tab.SecondShot));
+        NamedCommands.registerCommand("TabShot2", CommonCommands.DoTabShot2Command());
         NamedCommands.registerCommand("TabShot3", CommonCommands.DoShotCommand("TabShot3", Tab.ThirdShot));
         NamedCommands.registerCommand("TabShot4", CommonCommands.DoShotCommand("TabShot4", Tab.ForthShot));
         NamedCommands.registerCommand("TabShot5", CommonCommands.DoShotCommand("TabShot5", Tab.FifthShot));

@@ -179,4 +179,7 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
         }
     }
 
+    public boolean isEnabled() {
+        return feeder.isEnabled() && upper.isEnabled() && lower.isEnabled();
+    }
 }

@@ -26,7 +26,7 @@ public class CommonCommands {
                 Commands.sequence(
                         Commands.parallel(
                                 AutoPathStrategy.writeLog("DoShotCommand", "Setting shooter and pivot profiles"),
-                                new EnableShooterCommand(),
+                                new EnableShooterCommand().unless(() -> Subsystems.shooter.isEnabled()),
                                 Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(profile)),
                                 Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))
                         ),
@@ -41,6 +41,38 @@ public class CommonCommands {
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup)
         ).beforeStarting(() -> BSLogger.log("DoShotCommand", "starting: " + name))
                 .finallyDo(() -> BSLogger.log("DoShotCommand", "ending: " + name));
+    }
+
+    public static Command DoTabShot2Command() {
+        String name = "TabShot2";
+        VisionAimManager.ShootingProfile profile = Tab.SecondShot;
+        return new SequentialCommandGroup(
+                // Start point is that we expect the shooter to have a note
+                new WaitShooterHasNote().withTimeout(0.5),
+                Commands.parallel(
+                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.MoveIntakeToFloorWithoutIntaking),
+                        AutoPathStrategy.writeLog("DoShotCommand", "Using profile: " + profile)
+                ),
+                //
+                Commands.sequence(
+                        Commands.parallel(
+                                AutoPathStrategy.writeLog("DoShotCommand", "Setting shooter and pivot profiles"),
+                                new EnableShooterCommand().unless(() -> Subsystems.shooter.isEnabled()),
+                                Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(profile)),
+                                Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))
+                        ),
+                        Commands.parallel(
+                                new WaitPivotInPosition(),
+                                new WaitShooterAtSpeed()
+                        ).withTimeout(0.5),
+                        AutoPathStrategy.writeLog("DoShotCommand", "******* WILL BE FIRING NEXT *******"),
+//                        new WaitCommand(0.5),
+                        CommonCommands.doShootCmd() // has 0.2 delay
+                ),
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup),
+                Commands.runOnce((() -> Subsystems.pivot.applyShootingProfile(Tab.ThirdShot)))  // override pose
+        ).beforeStarting(() -> BSLogger.log("DoTabShot2Command", "starting: " + name))
+                .finallyDo(() -> BSLogger.log("DoTabShot2Command", "ending: " + name));
     }
 
     public static Command DoBlazeShotCommand(VisionAimManager.ShootingProfile profile) {

@@ -27,14 +27,15 @@ public class FeedAndShootAuto extends SequentialCommandGroup {
                 ).withTimeout(1.0),
                 Commands.parallel(
                         Commands.runOnce(() -> BSLogger.log("FeedAndShootAuto", "feed and shoot")),
-                        Commands.runOnce(() -> Subsystems.shooter.getFeeder().startFeed(), Subsystems.shooter)
+                        Commands.runOnce(() -> Subsystems.shooter.getFeeder().startFeed(), Subsystems.shooter),
+                        Subsystems.intake.moveToStateCmd(Intake.IntakeState.FeedNote),
+                        Commands.runOnce(() -> Subsystems.intake.getIntakePivot().setIntakePosition(IntakePivot.IntakePosition.Pickup)) //hack
                 ),
-                Subsystems.intake.moveToStateCmd(Intake.IntakeState.FeedNote),
                 new WaitCommand(0.3),
                 Commands.parallel(
                         Commands.runOnce(() -> BSLogger.log("FeedAndShootAuto", "finished")),
                         Commands.runOnce(Subsystems.shooter::stopFeeder, Subsystems.shooter),
-                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup)
+                        Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PickupNoTrap)
                 ));
     }
 }

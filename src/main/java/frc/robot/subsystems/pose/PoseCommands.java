@@ -43,6 +43,21 @@ class PoseCommands {
         );
     }
 
+    static Command moveToPickupPoseNoTrap() {
+        return Commands.sequence(
+                Commands.parallel(
+                        Commands.runOnce(Subsystems.shooter::stopFeeder
+                        ),
+//                new WaitCommand(0.25),  // add wait for intake pivot to be in position
+                        Commands.parallel(
+                                Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeFast()),
+                                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition),
+                                Subsystems.intake.moveToStateCmd(Intake.IntakeState.IntakeFromFloor)
+                        )
+                )
+        );
+    }
+
     static Command feedNoteToShooterPose() {
         return feedNoteToShooterWithPosition(Pivot.PivotPosition.FeedPosition);
     }
