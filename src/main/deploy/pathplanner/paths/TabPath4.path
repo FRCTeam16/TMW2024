@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8413545457642604,
-        "y": 6.440673664307581
+        "x": 1.8398794046299172,
+        "y": 6.443837114678908
       },
       "isLocked": true,
       "linkedName": "Tab3End"
@@ -20,8 +20,8 @@
         "y": 6.76
       },
       "prevControl": {
-        "x": 2.2086454542357394,
-        "y": 6.719326335692419
+        "x": 2.210120595370083,
+        "y": 6.716162885321092
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,7 +39,7 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": 27.0,
+    "rotation": 28.0,
     "rotateFast": false
   },
   "reversed": false,

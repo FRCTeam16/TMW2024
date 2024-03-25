@@ -24,12 +24,6 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "TabShot2Rotate"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "TabShot2"
                 }
               }

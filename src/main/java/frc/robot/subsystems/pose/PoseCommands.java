@@ -3,7 +3,6 @@ package frc.robot.subsystems.pose;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Subsystems;
-import frc.robot.commands.CenterNoteIntakeCommand;
 import frc.robot.commands.auto.WaitIntakeInPosition;
 import frc.robot.commands.auto.WaitPivotInPosition;
 import frc.robot.commands.auto.WaitTrapExtendInPosition;

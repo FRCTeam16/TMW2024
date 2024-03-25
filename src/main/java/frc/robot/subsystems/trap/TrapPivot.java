@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.Sendable;
@@ -13,6 +14,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.Constants;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.util.BSMath;
 import frc.robot.subsystems.util.OpenLoopSpeedsConfig;
 import frc.robot.subsystems.util.PIDHelper;
 import frc.robot.subsystems.util.SoftLimitValues;
@@ -143,6 +145,10 @@ public class TrapPivot implements Lifecycle, Sendable {
         this.trapPosition = trapPosition;
         this.setClosedLoopSetpoint(trapPosition.setpoint);
     }
+
+//    private double calculateGravityFF() {
+//        double angle = BSMath.map(encoder.get(), )
+//    }
 
     public void periodic() {
         if (openLoop) {
