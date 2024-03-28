@@ -394,7 +394,7 @@ public class RobotContainer {
 
                 ampAim.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PositionForAmp));
 
-                reverseFeed.whileTrue(Subsystems.poseManager.getPoseCommand(Pose.ReverseFeed));
+                reverseFeed.onTrue(Subsystems.poseManager.getPoseCommand(Pose.ReverseFeed));
 
                 startShooter.onTrue(Commands.runOnce(Subsystems.shooter::runShooter));
                 stopShooter.onTrue(Commands.runOnce(Subsystems.shooter::stopShooter));

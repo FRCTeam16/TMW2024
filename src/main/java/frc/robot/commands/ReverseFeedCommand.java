@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Subsystems;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.Intake.IntakeState;
 import frc.robot.subsystems.util.BSLogger;
 
@@ -23,6 +24,13 @@ public class ReverseFeedCommand extends Command {
     public boolean isFinished() {
         BSLogger.log("ReverseFeedCommand", "finished");
         return Subsystems.intake.isNoteDetected();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        BSLogger.log("ReverseFeedCommand", "ended: interrupt? " + interrupted);
+        Subsystems.shooter.stopFeeder();
+        Subsystems.intake.setIntakeState(IntakeState.StopFeed);
     }
     
 }

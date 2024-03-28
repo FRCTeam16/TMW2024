@@ -145,11 +145,12 @@ public class FeederHelper implements Sendable {
     }
 
     public void reverseFeed() {
-        this.velocityControl.velocitySetpoint = this.velocityControl.reverseFeedVelocity;
+        // this.velocityControl.velocitySetpoint = this.velocityControl.reverseFeedVelocity;
+        this.setOpenLoopSetpoint(3);
         this.setSlowFeedMode(false);
-        this.setVelocityMode(true);
+        this.setVelocityMode(false);
         this.setEnabled(true);
-        this.applyVelocity();
+        // this.applyVelocity();
     }
 
     public boolean isAtSpeed() {
