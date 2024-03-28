@@ -9,10 +9,10 @@ public final class Constants {
         // Whether to use the sendable system for dashboard updates
         public static final boolean UseSendables = true;
         // Whether to use the sendable system for real-time tuning
-        public static final boolean ConfigurationMode = false;
+        public static final boolean ConfigurationMode = true;
 
 
-        public static final boolean PivotConfigMode = false;
+        public static final boolean PivotConfigMode = true;
         public static final boolean IntakeConfigMode = true;
         public static final boolean ShooterConfigMode = true;
         public static final boolean TrapConfigMode = false;
