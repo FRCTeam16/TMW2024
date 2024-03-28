@@ -30,10 +30,9 @@ public class VisionAimManager {
     public Optional<VisionAimResult> calculate() {
         VisionTypes.TargetInfo targetInfo = limelight.getTargetInfo();
         if (targetInfo.hasTarget()) {
-            // TODO: Add less than 75" shoot profile
             final double distance = targetInfo.calculateDistance();
             final double shooterSpeed = (0.2 * distance) + 24.9;
-            final double angle = 61.1 - (0.409 * distance) + (0.000897 * distance * distance);
+            final double angle = 61.1 - (0.409 * distance) + (0.000847 * distance * distance);
 
             VisionAimResult value = new VisionAimResult(targetInfo, new ShootingProfile(angle, shooterSpeed, shooterSpeed));
             SmartDashboard.putNumber("VisionAimManager/Distance", value.targetInfo.calculateDistance());

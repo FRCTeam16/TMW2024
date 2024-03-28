@@ -21,9 +21,9 @@ import static edu.wpi.first.units.Units.Degrees;
 public class Tab extends AutoPathStrategy {
 
     public static final VisionAimManager.ShootingProfile TabStraightFirst = new VisionAimManager.ShootingProfile(41.5, 30, 26); // 87"
-    public static final VisionAimManager.ShootingProfile SecondShot = new VisionAimManager.ShootingProfile(41.5, 30, 26); // 87"
+    public static final VisionAimManager.ShootingProfile SecondShot = new VisionAimManager.ShootingProfile(40.0, 30, 26); // 87"
     public static final VisionAimManager.ShootingProfile ThirdShot = new VisionAimManager.ShootingProfile(47.5, 22, 22); // 55"
-    public static final VisionAimManager.ShootingProfile ForthShot = new VisionAimManager.ShootingProfile(43.5, 31, 27); // 76.5"
+    public static final VisionAimManager.ShootingProfile ForthShot = new VisionAimManager.ShootingProfile(38.5, 31, 27); // 76.5"
     public static final VisionAimManager.ShootingProfile FifthShot = new VisionAimManager.ShootingProfile(31.5, 45, 32); // 98.8"
     private final Pose2d blueStraightStartPose = new Pose2d(1.28, 4.79, Rotation2d.fromDegrees(0));
 
