@@ -4,14 +4,14 @@
     {
       "anchor": {
         "x": 1.35,
-        "y": 5.662
+        "y": 5.62
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.35,
-        "y": 5.162
+        "x": 1.85,
+        "y": 5.62
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": null
     },
     {
@@ -27,7 +27,7 @@
         "x": 5.006637765455837,
         "y": 4.772587841958537
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": null
     },
     {
@@ -43,7 +43,7 @@
         "x": 7.93259541881967,
         "y": 4.143676582622273
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "Tab1Pickup"
     },
     {
@@ -59,7 +59,7 @@
         "x": 2.630871592049069,
         "y": 5.0594185511540735
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": null
     },
     {
@@ -72,7 +72,7 @@
         "y": 4.715085881555724
       },
       "nextControl": null,
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "Tab1End"
     }
   ],
