@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Angle;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Velocity;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -131,6 +132,9 @@ public class RobotContainer {
         // Trigger povUp = xboxController.povUp();
         // Trigger povDown = xboxController.povDown();
         MusicController music = new MusicController();
+
+        private final DigitalInput dmsButton = new DigitalInput(6);
+        private final Trigger dmsButtonPressed = new Trigger(() -> !dmsButton.get());
 
         // private final VisionAlignmentHelper trapAlignHelper = new
         // VisionAlignmentHelper();
@@ -433,6 +437,8 @@ public class RobotContainer {
                 SmartDashboard.putData("Stop Music", music.getPauseommand());
 
                 SmartDashboard.putData("Run DMS", new RunDMSCommand());
+
+                dmsButtonPressed.onTrue(new RunDMSCommand().withTimeout(20.0));
 
 
                 // Debug
