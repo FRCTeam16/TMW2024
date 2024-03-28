@@ -106,6 +106,10 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
         feeder.receiveFromIntake();
     }
 
+    public void reverseFeed() {
+        feeder.reverseFeed();
+    }
+
     public static boolean isReadyToShoot(){
          // Has Target
         return  RobotContainer.isUseVisionAlignment() &&

@@ -29,6 +29,7 @@ import frc.robot.subsystems.RotationController;
 import frc.robot.subsystems.VisionAimManager;
 import frc.robot.subsystems.pose.ClimbManager;
 import frc.robot.subsystems.pose.PoseManager;
+import frc.robot.subsystems.pose.PoseManager.Pose;
 import frc.robot.subsystems.util.BSLogger;
 import frc.robot.subsystems.util.GameInfo;
 import frc.robot.subsystems.vision.VisionTypes;
@@ -117,6 +118,7 @@ public class RobotContainer {
         private final Trigger rightTrigger = xboxController.rightTrigger();
         private final Trigger ampAim = xboxController.x();
         private final Trigger feedNoteToShooter = xboxController.y();
+        private final Trigger reverseFeed = xboxController.a();
         private final Trigger startClimb = xboxController.povUp();
         private final Trigger climbPull = xboxController.povDown();
 
@@ -387,6 +389,8 @@ public class RobotContainer {
                 feedNoteToShooter.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter));
 
                 ampAim.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PositionForAmp));
+
+                reverseFeed.whileTrue(Subsystems.poseManager.getPoseCommand(Pose.ReverseFeed));
 
                 startShooter.onTrue(Commands.runOnce(Subsystems.shooter::runShooter));
                 stopShooter.onTrue(Commands.runOnce(Subsystems.shooter::stopShooter));

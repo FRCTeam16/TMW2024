@@ -3,6 +3,7 @@ package frc.robot.subsystems.pose;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Subsystems;
+import frc.robot.commands.ReverseFeedCommand;
 import frc.robot.commands.auto.WaitIntakeInPosition;
 import frc.robot.commands.auto.WaitPivotInPosition;
 import frc.robot.commands.auto.WaitTrapExtendInPosition;
@@ -89,6 +90,10 @@ class PoseCommands {
 //                Commands.runOnce(Subsystems.shooter::stopFeeder),
                 Subsystems.intake.moveToStateCmd(Intake.IntakeState.HoldNote)
         );
+    }
+
+    static Command reverseFeedPose() {
+        return new ReverseFeedCommand().withTimeout(2.0);
     }
 
     static Command moveToDrivePose() {

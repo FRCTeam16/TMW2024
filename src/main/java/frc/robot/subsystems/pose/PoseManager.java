@@ -45,7 +45,8 @@ public class PoseManager {
         FeedNoteShooterCustomPivot,
         // Auto only
         PickupNoTrap,
-        PrepareBloopShot
+        PrepareBloopShot,
+        ReverseFeed
     }
 
     private Pose lastPose = Pose.StartingConfig;
@@ -74,6 +75,7 @@ public class PoseManager {
         registry.put(Pose.SubShot, PoseCommands::fireSubShot);
         registry.put(Pose.TryClearNote, PoseCommands::tryClearNote);
         registry.put(Pose.FireShootOverSmiley, PoseCommands::fireShootOverSmiley);
+        registry.put(Pose.ReverseFeed, PoseCommands::reverseFeedPose);
     }
 
     public ClimbManager getClimbManager() {

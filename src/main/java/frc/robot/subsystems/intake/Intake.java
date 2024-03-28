@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.intake.IntakePivot.IntakePosition;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.util.BSLogger;
 
@@ -51,7 +52,8 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
 
         AmpAim,
         TryClearNote,
-        TryShootAmp
+        TryShootAmp, 
+        ReverseFeed
     }
 
     private IntakeState intakeState = IntakeState.StartingPosition;
@@ -129,6 +131,10 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
             case TryClearNote -> {
                 intakeSpeed.runIntakeEject();
                 intakePivot.setIntakePosition(IntakePivot.IntakePosition.Pickup);
+            }
+            case ReverseFeed -> {
+                intakeSpeed.runIntakeFast();
+                intakePivot.setIntakePosition(IntakePosition.Zero);
             }
             default -> {
                 BSLogger.log("Intake", "Unhandled IntakeState: " + state.name());
