@@ -126,8 +126,10 @@ public class AutoManager {
         NamedCommands.registerCommand("TabShot5", CommonCommands.DoShotCommand("TabShot5", Tab.FifthShot));
 
         NamedCommands.registerCommand("TabQPose2", CommonCommands.queueTabShot2());
-        NamedCommands.registerCommand("TabFAS3", CommonCommands.feedAndShootAutoCmd(Tab.ThirdShot));
-        NamedCommands.registerCommand("TabFAS4", CommonCommands.feedAndShootAutoCmd(Tab.ForthShot));
+       // NamedCommands.registerCommand("TabFAS3", CommonCommands.feedAndShootAutoCmd(Tab.ThirdShot));
+        NamedCommands.registerCommand("TabFAS3", FeedAndShootAuto.createStandardShot(Tab.ThirdShot));
+        NamedCommands.registerCommand("TabFAS4", FeedAndShootAuto.createStandardShot(Tab.ForthShot));
+        // NamedCommands.registerCommand("TabFAS4", CommonCommands.feedAndShootAutoCmd(Tab.ForthShot));
         NamedCommands.registerCommand("TabFAS5", CommonCommands.feedAndShootAutoCmd(Tab.FifthShot));
 
         // DropShot

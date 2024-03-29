@@ -203,7 +203,7 @@ public class Climber extends SubsystemBase implements Lifecycle, Sendable {
      */
     public static class ClimberPositionValues {
         static double UP = -204;
-        static double DOWN = -25;
+        static double DOWN = -12.24;
         static double RESET = 0;
     }
 }

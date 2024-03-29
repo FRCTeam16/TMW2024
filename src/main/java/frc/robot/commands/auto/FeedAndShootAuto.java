@@ -1,9 +1,11 @@
 package frc.robot.commands.auto;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Subsystems;
+import frc.robot.auto.strategies.CommonCommands;
 import frc.robot.subsystems.VisionAimManager;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakePivot;
@@ -38,5 +40,23 @@ public class FeedAndShootAuto extends SequentialCommandGroup {
                         Commands.runOnce(Subsystems.shooter::stopFeeder, Subsystems.shooter),
                         Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PickupNoTrap)
                 ));
+    }
+
+    public static Command createStandardShot(VisionAimManager.ShootingProfile profile) {
+        return Commands.sequence(
+                Commands.parallel(
+                        Commands.runOnce(() -> BSLogger.log("FeedAndShootAuto | std", "starting - wait for intake has note")),
+                        new WaitIntakeHasNoteCommand(),
+                        Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(profile), Subsystems.shooter)
+                ).withTimeout(1.0),
+                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter).withTimeout(1.0), 
+                Commands.parallel(
+                        Commands.runOnce(() -> BSLogger.log("FeedAndShootAuto | std", "Running standard shot")),
+                        CommonCommands.DoShotCommand(profile),
+                        new WaitCommand(0.25)
+                ),
+                // Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PickupNoTrap),
+                Commands.runOnce(() -> BSLogger.log("FeedAndShootAuto | std", "finished"))
+        );
     }
 }

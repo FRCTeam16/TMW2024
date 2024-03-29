@@ -38,7 +38,8 @@ public class CommonCommands {
 //                        new WaitCommand(0.5),
                         CommonCommands.doShootCmd()
                 ),
-                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup)
+                Subsystems.poseManager.getPoseCommand(
+                        name == "TabFAS3" ? PoseManager.Pose.PickupNoTrap : PoseManager.Pose.Pickup)
         ).beforeStarting(() -> BSLogger.log("DoShotCommand", "starting: " + name))
                 .finallyDo(() -> BSLogger.log("DoShotCommand", "ending: " + name));
     }

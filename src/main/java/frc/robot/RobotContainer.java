@@ -247,6 +247,8 @@ public class RobotContainer {
                 leftBumper.onTrue(Commands.runOnce(Subsystems.pivot::openLoopDown))
                                 .onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
 
+                SmartDashboard.putData("Test StdFAS3", FeedAndShootAuto.createStandardShot(Tab.ThirdShot));
+
                 // Test Intake
                 if (false) {
                         leftTrigger
