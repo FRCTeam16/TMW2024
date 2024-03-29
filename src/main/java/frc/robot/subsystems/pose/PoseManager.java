@@ -46,7 +46,8 @@ public class PoseManager {
         // Auto only
         PickupNoTrap,
         PrepareBloopShot,
-        ReverseFeed
+        ReverseFeed,
+        EmergencyEject
     }
 
     private Pose lastPose = Pose.StartingConfig;
@@ -76,6 +77,7 @@ public class PoseManager {
         registry.put(Pose.TryClearNote, PoseCommands::tryClearNote);
         registry.put(Pose.FireShootOverSmiley, PoseCommands::fireShootOverSmiley);
         registry.put(Pose.ReverseFeed, PoseCommands::reverseFeedPose);
+        registry.put(Pose.EmergencyEject, PoseCommands::emergencyEject);
     }
 
     public ClimbManager getClimbManager() {

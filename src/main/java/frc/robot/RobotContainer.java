@@ -67,6 +67,7 @@ public class RobotContainer {
         //
         private final JoystickButton intake = new JoystickButton(left, 1);
         private final JoystickButton bigShot = new JoystickButton(left, 2);
+        private final JoystickButton ejectNote = new JoystickButton(left, 3);
 
         private final JoystickButton feedIntake = new JoystickButton(left, 4); // debug feed intake speeds
         private final JoystickButton unsafeRaiseClimber = new JoystickButton(left, 14);
@@ -352,6 +353,9 @@ public class RobotContainer {
                                 .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));
                 eject.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeEject()))
                                 .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));
+
+                ejectNote.whileTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.EmergencyEject))
+                        .onFalse(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
 
                 //
                 // Climb subsystem

@@ -10,6 +10,7 @@ import frc.robot.commands.auto.WaitTrapExtendInPosition;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakePivot;
+import frc.robot.subsystems.intake.Intake.IntakeState;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.trap.Trap;
 import frc.robot.subsystems.util.BSLogger;
@@ -209,6 +210,15 @@ class PoseCommands {
                 Commands.runOnce(() -> Subsystems.shooter.runFeeder()),
                 Commands.runOnce(() -> Subsystems.shooter.getFeeder().setEnabled(true)
                 ));
+    }
+
+    public static Command emergencyEject() {
+        return Commands.sequence(
+                Commands.runOnce(() -> 
+                Subsystems.intake.getIntakePivot().setIntakePosition(IntakePivot.IntakePosition.Eject)),
+                new WaitCommand(1.0),
+                Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeEject())
+        );
     }
 
     public static Command fireShootOverSmiley() {
