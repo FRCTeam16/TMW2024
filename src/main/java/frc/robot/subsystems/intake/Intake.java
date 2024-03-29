@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase implements Lifecycle, Sendable {
 
     private Optional<Timer> ampShotTimer = Optional.empty();
 
-    private static final double POST_NOTE_DETECT_TIME = 0.25;
+    private static final double POST_NOTE_DETECT_TIME = 0.15;
 
 
 
