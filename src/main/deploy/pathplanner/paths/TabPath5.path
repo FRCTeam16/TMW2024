@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 2.3,
-        "y": 6.76
+        "y": 6.61
       },
       "prevControl": null,
       "nextControl": {
         "x": 3.3,
-        "y": 6.76
+        "y": 6.61
       },
       "isLocked": false,
       "linkedName": "Tab4End"

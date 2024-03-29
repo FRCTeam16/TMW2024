@@ -29,6 +29,7 @@ public class FeedAndShootAuto extends SequentialCommandGroup {
                         Commands.runOnce(() -> BSLogger.log("FeedAndShootAuto", "feed and shoot")),
                         Commands.runOnce(() -> Subsystems.shooter.getFeeder().startFeed(), Subsystems.shooter),
                         Subsystems.intake.moveToStateCmd(Intake.IntakeState.FeedNote),
+                        new WaitCommand(0.15), // time to feed from intake to shooter
                         Commands.runOnce(() -> Subsystems.intake.getIntakePivot().setIntakePosition(IntakePivot.IntakePosition.Pickup)) //hack
                 ),
                 new WaitCommand(0.3),
