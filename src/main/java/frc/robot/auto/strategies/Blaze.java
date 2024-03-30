@@ -23,7 +23,7 @@ public class Blaze extends AutoPathStrategy {
     private final double startingAngleOffset = 21; // 90 - 31
     private final Pose2d blueStartPose = new Pose2d(1.4478, 2.184, new Rotation2d(Degrees.of(-90)));
     private final VisionAimManager.ShootingProfile firstShotProfile = new VisionAimManager.ShootingProfile(20.74, 52.5, 52);
-    public static final VisionAimManager.ShootingProfile shootingPositionProfile = new VisionAimManager.ShootingProfile(19, 56, 56);
+    public static final VisionAimManager.ShootingProfile shootingPositionProfile = new VisionAimManager.ShootingProfile(19.4, 56, 56);
 
     public Blaze() {
         addCommands(
@@ -53,7 +53,8 @@ public class Blaze extends AutoPathStrategy {
                 // First Shot
                 //
                 Commands.parallel(
-                        new RotateToAngle(GameInfo.isBlueAlliance() ? startAngle - startingAngleOffset : startAngle + startingAngleOffset)
+                        new RotateToAngle(-69)
+                        // new RotateToAngle(GameInfo.isBlueAlliance() ? startAngle - startingAngleOffset : startAngle + startingAngleOffset)
                                 .withThreshold(1).withTimeout(0.5),
                         Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(firstShotProfile)),
                         Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(firstShotProfile)),
