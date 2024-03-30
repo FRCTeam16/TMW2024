@@ -22,7 +22,7 @@ import static edu.wpi.first.units.Units.Degree;
 public class DropShot extends AutoPathStrategy {
 
     private final VisionAimManager.ShootingProfile firstShotProfile = new VisionAimManager.ShootingProfile(36.46, 40, 40);
-    private final VisionAimManager.ShootingProfile fieldShotProfile = new VisionAimManager.ShootingProfile(20.3, 55, 55);
+    private final VisionAimManager.ShootingProfile fieldShotProfile = new VisionAimManager.ShootingProfile(19.3, 55, 55);
 
 
     public DropShot() {

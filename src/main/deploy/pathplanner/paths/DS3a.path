@@ -11,7 +11,7 @@
         "x": 4.525456204922345,
         "y": 6.288136806223932
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "DS2End"
     },
     {
@@ -27,21 +27,21 @@
         "x": 6.921378003919584,
         "y": 6.735132003738748
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
       "anchor": {
         "x": 8.1,
-        "y": 6.15
+        "y": 6.0
       },
       "prevControl": {
         "x": 7.808731717236323,
-        "y": 6.293789480268813
+        "y": 6.143789480268812
       },
       "nextControl": {
         "x": 8.433520586855227,
-        "y": 5.985351960097309
+        "y": 5.8353519600973085
       },
       "isLocked": true,
       "linkedName": "DSPick2"
@@ -59,7 +59,7 @@
         "x": 5.5212709484847995,
         "y": 6.761020622960894
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -72,7 +72,7 @@
         "y": 6.471582042443332
       },
       "nextControl": null,
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "DS2End"
     }
   ],
