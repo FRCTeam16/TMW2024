@@ -7,6 +7,7 @@
     "CrossWingShot",
     "DCL_BCL",
     "DropShot",
+    "New Folder",
     "Tab",
     "Test",
     "UTB"
@@ -16,10 +17,11 @@
     "CrossWingShot",
     "DCL_BCL",
     "DropShot",
-    "XTab",
+    "Front",
     "Tab",
     "Test",
-    "UTB"
+    "UTB",
+    "XTab"
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,

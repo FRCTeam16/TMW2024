@@ -11,7 +11,7 @@
         "x": 6.82798441018355,
         "y": 1.7919138588942665
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "B1End"
     },
     {
@@ -27,7 +27,7 @@
         "x": 4.744702444152004,
         "y": 1.9303137097844736
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -40,7 +40,7 @@
         "y": 2.4762260775808156
       },
       "nextControl": null,
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "BlazeShoot"
     }
   ],

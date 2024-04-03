@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.2788871226815193,
+      "y": 5.562647359246215
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Front"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Front2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Front3"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Front",
+  "choreoAuto": false
+}
