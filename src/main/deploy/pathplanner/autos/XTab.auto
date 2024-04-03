@@ -98,12 +98,6 @@
               }
             ]
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TabPath5"
-          }
         }
       ]
     }

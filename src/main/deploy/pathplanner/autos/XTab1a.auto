@@ -79,37 +79,6 @@
               }
             ]
           }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "TabPath4"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "FeedNote"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "TabShot5"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TabPath5"
-          }
         }
       ]
     }

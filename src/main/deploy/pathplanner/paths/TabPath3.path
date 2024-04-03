@@ -32,15 +32,15 @@
     },
     {
       "anchor": {
-        "x": 1.75,
-        "y": 6.4
+        "x": 2.75,
+        "y": 5.52
       },
       "prevControl": {
-        "x": 1.748221241657356,
-        "y": 6.399352584909325
+        "x": 2.748107084909152,
+        "y": 5.52
       },
       "nextControl": null,
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "Tab3End"
     }
   ],
@@ -52,7 +52,25 @@
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Queue Shot 4",
+      "waypointRelativePos": 0.05,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "TabQPose4"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.5,
     "maxAcceleration": 4.5,
@@ -61,7 +79,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 26.0,
+    "rotation": 0.0,
     "rotateFast": false
   },
   "reversed": false,

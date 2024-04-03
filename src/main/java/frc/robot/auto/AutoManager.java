@@ -76,8 +76,7 @@ public class AutoManager {
         // registerStrategy("DCL-BCL", AutoStrategies.DCL_BCL, () -> new DebugPathAuto("DCL_BCL"));
 
         // registerStrategy("Under The Bridge", AutoStrategies.UnderTheBridge, UnderTheBridge::new);
-        registerStrategy("Tab", AutoStrategies.Tab, () -> new Tab(Tab.TabVersion.OffsetStart));
-        registerStrategy("TabStraight", AutoStrategies.TabStraight, () -> new Tab(Tab.TabVersion.StraightStart));
+        registerStrategy("Tab", AutoStrategies.Tab, Tab::new);
         registerStrategy("DropShot", AutoStrategies.DropShot, DropShot::new);
         // registerStrategy("CrossWing", AutoStrategies.CrossWing, CrossWingShot::new);
         registerStrategy("Blaze", AutoStrategies.Blaze, Blaze::new);
@@ -110,14 +109,6 @@ public class AutoManager {
         NamedCommands.registerCommand("FeedNote", new FeedNoteInAuto());
 
 
-        // UTB
-        NamedCommands.registerCommand("UTBSetThirdShotPivot",
-                Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.Custom));
-        NamedCommands.registerCommand("UTBSetSecondShotSpeed",
-                Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(UnderTheBridge.SecondShotProfile)));
-        NamedCommands.registerCommand("UTBSetThirdShotSpeed",
-                Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(UnderTheBridge.ThirdShotProfile)));
-
         // Tab
         NamedCommands.registerCommand("FeedNoteTab2", new FeedNoteInAutoTabShot2());
         NamedCommands.registerCommand("TabShot2Rotate", Tab.createTabShot2Rotate());
@@ -127,7 +118,8 @@ public class AutoManager {
         NamedCommands.registerCommand("TabShot5", CommonCommands.DoShotCommand("TabShot5", Tab.FifthShot));
 
         NamedCommands.registerCommand("TabQPose2", CommonCommands.queueTabShot2());
-       // NamedCommands.registerCommand("TabFAS3", CommonCommands.feedAndShootAutoCmd(Tab.ThirdShot));
+        NamedCommands.registerCommand("TabQPose4", CommonCommands.queueTabShot4());
+        NamedCommands.registerCommand("TabFAS2", FeedAndShootAuto.createStandardShot(Tab.SecondShot));
         NamedCommands.registerCommand("TabFAS3", FeedAndShootAuto.createStandardShot(Tab.ThirdShot));
         NamedCommands.registerCommand("TabFAS4", FeedAndShootAuto.createStandardShot(Tab.ForthShot));
         // NamedCommands.registerCommand("TabFAS4", CommonCommands.feedAndShootAutoCmd(Tab.ForthShot));
@@ -148,7 +140,6 @@ public class AutoManager {
      * Registers the autonomous paths with the path registry
      */
     private void registerAutoPaths() {
-        UnderTheBridge.registerAutoPaths(pathRegistry);
         Tab.registerAutoPaths(pathRegistry);
         DropShot.registerAutoPaths(pathRegistry);
         Blaze.registerAutoPaths(pathRegistry);

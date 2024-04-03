@@ -62,32 +62,34 @@ public class SL1toSL3 extends AutoPathStrategy {
          new EnableShooterCommand()
              ),
             new WaitCommand(0.5),
-           Subsystems.shooter.shootCmd(),
+           Subsystems.shooter.shootCmd()
+    );
+ }
 
         //Front 2
-        this.runAutoPath("Front2"),
-      Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup),
-      
-      Subsystems.poseManager.getPoseCommand(PoseManager.Pose.AutoShortShot),
-        new WaitCommand(0.25),
-       Subsystems.shooter.shootCmd(),
-        Commands.parallel(
-            new EnableShooterCommand(false),
-            Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive)
-        ),
-      this.runAutoPath("Front3"),
-         new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero).withTimeout(1.0),
-                new WaitIntakeHasNoteCommand().withTimeout(1.0),
-                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
-                new WaitShooterHasNote().withTimeout(1.0),
-                Commands.parallel(
-                        Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(SL1toSL3.ForthShotProfile)),
-                        new EnableShooterCommand()
-                ),
-                new WaitCommand(0.5),
-                Subsystems.shooter.shootCmd()
-        );
- }
+//        this.runAutoPath("Front2"),
+//      Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup),
+//
+//      Subsystems.poseManager.getPoseCommand(PoseManager.Pose.AutoShortShot),
+//        new WaitCommand(0.25),
+//       Subsystems.shooter.shootCmd(),
+//        Commands.parallel(
+//            new EnableShooterCommand(false),
+//            Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive)
+//        ),
+//      this.runAutoPath("Front3"),
+//         new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero).withTimeout(1.0),
+//                new WaitIntakeHasNoteCommand().withTimeout(1.0),
+//                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter),
+//                new WaitShooterHasNote().withTimeout(1.0),
+//                Commands.parallel(
+//                        Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(SL1toSL3.ForthShotProfile)),
+//                        new EnableShooterCommand()
+//                ),
+//                new WaitCommand(0.5),
+//                Subsystems.shooter.shootCmd()
+//        );
+// }
             public Command waitForPositionThenShoot() {
                 return new SequentialCommandGroup(
 );

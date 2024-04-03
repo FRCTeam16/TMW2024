@@ -120,4 +120,14 @@ public class CommonCommands {
                 )
         );
     }
+
+    public static Command queueTabShot4() {
+        return Commands.sequence(
+                new EnableShooterCommand(),
+                Commands.parallel(
+                        Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(Tab.ThirdShot), Subsystems.shooter),
+                        Subsystems.pivot.queueNextProfileCommand(Tab.ThirdShot)
+                )
+        );
+    }
 }

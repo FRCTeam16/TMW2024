@@ -3,50 +3,50 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.75,
-        "y": 6.4
+        "x": 2.75,
+        "y": 5.52
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8398794046299172,
-        "y": 6.443837114678908
+        "x": 2.75,
+        "y": 6.02
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "Tab3End"
     },
     {
       "anchor": {
-        "x": 2.3,
-        "y": 6.61
+        "x": 2.8872307611518506,
+        "y": 6.6577612480868265
       },
       "prevControl": {
-        "x": 2.210120595370083,
-        "y": 6.566162885321092
+        "x": 2.8872307611518506,
+        "y": 6.207293038510482
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Tab4End"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.5,
-    "maxAcceleration": 4.5,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": 28.0,
-    "rotateFast": false
+    "velocity": 0,
+    "rotation": 90.0,
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "Tab",
   "previewStartingState": {
-    "rotation": 28.0,
+    "rotation": 0,
     "velocity": 0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
