@@ -81,6 +81,7 @@ public class AutoManager {
         registerStrategy("DropShot", AutoStrategies.DropShot, DropShot::new);
         // registerStrategy("CrossWing", AutoStrategies.CrossWing, CrossWingShot::new);
         registerStrategy("Blaze", AutoStrategies.Blaze, Blaze::new);
+        registerStrategy("SL1toSL3", AutoStrategies.SL1toSL3, SL1toSL3::new);
     }
 
     /**
@@ -138,6 +139,7 @@ public class AutoManager {
         // Blaze
         NamedCommands.registerCommand("BlazeQueuePivot", Subsystems.pivot.queueNextProfileCommand(Blaze.shootingPositionProfile));
         NamedCommands.registerCommand("BlazeShot", CommonCommands.DoBlazeShotCommand(Blaze.shootingPositionProfile));
+        //SL1-SL3
 
 
     }
@@ -202,7 +204,9 @@ public class AutoManager {
         DropShot,
         Tab,
         TabStraight,
-        Blaze, CrossWing
+        Blaze, 
+        CrossWing,
+        SL1toSL3
     }
 
 }
