@@ -34,7 +34,8 @@ public class SL1toSL3 extends AutoPathStrategy {
     registry.registerPaths( "Front", "Front2", "Front3");
 
    }
- public SL1toSL3() {
+   /*
+ public SL1toSL3() { 
     addCommands(
         Commands.parallel(
             new PrintStartInfo("SL1-SL3"),
@@ -96,7 +97,7 @@ public class SL1toSL3 extends AutoPathStrategy {
             }
 
         
-
+*/
  }
 
 
