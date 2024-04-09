@@ -108,6 +108,7 @@ class PoseCommands {
 
     }
 
+
     public static Command positionForAmpPose() {
         // Assumes intake is in zero position
         return Commands.sequence(
@@ -228,8 +229,19 @@ class PoseCommands {
                         Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(Shooter.ShootOverSmileyProfile)),
                         Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(Shooter.ShootOverSmileyProfile)),
                         Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive)
+                )
+        );
+
+        /* changed to just pose
+        return Commands.sequence(
+                Commands.runOnce(Subsystems.shooter::runShooter),
+                Commands.parallel(
+                        Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(Shooter.ShootOverSmileyProfile)),
+                        Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(Shooter.ShootOverSmileyProfile)),
+                        Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive)
                 ),
                 new WaitCommand(1.5),
                 Subsystems.shooter.shootCmd());
+                */
     }
 }

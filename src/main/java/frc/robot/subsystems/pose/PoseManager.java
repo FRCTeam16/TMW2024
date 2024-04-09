@@ -34,6 +34,9 @@ public class PoseManager {
         FireAmpShot,
         // Pose for automatically adjusting shooter pivot based on vision
         ShooterAimVision,
+        // Pose for BigShot.  Only sets angle
+        SetBigShotAngle,
+
         AutoShortShot,
         // Start climb
         @Deprecated StartClimb,

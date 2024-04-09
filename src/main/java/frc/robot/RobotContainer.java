@@ -80,6 +80,7 @@ public class RobotContainer {
         //
         private final Trigger feed = new Trigger(right::getTrigger);
         private final JoystickButton runVisionAlignAngle = new JoystickButton(right, 2);
+        private final JoystickButton setBigShotAngle = new JoystickButton(right, 3);
         private final JoystickButton robotCentric = new JoystickButton(right, 5);
         private final JoystickButton shootOverSmiley = new JoystickButton(right, 4);
 
@@ -144,6 +145,9 @@ public class RobotContainer {
 
         boolean isRedAlliance;
 
+        boolean useSetAngle = false;
+        double robotSetAngle = 0;
+
         public RobotContainer() {
                 configureBindings();
                 configureDashboardButtons();
@@ -183,13 +187,21 @@ public class RobotContainer {
                 final double twist;
                 if (!useVisionAlignment) {
                         twist = OIUtil.deadband(-left.getX(), DEADBAND) * (MaxAngularRate * 0.8);
+                if (useSetAngle) {
+                        ;
+                }
                 } else {
                         VisionTypes.TargetInfo targetInfo = Subsystems.visionSubsystem.getDefaultLimelight()
                                         .getTargetInfo();
                         // If no target give control back to human inputs
                         if (!targetInfo.hasTarget()) {
                                 twist = OIUtil.deadband(-left.getX(), DEADBAND) * (MaxAngularRate * 0.8);
-                        } else {
+                        }
+                        else if(useSetAngle) {
+                                robotSetAngle = isRedAlliance ? robotSetAngle : 180 - robotSetAngle;
+                                twist = alignController.calculate(45);  //probably not 
+                        }
+                        else {
                                 double distance = targetInfo.calculateDistance();
                                 double factor = distance / SmartDashboard.getNumber("AlignPIDFactor", 200);
                                 double horizontalComponent = factor
@@ -346,6 +358,12 @@ public class RobotContainer {
                 tryClearNote.whileTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.TryClearNote))
                                 .onFalse(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
 
+                setBigShotAngle.whileTrue(
+                        Commands.parallel (
+                                Commands.runOnce(() -> useSetAngle = true),
+                                Commands.runOnce(() -> robotSetAngle = 28)))
+                        .onFalse(Commands.runOnce(() -> useSetAngle = false));
+                
                 //
                 // Intake Subsystem
                 //
@@ -409,9 +427,17 @@ public class RobotContainer {
                                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireBigShot))
                                 .onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
 
-                shootOverSmiley.onTrue(
-                                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireShootOverSmiley))
-                                .onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
+                shootOverSmiley.onTrue(Commands.parallel(
+                                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireShootOverSmiley),
+                                Commands.runOnce(() -> useSetAngle = true),
+                                Commands.runOnce(() -> robotSetAngle = 10)
+                                )
+                        )
+                                .onFalse(Commands.parallel(
+                                Commands.runOnce(Subsystems.shooter::stopFeeder),
+                                Commands.runOnce(() -> useSetAngle = false)
+                                )
+                        );
 
                 subShot.onTrue(
                                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.SubShot))
