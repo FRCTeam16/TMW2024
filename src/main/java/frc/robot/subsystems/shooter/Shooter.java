@@ -38,7 +38,7 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
             new VisionAimManager.ShootingProfile(50, 25, 25);
 
     public static final VisionAimManager.ShootingProfile ShootOverSmileyProfile =
-            new VisionAimManager.ShootingProfile(17.75, 65, 61);
+            new VisionAimManager.ShootingProfile(16, 60, 60);
 
 
     public Shooter(){
@@ -93,7 +93,8 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
 //        feeder.setEnabled(true);
     }
 
-    public void stopFeeder(){
+    public void stopFeeder() {
+        feeder.setVelocityMode(false);
         feeder.setOpenLoopSetpoint(0.0);
 //        feeder.setEnabled(false);
     }

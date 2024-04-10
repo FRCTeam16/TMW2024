@@ -42,9 +42,9 @@ public class PoseManager {
         @Deprecated StartClimb,
         TryClearNote,
         @Deprecated ExtendClimbers,
-        FireBigShot,
+        PrepBigShot,
         SubShot,
-        FireShootOverSmiley,
+        PrepShootOverSmiley,
         FeedNoteShooterCustomPivot,
         // Auto only
         PickupNoTrap,
@@ -75,10 +75,10 @@ public class PoseManager {
         registry.put(Pose.AutoShortShot, PoseCommands::shortShotPose);
 //        registry.put(Pose.StartClimb, PoseCommands::stepClimbPose);
         registry.put(Pose.PrepareBloopShot, PoseCommands::prepareBloopShotPose);
-        registry.put(Pose.FireBigShot, PoseCommands::fireBigShot);
-        registry.put(Pose.SubShot, PoseCommands::fireSubShot);
+        registry.put(Pose.PrepBigShot, PoseCommands::prepBigShot);
+        registry.put(Pose.SubShot, PoseCommands::prepSubShot);
         registry.put(Pose.TryClearNote, PoseCommands::tryClearNote);
-        registry.put(Pose.FireShootOverSmiley, PoseCommands::fireShootOverSmiley);
+        registry.put(Pose.PrepShootOverSmiley, PoseCommands::prepShootOverSmiley);
         registry.put(Pose.ReverseFeed, PoseCommands::reverseFeedPose);
         registry.put(Pose.EmergencyEject, PoseCommands::emergencyEject);
     }

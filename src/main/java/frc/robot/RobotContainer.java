@@ -3,6 +3,7 @@ package frc.robot;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.pathplanner.lib.util.GeometryUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,10 +28,10 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.RotationController;
-import frc.robot.subsystems.VisionAimManager;
 import frc.robot.subsystems.pose.ClimbManager;
 import frc.robot.subsystems.pose.PoseManager;
 import frc.robot.subsystems.pose.PoseManager.Pose;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.util.BSLogger;
 import frc.robot.subsystems.util.GameInfo;
 import frc.robot.subsystems.vision.VisionTypes;
@@ -67,9 +68,10 @@ public class RobotContainer {
         //
         private final JoystickButton intake = new JoystickButton(left, 1);
         private final JoystickButton bigShot = new JoystickButton(left, 2);
-        private final JoystickButton ejectNote = new JoystickButton(left, 3);
 
-        private final JoystickButton feedIntake = new JoystickButton(left, 4); // debug feed intake speeds
+        private final JoystickButton shootOverSmiley = new JoystickButton(left, 4);
+
+//        private final JoystickButton feedIntake = new JoystickButton(left, 4); // debug feed intake speeds
         private final JoystickButton unsafeRaiseClimber = new JoystickButton(left, 14);
         private final JoystickButton unsafeLowerClimber = new JoystickButton(left, 15);
         private final JoystickButton unsafeLowerTrap = new JoystickButton(left, 8);
@@ -80,9 +82,7 @@ public class RobotContainer {
         //
         private final Trigger feed = new Trigger(right::getTrigger);
         private final JoystickButton runVisionAlignAngle = new JoystickButton(right, 2);
-        private final JoystickButton setBigShotAngle = new JoystickButton(right, 3);
         private final JoystickButton robotCentric = new JoystickButton(right, 5);
-        private final JoystickButton shootOverSmiley = new JoystickButton(right, 4);
 
         private final JoystickButton bumpClimberDown = new JoystickButton(right, 6);
         private final JoystickButton bumpClimberUp = new JoystickButton(right, 7);
@@ -95,7 +95,7 @@ public class RobotContainer {
                         .or(new POVButton(right, 270))
                         .or(new POVButton(right, 315));
 
-        private final JoystickButton tryClearNote = new JoystickButton(right, 16);
+        private final JoystickButton tryClearNoteJoy = new JoystickButton(right, 16);
         //
         // Debug Controller
         //
@@ -115,8 +115,8 @@ public class RobotContainer {
         //
         private final Trigger startShooter = xboxController.start();
         private final Trigger stopShooter = xboxController.back();
-        private final Trigger rightBumper = xboxController.rightBumper();
-        private final Trigger leftBumper = xboxController.leftBumper();
+        private final Trigger tryClearNote = xboxController.rightBumper();
+        private final Trigger ejectNote = xboxController.leftBumper();
         private final Trigger leftTrigger = xboxController.leftTrigger();
         private final Trigger rightTrigger = xboxController.rightTrigger();
         private final Trigger ampAim = xboxController.x();
@@ -130,9 +130,7 @@ public class RobotContainer {
         //
         // Miscellaneous
         //
-        private final RotationController alignController = new RotationController(0.02, 0, 0);
-        // Trigger povUp = xboxController.povUp();
-        // Trigger povDown = xboxController.povDown();
+        private final RotationController alignController = new RotationController(0.015, 0, 0);
         MusicController music = new MusicController();
 
         private final DigitalInput dmsButton = new DigitalInput(6);
@@ -145,8 +143,22 @@ public class RobotContainer {
 
         boolean isRedAlliance;
 
-        boolean useSetAngle = false;
-        double robotSetAngle = 0;
+        ShootMode shootMode = ShootMode.Normal;
+
+    /**
+     * The shoot mode to track with the angle to pose the robot at.
+     */
+    private enum ShootMode {
+            Normal(0), BigShot(-28), ShootOverSmiley(-6);
+
+            private final double angle;
+
+            ShootMode(double angle) {
+                this.angle = angle;
+            }
+
+            public double getAngle() { return this.angle;}
+        }
 
         public RobotContainer() {
                 configureBindings();
@@ -185,30 +197,29 @@ public class RobotContainer {
         private Measure<Velocity<Angle>> supplySwerveRotate() {
                 final double DEADBAND = 0.05;
                 final double twist;
-                if (!useVisionAlignment) {
+
+                if (ShootMode.Normal != shootMode) {
+                    double robotSetAngle = shootMode.getAngle();
+                    robotSetAngle = isRedAlliance ?
+                            GeometryUtil.flipFieldRotation(Rotation2d.fromDegrees(robotSetAngle)).getDegrees() :
+                            robotSetAngle;
+                    twist = alignController.calculate(Subsystems.swerveSubsystem.getYaw(), robotSetAngle) * (MaxAngularRate * 0.8);
+                } else if (useVisionAlignment) {
+                    VisionTypes.TargetInfo targetInfo = Subsystems.visionSubsystem.getDefaultLimelight()
+                                    .getTargetInfo();
+                    // If no target give control back to human inputs
+                    if (!targetInfo.hasTarget()) {
                         twist = OIUtil.deadband(-left.getX(), DEADBAND) * (MaxAngularRate * 0.8);
-                if (useSetAngle) {
-                        ;
-                }
+                    } else {
+                            double distance = targetInfo.calculateDistance();
+                            double factor = distance / SmartDashboard.getNumber("AlignPIDFactor", 200);
+                            double horizontalComponent = factor
+                                            * alignController.calculate(targetInfo.xOffset(), 0);
+                            twist = MathUtil.clamp(horizontalComponent * Constants.Swerve.kMaxAngularVelocity,
+                                            -Math.PI, Math.PI);
+                    }
                 } else {
-                        VisionTypes.TargetInfo targetInfo = Subsystems.visionSubsystem.getDefaultLimelight()
-                                        .getTargetInfo();
-                        // If no target give control back to human inputs
-                        if (!targetInfo.hasTarget()) {
-                                twist = OIUtil.deadband(-left.getX(), DEADBAND) * (MaxAngularRate * 0.8);
-                        }
-                        else if(useSetAngle) {
-                                robotSetAngle = isRedAlliance ? robotSetAngle : 180 - robotSetAngle;
-                                twist = alignController.calculate(45);  //probably not 
-                        }
-                        else {
-                                double distance = targetInfo.calculateDistance();
-                                double factor = distance / SmartDashboard.getNumber("AlignPIDFactor", 200);
-                                double horizontalComponent = factor
-                                                * alignController.calculate(targetInfo.xOffset(), 0);
-                                twist = MathUtil.clamp(horizontalComponent * Constants.Swerve.kMaxAngularVelocity,
-                                                -Math.PI, Math.PI);
-                        }
+                        twist = OIUtil.deadband(-left.getX(), DEADBAND) * (MaxAngularRate * 0.8);
                 }
                 return RadiansPerSecond.of(twist);
         }
@@ -250,14 +261,6 @@ public class RobotContainer {
                                                 .withVelocityX(OIUtil.deadband(supplySwerveY(), 0.05) * MaxSpeed)
                                                 .withVelocityY(OIUtil.deadband(supplySwerveY(), 0.05) * MaxSpeed)
                                                 .withRotationalRate(supplySwerveRotate().in(RadiansPerSecond))));
-
-                //
-                // Debug/Development
-                //
-                rightBumper.onTrue(Commands.runOnce(Subsystems.pivot::openLoopUp))
-                                .onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
-                leftBumper.onTrue(Commands.runOnce(Subsystems.pivot::openLoopDown))
-                                .onFalse((Commands.runOnce(Subsystems.pivot::holdPosition)));
 
                 SmartDashboard.putData("Test StdFAS3", FeedAndShootAuto.createStandardShot(Tab.ThirdShot));
 
@@ -355,22 +358,19 @@ public class RobotContainer {
                                                                                 PoseManager.Pose.Drive)));
 
                 //
-                tryClearNote.whileTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.TryClearNote))
+                tryClearNote.or(tryClearNoteJoy)
+                        .whileTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.TryClearNote))
                                 .onFalse(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
 
-                setBigShotAngle.whileTrue(
-                        Commands.parallel (
-                                Commands.runOnce(() -> useSetAngle = true),
-                                Commands.runOnce(() -> robotSetAngle = 28)))
-                        .onFalse(Commands.runOnce(() -> useSetAngle = false));
+
                 
                 //
                 // Intake Subsystem
                 //
                 intake.whileTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Pickup))
                                 .onFalse(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
-                feedIntake.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeFeedShooter()))
-                                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));
+//                feedIntake.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeFeedShooter()))
+//                                .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));
                 eject.onTrue(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().runIntakeEject()))
                                 .onFalse(Commands.runOnce(() -> Subsystems.intake.getIntakeSpeed().stopIntake()));
 
@@ -411,8 +411,13 @@ public class RobotContainer {
                 //
                 // Shooter
                 //
-                feed.onTrue(new TeleopShoot())
-                                .onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
+                feed.onTrue(Commands.deferredProxy(this::getShootModeCmd))
+                        .onFalse(
+                                Commands.runOnce(() -> {
+                                    Subsystems.shooter.stopFeeder();    // stop feeding
+                                    Subsystems.shooter.runShooter();    // reset to default speed
+                                }, Subsystems.shooter));
+
 
                 feedNoteToShooter.onTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FeedNoteToShooter));
 
@@ -423,21 +428,21 @@ public class RobotContainer {
                 startShooter.onTrue(Commands.runOnce(Subsystems.shooter::runShooter));
                 stopShooter.onTrue(Commands.runOnce(Subsystems.shooter::stopShooter));
 
-                bigShot.onTrue(
-                                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireBigShot))
-                                .onFalse(Commands.runOnce(Subsystems.shooter::stopFeeder));
 
-                shootOverSmiley.onTrue(Commands.parallel(
-                                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.FireShootOverSmiley),
-                                Commands.runOnce(() -> useSetAngle = true),
-                                Commands.runOnce(() -> robotSetAngle = 10)
-                                )
+                bigShot.whileTrue(
+                        Commands.sequence(
+                                Commands.runOnce(() -> this.shootMode = ShootMode.BigShot),
+                                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PrepBigShot)
                         )
-                                .onFalse(Commands.parallel(
-                                Commands.runOnce(Subsystems.shooter::stopFeeder),
-                                Commands.runOnce(() -> useSetAngle = false)
-                                )
-                        );
+                ).onFalse(Commands.runOnce(() -> this.shootMode = ShootMode.Normal));
+
+                shootOverSmiley.whileTrue(
+                        Commands.sequence(
+                                Commands.runOnce(() -> this.shootMode = ShootMode.ShootOverSmiley),
+                                Subsystems.poseManager.getPoseCommand(Pose.PrepShootOverSmiley)
+                        )
+                ).onFalse(Commands.runOnce(() -> this.shootMode = ShootMode.Normal));
+
 
                 subShot.onTrue(
                                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.SubShot))
@@ -448,6 +453,15 @@ public class RobotContainer {
                 }
                 drivetrain.registerTelemetry(swerveStateTelemetry::telemeterize);
 
+        }
+
+        private Command getShootModeCmd() {
+            BSLogger.log("RobotContainer", "Selected ShootModeCmd: " + shootMode);
+            return switch (shootMode) {
+                case BigShot -> new FeedAndShootTeleop(Shooter.BigShotProfile);
+                case ShootOverSmiley -> Subsystems.shooter.shootCmd();
+                default -> new TeleopShoot();
+            };
         }
 
         private void configureDashboardButtons() {

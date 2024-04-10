@@ -10,7 +10,6 @@ import frc.robot.commands.auto.WaitTrapExtendInPosition;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakePivot;
-import frc.robot.subsystems.intake.Intake.IntakeState;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.trap.Trap;
 import frc.robot.subsystems.util.BSLogger;
@@ -176,20 +175,20 @@ class PoseCommands {
         );
     }
 
-    public static Command fireBigShot() {
+    public static Command prepBigShot() {
         return Commands.sequence(
                 Commands.runOnce(Subsystems.shooter::runShooter),
                 Commands.parallel(
                         Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(Shooter.BigShotProfile)),
                         Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(Shooter.BigShotProfile)),
                         Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive)
-                ),
-                Commands.runOnce(Subsystems.shooter::runShooter),
-                new WaitCommand(0.25),
-                Subsystems.shooter.shootCmd());
+                ));
+//                Commands.runOnce(Subsystems.shooter::runShooter),
+//                new WaitCommand(0.25),
+//                Subsystems.shooter.shootCmd());
     }
 
-    public static Command fireSubShot() {
+    public static Command prepSubShot() {
         return Commands.sequence(
                 Commands.runOnce(Subsystems.shooter::runShooter),
                 Commands.parallel(
@@ -222,7 +221,7 @@ class PoseCommands {
         );
     }
 
-    public static Command fireShootOverSmiley() {
+    public static Command prepShootOverSmiley() {
         return Commands.sequence(
                 Commands.runOnce(Subsystems.shooter::runShooter),
                 Commands.parallel(
