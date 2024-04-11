@@ -52,7 +52,10 @@ public class SL1toSL3 extends AutoPathStrategy {
                         new EnableShooterCommand()
                 ),
                 new WaitCommand(0.5),
-                Subsystems.shooter.shootCmd(),
+                Subsystems.shooter.shootCmd()
+
+                /*
+                // FIXME: Missing Front2 and Front3 autos in code repository
 
                 //Front 2
                 this.runAutoPath("Front2"),
@@ -76,6 +79,8 @@ public class SL1toSL3 extends AutoPathStrategy {
                 ),
                 new WaitCommand(0.5),
                 Subsystems.shooter.shootCmd()
+
+                 */
         );
     }
 
