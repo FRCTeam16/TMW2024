@@ -458,7 +458,9 @@ public class RobotContainer {
         private Command getShootModeCmd() {
             BSLogger.log("RobotContainer", "Selected ShootModeCmd: " + shootMode);
             return switch (shootMode) {
-                case BigShot -> new FeedAndShootTeleop(Shooter.BigShotProfile);
+                case BigShot -> Subsystems.intake.isNoteDetected() ?
+                        new FeedAndShootTeleop(Shooter.BigShotProfile) :
+                        Subsystems.shooter.shootCmd();
                 case ShootOverSmiley -> Subsystems.shooter.shootCmd();
                 default -> new TeleopShoot();
             };
