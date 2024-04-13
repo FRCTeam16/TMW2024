@@ -79,7 +79,8 @@ public class AutoManager {
         registerStrategy("Tab", AutoStrategies.Tab, Tab::new);
         registerStrategy("DropShot", AutoStrategies.DropShot, DropShot::new);
         // registerStrategy("CrossWing", AutoStrategies.CrossWing, CrossWingShot::new);
-        registerStrategy("Blaze", AutoStrategies.Blaze, Blaze::new);
+        registerStrategy("BlazeBA", AutoStrategies.Blaze, () -> new Blaze(Blaze.BlazeRoute.BlazeBA));
+        registerStrategy("BlazeAB", AutoStrategies.Blaze, () -> new Blaze(Blaze.BlazeRoute.BlazeAB));
         registerStrategy("SL1toSL3", AutoStrategies.SL1toSL3, SL1toSL3::new);
     }
 

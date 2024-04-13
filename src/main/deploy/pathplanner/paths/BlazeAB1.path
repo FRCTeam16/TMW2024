@@ -3,53 +3,53 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.835268612861982,
-        "y": 1.8501874803217224
+        "x": 1.5,
+        "y": 2.184
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.82798441018355,
-        "y": 1.7919138588942665
+        "x": 5.7790592244893455,
+        "y": 1.3257248874746197
       },
-      "isLocked": true,
-      "linkedName": "B1End"
+      "isLocked": false,
+      "linkedName": "BlazeStart"
     },
     {
       "anchor": {
-        "x": 5.305586050391266,
-        "y": 1.69721922407465
+        "x": 8.051730460160123,
+        "y": 0.84
       },
       "prevControl": {
-        "x": 5.9782657868834175,
-        "y": 1.41766400890908
+        "x": 7.978888433375802,
+        "y": 0.881388524090269
       },
       "nextControl": {
-        "x": 4.744702444152004,
-        "y": 1.9303137097844736
+        "x": 8.269093306425248,
+        "y": 0.7164953722991392
       },
-      "isLocked": true,
-      "linkedName": null
+      "isLocked": false,
+      "linkedName": "BlazeLinePickupA"
     },
     {
       "anchor": {
-        "x": 3.717629866493096,
-        "y": 2.891828463337495
+        "x": 6.835268612861982,
+        "y": 1.8501874803217224
       },
       "prevControl": {
-        "x": 4.237763905288232,
-        "y": 2.4762260775808156
+        "x": 7.126636719999261,
+        "y": 1.6316613999687632
       },
       "nextControl": null,
-      "isLocked": true,
-      "linkedName": "BlazeShoot"
+      "isLocked": false,
+      "linkedName": "B1End"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "Feed",
-      "waypointRelativePos": 0.0,
+      "name": "Intake",
+      "waypointRelativePos": 0.05,
       "command": {
         "type": "parallel",
         "data": {
@@ -57,7 +57,7 @@
             {
               "type": "named",
               "data": {
-                "name": "FeedNote"
+                "name": "StartIntake"
               }
             }
           ]
@@ -73,14 +73,14 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -37.0,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "BlazeBA",
+  "folder": "BlazeAB",
   "previewStartingState": {
-    "rotation": 0,
-    "velocity": 1.5
+    "rotation": -70.0,
+    "velocity": 0
   },
   "useDefaultConstraints": false
 }

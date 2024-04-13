@@ -43,21 +43,21 @@
         "x": 8.088299157435786,
         "y": 2.3907270525683697
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "BlazeLinePickupB"
     },
     {
       "anchor": {
-        "x": 6.835268612861982,
-        "y": 1.8501874803217224
+        "x": 7.442643927161524,
+        "y": 2.766381004727943
       },
       "prevControl": {
-        "x": 7.388868016422812,
-        "y": 2.0541451553178174
+        "x": 8.14699508746073,
+        "y": 2.660728330683063
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "B1End"
+      "linkedName": "BlazeBCDecision"
     }
   ],
   "rotationTargets": [
@@ -104,7 +104,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "BlazeBA",
+  "folder": "BlazeBC",
   "previewStartingState": {
     "rotation": -70.0,
     "velocity": 0

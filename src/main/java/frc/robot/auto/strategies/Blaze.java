@@ -19,16 +19,32 @@ import frc.robot.subsystems.util.GameInfo;
 import static edu.wpi.first.units.Units.Degrees;
 
 public class Blaze extends AutoPathStrategy {
-    private final double startAngle = -90;
-    private final double startingAngleOffset = 21; // 90 - 31
     private final Pose2d blueStartPose = new Pose2d(1.4478, 2.184, new Rotation2d(Degrees.of(-90)));
     private final VisionAimManager.ShootingProfile firstShotProfile = new VisionAimManager.ShootingProfile(20.74, 52.5, 52);
     public static final VisionAimManager.ShootingProfile shootingPositionProfile = new VisionAimManager.ShootingProfile(19.4, 56, 56);
 
-    public Blaze() {
+    public enum BlazeRoute {
+        BlazeAB(new RouteNames("BlazeAB", "BlazeAB2", "BlazeAB2a")),
+        BlazeBA(new RouteNames("BlazeBA", "BlazeBA2", "BlazeBA2a")),
+        BlazeBC(new RouteNames("BlazeBC", "BlazeBC2", "BlazeBC2a")),
+        BlazeCB(new RouteNames("BlazeCB", "BlazeCB2", "BlazeCB2a"));
+//        BlazeAC,
+//        BlazeCA;
+
+        private final RouteNames routeNames;
+
+        BlazeRoute(RouteNames routeNames) {
+            this.routeNames = routeNames;
+        }
+    }
+
+    public record RouteNames(String base, String next, String alternate) {}
+
+
+    public Blaze(BlazeRoute route) {
         addCommands(
                 Commands.parallel(
-                        new PrintStartInfo("Blaze"),
+                        new PrintStartInfo("Blaze route: " + route),
                         new InitializeAutoState(Degrees.of(0)),
                         new EnableShooterCommand(),
                         Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive)
@@ -54,27 +70,26 @@ public class Blaze extends AutoPathStrategy {
                 //
                 Commands.parallel(
                         new RotateToAngle(-69)
-                        // new RotateToAngle(GameInfo.isBlueAlliance() ? startAngle - startingAngleOffset : startAngle + startingAngleOffset)
                                 .withThreshold(1).withTimeout(0.5),
                         Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(firstShotProfile)),
                         Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(firstShotProfile)),
                         new WaitCommand(0.25)
                 ).withTimeout(0.5),
-                Tab.doShootCmd(),
+                CommonCommands.doShootCmd(),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive),
 
                 //
                 // First leg to pickup
                 //
-                writeLog("Blaze", "First leg to pickup"),
-                this.runAutoPath("Blaze"),
+                writeLog(route.name(), "First leg to pickup"),
+                this.runAutoPath(route.routeNames.base),
 
                 //
                 // Decision Point
                 //
                 Commands.either(
-                        this.runAutoPath("Blaze2"),
-                        this.runAutoPath("Blaze2a"),
+                        this.runAutoPath(route.routeNames.next),
+                        this.runAutoPath(route.routeNames.alternate),
                         Subsystems.intake::isNoteDetected
                 )
         ); // end addCommands
@@ -82,6 +97,11 @@ public class Blaze extends AutoPathStrategy {
 
 
     public static void registerAutoPaths(PathRegistry pathRegistry) {
-        pathRegistry.registerPaths("Blaze", "Blaze2", "Blaze2a");
+        for(BlazeRoute route : BlazeRoute.values()) {
+            pathRegistry.registerPaths(
+                    route.routeNames.base,
+                    route.routeNames.next,
+                    route.routeNames.alternate);
+        }
     }
 }

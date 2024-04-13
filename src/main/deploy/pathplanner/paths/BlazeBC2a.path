@@ -3,47 +3,47 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.835268612861982,
-        "y": 1.8501874803217224
+        "x": 7.442643927161524,
+        "y": 2.766381004727943
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.840173617503,
-        "y": 1.8549198887099414
+        "x": 7.447548931802542,
+        "y": 2.771113413116162
       },
       "isLocked": true,
-      "linkedName": "B1End"
+      "linkedName": "BlazeBCDecision"
     },
     {
       "anchor": {
-        "x": 8.051730460160123,
-        "y": 0.84
+        "x": 8.082429564433296,
+        "y": 3.87573408219918
       },
       "prevControl": {
-        "x": 8.211982919085624,
-        "y": 0.8472842026784321
+        "x": 8.21923256095317,
+        "y": 3.791955502935071
       },
       "nextControl": {
-        "x": 7.190126196112418,
-        "y": 0.8008361698160124
+        "x": 7.325252067111658,
+        "y": 4.339431929396151
       },
-      "isLocked": false,
-      "linkedName": "BlazeLinePickupA"
+      "isLocked": true,
+      "linkedName": "BlazeLinePickupC"
     },
     {
       "anchor": {
-        "x": 5.291017645034402,
-        "y": 1.4568405356863956
+        "x": 5.493939050333743,
+        "y": 4.116387395301405
       },
       "prevControl": {
-        "x": 6.026722115556032,
-        "y": 0.946946348196157
+        "x": 6.562204976787527,
+        "y": 4.409867045426072
       },
       "nextControl": {
-        "x": 4.531745314655021,
-        "y": 1.9830688834740855
+        "x": 4.6485097682536445,
+        "y": 3.884126603521158
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -52,19 +52,19 @@
         "y": 2.891828463337495
       },
       "prevControl": {
-        "x": 4.28579767541079,
-        "y": 2.2653870329923445
+        "x": 3.9737144626879743,
+        "y": 3.2007308869124484
       },
       "nextControl": null,
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "BlazeShoot"
     }
   ],
   "rotationTargets": [
     {
       "waypointRelativePos": 0.65,
-      "rotationDegrees": -50.0,
-      "rotateFast": false
+      "rotationDegrees": 50.0,
+      "rotateFast": true
     }
   ],
   "constraintZones": [],
@@ -116,7 +116,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "BlazeBA",
+  "folder": "BlazeBC",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 1.5

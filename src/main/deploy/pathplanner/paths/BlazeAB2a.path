@@ -3,61 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.717629866493096,
-        "y": 2.891828463337495
+        "x": 6.835268612861982,
+        "y": 1.8501874803217224
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.3732081075519735,
-        "y": 2.4766289106668715
+        "x": 7.066989975001952,
+        "y": 1.9622467633863585
       },
       "isLocked": false,
-      "linkedName": "BlazeShoot"
+      "linkedName": "B1End"
     },
     {
       "anchor": {
-        "x": 5.7790592244893455,
-        "y": 1.6243771972903311
+        "x": 7.923950553365975,
+        "y": 2.320291936538451
       },
       "prevControl": {
-        "x": 4.992099882713519,
-        "y": 2.027739920608503
+        "x": 7.567152843454185,
+        "y": 2.114447103897035
       },
       "nextControl": {
-        "x": 6.566018566265172,
-        "y": 1.2210144739721605
+        "x": 8.076559971430802,
+        "y": 2.4083358315758505
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "BlazeLinePickupB"
     },
     {
       "anchor": {
-        "x": 8.051730460160123,
-        "y": 0.84
+        "x": 5.124154691176664,
+        "y": 1.8501874803217224
       },
       "prevControl": {
-        "x": 8.171233942577045,
-        "y": 0.8277064551134128
+        "x": 6.506317087474801,
+        "y": 1.267623164526639
       },
       "nextControl": {
-        "x": 7.082931503928669,
-        "y": 0.9396621455177249
-      },
-      "isLocked": false,
-      "linkedName": "BlazeLinePickupA"
-    },
-    {
-      "anchor": {
-        "x": 5.7790592244893455,
-        "y": 1.5005457517569871
-      },
-      "prevControl": {
-        "x": 6.505893668039303,
-        "y": 1.1174843558320096
-      },
-      "nextControl": {
-        "x": 4.7009972280814125,
-        "y": 2.068713560674682
+        "x": 4.4139339378749725,
+        "y": 2.1495367234488825
       },
       "isLocked": false,
       "linkedName": null
@@ -68,49 +52,26 @@
         "y": 2.891828463337495
       },
       "prevControl": {
-        "x": 3.9725769602382157,
-        "y": 2.4474920999531444
+        "x": 4.226106961795187,
+        "y": 2.384857459565878
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "BlazeShoot"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.65,
-      "rotationDegrees": -10.0,
+      "waypointRelativePos": 0.8999999999999999,
+      "rotationDegrees": 18.0,
       "rotateFast": false
     }
   ],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "Feed",
-      "waypointRelativePos": 2.35,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "FeedNote"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "BlazeQueuePivot"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
       "name": "Intake",
-      "waypointRelativePos": 0.2,
+      "waypointRelativePos": 0,
       "command": {
         "type": "parallel",
         "data": {
@@ -119,6 +80,23 @@
               "type": "named",
               "data": {
                 "name": "StartIntake"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 2.0999999999999996,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "FeedNote"
               }
             }
           ]
@@ -138,9 +116,9 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "BlazeBA",
+  "folder": "BlazeAB",
   "previewStartingState": {
-    "rotation": -40.0,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": false

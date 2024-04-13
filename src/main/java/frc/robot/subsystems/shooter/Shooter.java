@@ -4,10 +4,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Subsystems;
@@ -25,8 +22,8 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
     public static final int DEFAULT_VELOCITY_SETPOINT = 25;
     private final DigitalInput noteFeedStop = new DigitalInput(2);
     private final DigitalInput slowFeedSensor = new DigitalInput(3);
-    private final ShooterHelper upper = new ShooterHelper("ShooterSubsystem", "Upper",  new TalonFX(40));
-    private final ShooterHelper lower =  new ShooterHelper("ShooterSubsystem", "Lower", new TalonFX(41));
+    private final ShooterHelper upper = new ShooterHelper("ShooterSubsystem", "Upper", new TalonFX(40));
+    private final ShooterHelper lower = new ShooterHelper("ShooterSubsystem", "Lower", new TalonFX(41));
     private final FeederHelper feeder = new FeederHelper("ShooterSubsystem", "Feeder", new TalonFX(42), noteFeedStop, slowFeedSensor);
     public final VisionAimManager.ShootingProfile BloopProfile =
             new VisionAimManager.ShootingProfile(Pivot.PivotPosition.Horizontal.setpoint, 10, 10);
@@ -39,9 +36,11 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
 
     public static final VisionAimManager.ShootingProfile ShootOverSmileyProfile =
             new VisionAimManager.ShootingProfile(16, 60, 60);
+    private boolean shootWhenReady;
+    private boolean enableShootWhenReady;
 
 
-    public Shooter(){
+    public Shooter() {
         upper.setInvert(true);
     }
 
@@ -75,6 +74,7 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
 
     /**
      * Checks the Shooter upper and lower are at speed
+     *
      * @return
      */
     public boolean isAtSpeed() {
@@ -86,9 +86,9 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     /**
-     *  testing
+     * testing
      */
-    public void runFeeder(){
+    public void runFeeder() {
         feeder.setOpenLoopSetpoint(-0.50);
 //        feeder.setEnabled(true);
     }
@@ -102,7 +102,8 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
     /**
      * Runs the feeder until a note is detected
      */
-    @Deprecated public void feedNote() {
+    @Deprecated
+    public void feedNote() {
         feeder.setSlowFeedMode(false);
         feeder.receiveFromIntake();
     }
@@ -111,9 +112,9 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
         feeder.reverseFeed();
     }
 
-    public static boolean isReadyToShoot(){
-         // Has Target
-        return  RobotContainer.isUseVisionAlignment() &&
+    public static boolean isReadyToShoot() {
+        // Has Target
+        return RobotContainer.isUseVisionAlignment() &&
                 Subsystems.visionSubsystem.hasTarget() &&
                 Subsystems.pivot.isInPosition() &&
                 Subsystems.shooter.isAtSpeed();
@@ -136,7 +137,7 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
     }
 
 
-    public void runShooterOpenLoop(){
+    public void runShooterOpenLoop() {
         upper.setOpenLoop(true);
         lower.setOpenLoop(true);
         upper.setEnabled(true);
@@ -153,6 +154,7 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
         upper.setEnabled(true);
         lower.setEnabled(true);
     }
+
     public void stopShooter() {
         BSLogger.log("Shooter", "stopShooter");
         upper.setOpenLoop(false);
@@ -164,10 +166,16 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
     }
 
     @Override
-    public void periodic(){
+    public void periodic() {
         upper.periodic();
         lower.periodic();
         feeder.periodic();
+
+        if (isShootWhenReady() && isReadyToShoot()) {
+            BSLogger.log("Shooter", "ShootWhenReady scheduling shot");
+            CommandScheduler.getInstance().schedule(this.shootCmd());
+            this.setShootWhenReady(false);
+        }
     }
 
     @Override
@@ -181,10 +189,23 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
             builder.addBooleanProperty("isReadyToShoot", Shooter::isReadyToShoot, null); // good
             builder.addBooleanProperty("isAtSpeed", this::isAtSpeed, null);
             builder.addBooleanProperty("HasTarget", Subsystems.visionSubsystem::hasTarget, null);
+            builder.addBooleanProperty("shootWhenReady", this::isShootWhenReady, this::setShootWhenReady);
+            builder.addBooleanProperty("enableShootWhenReady", () -> enableShootWhenReady, (value) -> enableShootWhenReady = value);
         }
     }
 
     public boolean isEnabled() {
         return feeder.isEnabled() && upper.isEnabled() && lower.isEnabled();
     }
+
+    public void setShootWhenReady(boolean shootWhenReady) {
+        this.shootWhenReady = shootWhenReady;
+    }
+
+    public boolean isShootWhenReady() {
+        return enableShootWhenReady && shootWhenReady;
+    }
+
+
+
 }

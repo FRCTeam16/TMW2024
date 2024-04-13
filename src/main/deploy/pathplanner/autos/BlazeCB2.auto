@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BlazeCB2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BlazeShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BlazeAB3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BlazeShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blaze4"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Blaze",
+  "choreoAuto": false
+}

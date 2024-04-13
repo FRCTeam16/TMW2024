@@ -8,56 +8,56 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.3732081075519735,
-        "y": 2.4766289106668715
+        "x": 4.33762922884256,
+        "y": 3.247687630932395
       },
       "isLocked": false,
       "linkedName": "BlazeShoot"
     },
     {
       "anchor": {
-        "x": 5.7790592244893455,
-        "y": 1.6243771972903311
+        "x": 5.898940967505783,
+        "y": 4.104648209296419
       },
       "prevControl": {
-        "x": 4.992099882713519,
-        "y": 2.027739920608503
+        "x": 4.8071966690420265,
+        "y": 4.0753002442839525
       },
       "nextControl": {
-        "x": 6.566018566265172,
-        "y": 1.2210144739721605
+        "x": 7.470942103521038,
+        "y": 4.146906304350593
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.051730460160123,
-        "y": 0.84
+        "x": 7.882863402348523,
+        "y": 4.104648209296419
       },
       "prevControl": {
-        "x": 8.171233942577045,
-        "y": 0.8277064551134128
+        "x": 8.002679451377203,
+        "y": 4.113384796204761
       },
       "nextControl": {
-        "x": 7.082931503928669,
-        "y": 0.9396621455177249
+        "x": 6.755901545869806,
+        "y": 4.022473907261513
       },
       "isLocked": false,
-      "linkedName": "BlazeLinePickupA"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.7790592244893455,
-        "y": 1.5005457517569871
+        "x": 5.898940967505783,
+        "y": 4.104648209296419
       },
       "prevControl": {
-        "x": 6.505893668039303,
-        "y": 1.1174843558320096
+        "x": 6.491769860757607,
+        "y": 4.128126581306392
       },
       "nextControl": {
-        "x": 4.7009972280814125,
-        "y": 2.068713560674682
+        "x": 4.681276506049814,
+        "y": 4.056423874189253
       },
       "isLocked": false,
       "linkedName": null
@@ -68,8 +68,8 @@
         "y": 2.891828463337495
       },
       "prevControl": {
-        "x": 3.9725769602382157,
-        "y": 2.4474920999531444
+        "x": 4.278933298817627,
+        "y": 3.2124700729174354
       },
       "nextControl": null,
       "isLocked": false,
@@ -78,8 +78,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.65,
-      "rotationDegrees": -10.0,
+      "waypointRelativePos": 1.5,
+      "rotationDegrees": 0.0,
       "rotateFast": false
     }
   ],
@@ -87,7 +87,7 @@
   "eventMarkers": [
     {
       "name": "Feed",
-      "waypointRelativePos": 2.35,
+      "waypointRelativePos": 2.25,
       "command": {
         "type": "parallel",
         "data": {
@@ -138,7 +138,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "BlazeBA",
+  "folder": "BlazeBC",
   "previewStartingState": {
     "rotation": -40.0,
     "velocity": 0

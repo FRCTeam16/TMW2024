@@ -342,22 +342,20 @@ public class RobotContainer {
                 //
                 // Vision Alignment
                 //
-                runVisionAlignAngle.whileTrue(
-                                Commands.parallel(
-                                                Commands.runOnce(() -> useVisionAlignment = true),
-                                                Commands.runOnce(Subsystems.shooter::runShooter),
-                                                Subsystems.poseManager
-                                                                .getPoseCommand(PoseManager.Pose.ShooterAimVision)))
-                                .onFalse(
-                                                Commands.parallel(
-                                                                Commands.runOnce(() -> useVisionAlignment = false),
-                                                                Commands.runOnce(Subsystems.shooter::runShooter), // reset
-                                                                                                                  // to
-                                                                                                                  // default
-                                                                Subsystems.poseManager.getPoseCommand(
-                                                                                PoseManager.Pose.Drive)));
+            runVisionAlignAngle.whileTrue(
+                            Commands.parallel(
+                                    Commands.runOnce(() -> useVisionAlignment = true),
+                                    Commands.runOnce(Subsystems.shooter::runShooter),
+                                    Commands.runOnce(() -> Subsystems.shooter.setShootWhenReady(true)),
+                                    Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShooterAimVision)))
+                    .onFalse(
+                            Commands.parallel(
+                                    Commands.runOnce(() -> Subsystems.shooter.setShootWhenReady(false)),
+                                    Commands.runOnce(() -> useVisionAlignment = false),
+                                    Commands.runOnce(Subsystems.shooter::runShooter), // reset to default
+                                    Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive)));
 
-                //
+            //
                 tryClearNote.or(tryClearNoteJoy)
                         .whileTrue(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.TryClearNote))
                                 .onFalse(Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive));
@@ -392,10 +390,6 @@ public class RobotContainer {
                 unsafeRaiseClimber.onTrue(Commands.runOnce(() -> Subsystems.climber.unsafeOpenLoopDown()))
                                 .onFalse(Commands.runOnce(() -> Subsystems.climber.holdPosition()));
 
-                // climberDown.onTrue(Commands.runOnce(() ->
-                // Subsystems.climber.setClimberPosition(Climber.ClimberPosition.DOWN)));
-                // climberUp.onTrue(Commands.runOnce(() ->
-                // Subsystems.climber.setClimberPosition(Climber.ClimberPosition.UP)));
                 bumpClimberUp.onTrue(Commands.runOnce(() -> Subsystems.climber.bumpSetpoint(0.5))); // TODO: change to a
                                                                                                     // tested number
                 bumpClimberDown.onTrue(Commands.runOnce(() -> Subsystems.climber.bumpSetpoint(-0.5)));

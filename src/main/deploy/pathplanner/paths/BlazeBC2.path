@@ -3,31 +3,31 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.835268612861982,
-        "y": 1.8501874803217224
+        "x": 7.442643927161524,
+        "y": 2.766381004727943
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.82798441018355,
-        "y": 1.7919138588942665
+        "x": 7.435359724483092,
+        "y": 2.708107383300487
       },
-      "isLocked": true,
-      "linkedName": "B1End"
+      "isLocked": false,
+      "linkedName": "BlazeBCDecision"
     },
     {
       "anchor": {
-        "x": 5.305586050391266,
-        "y": 1.69721922407465
+        "x": 5.670026840408543,
+        "y": 1.5572448462143198
       },
       "prevControl": {
-        "x": 5.9782657868834175,
-        "y": 1.41766400890908
+        "x": 6.791310926169752,
+        "y": 1.5364803261076305
       },
       "nextControl": {
-        "x": 4.744702444152004,
-        "y": 1.9303137097844736
+        "x": 4.719152774004625,
+        "y": 1.5748536252218
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": null
     },
     {
@@ -40,7 +40,7 @@
         "y": 2.4762260775808156
       },
       "nextControl": null,
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "BlazeShoot"
     }
   ],
@@ -77,7 +77,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "BlazeBA",
+  "folder": "BlazeBC",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 1.5
