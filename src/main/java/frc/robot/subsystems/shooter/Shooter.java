@@ -36,7 +36,9 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
 
     public static final VisionAimManager.ShootingProfile ShootOverSmileyProfile =
             new VisionAimManager.ShootingProfile(16, 60, 60);
+    // runtime variable about when we are in an autoshoot state
     private boolean shootWhenReady;
+    // whether to use enableshootwhen ready or not
     private boolean enableShootWhenReady;
 
 
@@ -191,6 +193,13 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
             builder.addBooleanProperty("HasTarget", Subsystems.visionSubsystem::hasTarget, null);
             builder.addBooleanProperty("shootWhenReady", this::isShootWhenReady, this::setShootWhenReady);
             builder.addBooleanProperty("enableShootWhenReady", () -> enableShootWhenReady, (value) -> enableShootWhenReady = value);
+
+            if (Constants.Dashboard.ShooterConfigMode) {
+                builder.addDoubleProperty("SetShooterVelocity", upper::getVelocitySetpoint, (v) -> {
+                    lower.setVelocitySetpoint(v);
+                    upper.setVelocitySetpoint(v);
+                });
+            }
         }
     }
 

@@ -34,7 +34,8 @@ public class VisionAimManager {
             final double shooterSpeed = (0.2 * distance) + 24.9;
             // final double angle = 61.1 - (0.409 * distance) + (0.000847 * distance * distance);
             // y = 0.0021x2 - 0.6675x + 70.6
-            final double angle = (distance * distance * .0021) - (0.6675 * distance) + 70.6;
+//            final double angle = (distance * distance * .0021) - (0.6675 * distance) + 70.6;
+            final double angle = (distance * distance * 0.0016) - (0.5811 * distance) + 68.629;
 
 
             VisionAimResult value = new VisionAimResult(targetInfo, new ShootingProfile(angle, shooterSpeed, shooterSpeed));

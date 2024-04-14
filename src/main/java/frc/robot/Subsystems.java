@@ -57,7 +57,7 @@ public class Subsystems {
         swerveSubsystem = TunerConstants.DriveTrain;
         visionSubsystem = new VisionSubsystem(
                 Stream.of(
-                        new VisionTypes.LimelightInfo("limelight", 13.1, 25.71))
+                        new VisionTypes.LimelightInfo("limelight", 12.9275,  26.84))
                         // new VisionTypes.LimelightInfo("notelight", 10, 0))
                         .map(Limelight::new).collect(Collectors.toSet()));
         ledSubsystem = new LEDSubsystem();

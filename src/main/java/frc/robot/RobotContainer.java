@@ -346,8 +346,8 @@ public class RobotContainer {
                             Commands.parallel(
                                     Commands.runOnce(() -> useVisionAlignment = true),
                                     Commands.runOnce(Subsystems.shooter::runShooter),
-                                    Commands.runOnce(() -> Subsystems.shooter.setShootWhenReady(true)),
-                                    Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShooterAimVision)))
+                                    Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShooterAimVision)
+                                            .andThen(Commands.runOnce(() -> Subsystems.shooter.setShootWhenReady(true)))))
                     .onFalse(
                             Commands.parallel(
                                     Commands.runOnce(() -> Subsystems.shooter.setShootWhenReady(false)),
