@@ -50,6 +50,7 @@ public class PoseManager {
         PickupNoTrap,
         PrepareBloopShot,
         ReverseFeed,
+        PrepChainMode,
         EmergencyEject
     }
 
@@ -79,6 +80,7 @@ public class PoseManager {
         registry.put(Pose.SubShot, PoseCommands::prepSubShot);
         registry.put(Pose.TryClearNote, PoseCommands::tryClearNote);
         registry.put(Pose.PrepShootOverSmiley, PoseCommands::prepShootOverSmiley);
+        registry.put(Pose.PrepChainMode, PoseCommands::prepMidChain);
         registry.put(Pose.ReverseFeed, PoseCommands::reverseFeedPose);
         registry.put(Pose.EmergencyEject, PoseCommands::emergencyEject);
     }

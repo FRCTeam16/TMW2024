@@ -230,17 +230,18 @@ class PoseCommands {
                         Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive)
                 )
         );
+    }
 
-        /* changed to just pose
+    public static Command prepMidChain() {
         return Commands.sequence(
                 Commands.runOnce(Subsystems.shooter::runShooter),
                 Commands.parallel(
-                        Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(Shooter.ShootOverSmileyProfile)),
-                        Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(Shooter.ShootOverSmileyProfile)),
+                        Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(Shooter.MidChainProfile)),
+                        Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(Shooter.MidChainProfile)),
                         Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive)
-                ),
-                new WaitCommand(1.5),
-                Subsystems.shooter.shootCmd());
-                */
+                )
+        );
     }
+
+
 }

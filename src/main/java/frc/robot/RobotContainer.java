@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -68,6 +69,7 @@ public class RobotContainer {
         //
         private final JoystickButton intake = new JoystickButton(left, 1);
         private final JoystickButton bigShot = new JoystickButton(left, 2);
+        private final JoystickButton chainShot = new JoystickButton(left, 3);
 
         private final JoystickButton shootOverSmiley = new JoystickButton(left, 4);
 
@@ -149,7 +151,10 @@ public class RobotContainer {
      * The shoot mode to track with the angle to pose the robot at.
      */
     private enum ShootMode {
-            Normal(0), BigShot(-28), ShootOverSmiley(-6);
+            Normal(0),
+            BigShot(-28),
+            ShootOverSmiley(-6),
+            MidChain(-10);
 
             private final double angle;
 
@@ -346,7 +351,8 @@ public class RobotContainer {
                             Commands.parallel(
                                     Commands.runOnce(() -> useVisionAlignment = true),
                                     Commands.runOnce(Subsystems.shooter::runShooter),
-                                    Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShooterAimVision)
+                                    Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ShooterAimVision),
+                                    new WaitCommand(0.1)
                                             .andThen(Commands.runOnce(() -> Subsystems.shooter.setShootWhenReady(true)))))
                     .onFalse(
                             Commands.parallel(
@@ -434,6 +440,13 @@ public class RobotContainer {
                         Commands.sequence(
                                 Commands.runOnce(() -> this.shootMode = ShootMode.ShootOverSmiley),
                                 Subsystems.poseManager.getPoseCommand(Pose.PrepShootOverSmiley)
+                        )
+                ).onFalse(Commands.runOnce(() -> this.shootMode = ShootMode.Normal));
+
+                chainShot.whileTrue(
+                        Commands.sequence(
+                                Commands.runOnce(() -> this.shootMode = ShootMode.MidChain),
+                                Subsystems.poseManager.getPoseCommand(PoseManager.Pose.PrepChainMode)
                         )
                 ).onFalse(Commands.runOnce(() -> this.shootMode = ShootMode.Normal));
 

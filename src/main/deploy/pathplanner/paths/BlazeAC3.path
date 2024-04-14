@@ -1,0 +1,141 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.717629866493096,
+        "y": 2.891828463337495
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.7103456638146644,
+        "y": 2.833554841910039
+      },
+      "isLocked": false,
+      "linkedName": "BlazeShoot"
+    },
+    {
+      "anchor": {
+        "x": 5.006933740575556,
+        "y": 3.8970484329611077
+      },
+      "prevControl": {
+        "x": 4.193315261421249,
+        "y": 3.5463508126359757
+      },
+      "nextControl": {
+        "x": 5.851901251273665,
+        "y": 4.261258566882707
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.978888433375802,
+        "y": 4.064585094565043
+      },
+      "prevControl": {
+        "x": 8.009414454936909,
+        "y": 4.061161577157764
+      },
+      "nextControl": {
+        "x": 7.3076432881041775,
+        "y": 4.139865767311378
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.589669954850113,
+        "y": 4.064585094565043
+      },
+      "prevControl": {
+        "x": 6.744162359864819,
+        "y": 4.3159535573861785
+      },
+      "nextControl": {
+        "x": 4.742693542407437,
+        "y": 3.8801723102827905
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.717629866493096,
+        "y": 2.891828463337495
+      },
+      "prevControl": {
+        "x": 4.744702444152004,
+        "y": 3.780501190106196
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.75,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Feed",
+      "waypointRelativePos": 2.35,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "FeedNote"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.75,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "StartIntake"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.5,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -37.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "BlazeAC",
+  "previewStartingState": {
+    "rotation": -37.0,
+    "velocity": 1.5
+  },
+  "useDefaultConstraints": false
+}

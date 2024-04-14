@@ -1,0 +1,125 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 6.835268612861982,
+        "y": 1.8501874803217224
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.066989975001952,
+        "y": 1.9622467633863585
+      },
+      "isLocked": false,
+      "linkedName": "B1End"
+    },
+    {
+      "anchor": {
+        "x": 8.094168750438282,
+        "y": 3.7759510011567934
+      },
+      "prevControl": {
+        "x": 7.595253345226351,
+        "y": 3.0774694338600885
+      },
+      "nextControl": {
+        "x": 8.196574544218768,
+        "y": 3.9193191124494735
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.016332827555648,
+        "y": 4.081169837286446
+      },
+      "prevControl": {
+        "x": 7.493449355035708,
+        "y": 4.100107228664395
+      },
+      "nextControl": {
+        "x": 5.100676319166691,
+        "y": 4.069430651281459
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.717629866493096,
+        "y": 2.891828463337495
+      },
+      "prevControl": {
+        "x": 4.208498182787707,
+        "y": 3.4237754210071945
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "BlazeShoot"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8999999999999999,
+      "rotationDegrees": 60.0,
+      "rotateFast": true
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "StartIntake"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 1.75,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "FeedNote"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.5,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -37.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "BlazeAC",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}
