@@ -154,7 +154,7 @@ public class RobotContainer {
             Normal(0),
             BigShot(-28),
             ShootOverSmiley(-6),
-            MidChain(-10);
+            MidChain(-15);
 
             private final double angle;
 

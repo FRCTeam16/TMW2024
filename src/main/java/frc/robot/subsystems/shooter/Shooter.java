@@ -38,7 +38,7 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
             new VisionAimManager.ShootingProfile(16, 60, 60);
 
     public static final VisionAimManager.ShootingProfile MidChainProfile =
-            new VisionAimManager.ShootingProfile(16.75, 56.5, 56.5);
+            new VisionAimManager.ShootingProfile(18.75, 52.5, 52.5);
 
     // runtime variable about when we are in an autoshoot state
     private boolean shootWhenReady;

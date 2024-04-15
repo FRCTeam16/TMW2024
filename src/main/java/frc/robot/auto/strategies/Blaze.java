@@ -27,8 +27,8 @@ public class Blaze extends AutoPathStrategy {
         BlazeAB(new RouteNames("BlazeAB", "BlazeAB2", "BlazeAB2a")),
         BlazeBA(new RouteNames("BlazeBA", "BlazeBA2", "BlazeBA2a")),
         BlazeBC(new RouteNames("BlazeBC", "BlazeBC2", "BlazeBC2a")),
-        BlazeCB(new RouteNames("BlazeCB", "BlazeCB2", "BlazeCB2a"));
-//        BlazeAC,
+        BlazeCB(new RouteNames("BlazeCB", "BlazeCB2", "BlazeCB2a")),
+        BlazeAC(new RouteNames("BlazeAC", "BlazeAC2", "BlazeAC2a"));
 //        BlazeCA;
 
         private final RouteNames routeNames;
