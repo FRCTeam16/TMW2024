@@ -3,51 +3,65 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2788871226815193,
-        "y": 5.562647359246215
+        "x": 7.628905257810516,
+        "y": 4.124382094918037
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9112722961537205,
-        "y": 5.562647359246215
+        "x": 6.681678747972882,
+        "y": 4.301987065512593
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "CL3"
     },
     {
       "anchor": {
-        "x": 2.543657469625922,
-        "y": 5.562647359246215
+        "x": 4.165608331216664,
+        "y": 4.913737519782733
       },
       "prevControl": {
-        "x": 1.8644289499705946,
-        "y": 5.574358195791997
+        "x": 4.9549637560813595,
+        "y": 4.183583751782889
       },
       "nextControl": null,
-      "isLocked": true,
-      "linkedName": "Front1End"
+      "isLocked": false,
+      "linkedName": "Shot2"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "PickupNote",
-      "waypointRelativePos": 0.8,
+      "name": "StartShooter",
+      "waypointRelativePos": 0.85,
       "command": {
         "type": "sequential",
         "data": {
-          "commands": []
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "StartShooter"
+              }
+            }
+          ]
         }
       }
     },
     {
-      "name": "Feed",
+      "name": "ShootNote",
       "waypointRelativePos": 1.0,
       "command": {
         "type": "sequential",
         "data": {
-          "commands": []
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "ShootNote"
+              }
+            }
+          ]
         }
       }
     }
@@ -59,12 +73,12 @@
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": 1.2453642667683864,
+    "velocity": 0,
+    "rotation": -15.524110996754223,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Front",
+  "folder": "CL1-CL4",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

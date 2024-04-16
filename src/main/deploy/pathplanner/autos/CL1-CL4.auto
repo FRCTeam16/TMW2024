@@ -1,0 +1,67 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.2153924307848631,
+      "y": 1.785916648756376
+    },
+    "rotation": -4.5511854283026825
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CL1-Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": null
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot-CL2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CL2-Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot-CL3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CL3-Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot-CL4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CL4-Shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "CL1-CL4",
+  "choreoAuto": false
+}
