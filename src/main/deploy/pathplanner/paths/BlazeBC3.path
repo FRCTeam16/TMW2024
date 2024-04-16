@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.717629866493096,
-        "y": 2.891828463337495
+        "x": 3.72,
+        "y": 2.89
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.33762922884256,
-        "y": 3.247687630932395
+        "x": 4.339999362349464,
+        "y": 3.2458591675949005
       },
       "isLocked": false,
       "linkedName": "BlazeShoot"

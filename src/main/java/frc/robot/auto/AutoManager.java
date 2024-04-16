@@ -79,11 +79,11 @@ public class AutoManager {
         registerStrategy("Tab", AutoStrategies.Tab, Tab::new);
         registerStrategy("DropShot", AutoStrategies.DropShot, DropShot::new);
         // registerStrategy("CrossWing", AutoStrategies.CrossWing, CrossWingShot::new);
-        registerStrategy("BlazeBA", AutoStrategies.Blaze, () -> new Blaze(Blaze.BlazeRoute.BlazeBA));
-        registerStrategy("BlazeAB", AutoStrategies.Blaze, () -> new Blaze(Blaze.BlazeRoute.BlazeAB));
-        registerStrategy("BlazeBC", AutoStrategies.Blaze, () -> new Blaze(Blaze.BlazeRoute.BlazeBC));
-        registerStrategy("BlazeCB", AutoStrategies.Blaze, () -> new Blaze(Blaze.BlazeRoute.BlazeCB));
-        registerStrategy("BlazeAC", AutoStrategies.Blaze, () -> new Blaze(Blaze.BlazeRoute.BlazeAC));
+        registerStrategy("BlazeBA", AutoStrategies.BlazeBA, () -> new Blaze(Blaze.BlazeRoute.BlazeBA));
+        registerStrategy("BlazeAB", AutoStrategies.BlazeAB, () -> new Blaze(Blaze.BlazeRoute.BlazeAB));
+        registerStrategy("BlazeBC", AutoStrategies.BlazeBC, () -> new Blaze(Blaze.BlazeRoute.BlazeBC));
+        registerStrategy("BlazeCB", AutoStrategies.BlazeCB, () -> new Blaze(Blaze.BlazeRoute.BlazeCB));
+        registerStrategy("BlazeAC", AutoStrategies.BlazeAC, () -> new Blaze(Blaze.BlazeRoute.BlazeAC));
         registerStrategy("SL1toSL3", AutoStrategies.SL1toSL3, SL1toSL3::new);
     }
 
@@ -199,9 +199,13 @@ public class AutoManager {
         DropShot,
         Tab,
         TabStraight,
-        Blaze, 
         CrossWing,
-        SL1toSL3
+        SL1toSL3,
+        BlazeAB,
+        BlazeBA,
+        BlazeBC,
+        BlazeCB,
+        BlazeAC
     }
 
 }

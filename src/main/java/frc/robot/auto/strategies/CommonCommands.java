@@ -82,16 +82,16 @@ public class CommonCommands {
                 new WaitShooterHasNote().withTimeout(0.5),
                 AutoPathStrategy.writeLog("DoShotCommand", "If shooter has note then we will try shot"),
                 Commands.sequence(
+                        new EnableShooterCommand(),
                         Commands.parallel(
                                 AutoPathStrategy.writeLog("DoShotCommand", "Setting shooter and pivot profiles"),
-                                new EnableShooterCommand(),
                                 Commands.runOnce(() -> Subsystems.shooter.applyShootingProfile(profile)),
                                 Commands.runOnce(() -> Subsystems.pivot.applyShootingProfile(profile))
                         ),
                         Commands.parallel(
                                 new WaitPivotInPosition(),
                                 new WaitShooterAtSpeed(),
-                                new WaitCommand(0.25)
+                                new WaitCommand(0.5)
                         ).withTimeout(0.5),
                         AutoPathStrategy.writeLog("DoShotCommand", "******* WILL BE FIRING NEXT *******"),
 //                        new WaitCommand(0.5),

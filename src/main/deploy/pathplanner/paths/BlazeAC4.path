@@ -3,91 +3,53 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.72,
-        "y": 2.89
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 3.7127157973215685,
-        "y": 2.831726378572544
-      },
-      "isLocked": false,
-      "linkedName": "BlazeShoot"
-    },
-    {
-      "anchor": {
-        "x": 5.006933740575556,
-        "y": 3.8970484329611077
-      },
-      "prevControl": {
-        "x": 4.193315261421249,
-        "y": 3.5463508126359757
-      },
-      "nextControl": {
-        "x": 5.851901251273665,
-        "y": 4.261258566882707
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 7.82,
-        "y": 4.064585094565043
-      },
-      "prevControl": {
-        "x": 7.850526021561107,
-        "y": 4.061161577157764
-      },
-      "nextControl": {
-        "x": 7.1487548547283755,
-        "y": 4.139865767311378
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 4.719152774004625,
-        "y": 4.064585094565043
-      },
-      "prevControl": {
-        "x": 5.456584550059605,
-        "y": 4.254713147996165
-      },
-      "nextControl": {
-        "x": 3.463059871471056,
-        "y": 3.740733443141833
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
         "x": 3.3574071974261765,
         "y": 2.731163446712983
       },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.350122994747745,
+        "y": 2.672889825285527
+      },
+      "isLocked": false,
+      "linkedName": "BlazeAC3End"
+    },
+    {
+      "anchor": {
+        "x": 3.8680617886430944,
+        "y": 1.833115717331506
+      },
       "prevControl": {
-        "x": 3.408056038533789,
-        "y": 3.01071790527547
+        "x": 3.680234812563308,
+        "y": 2.132464960458666
+      },
+      "nextControl": {
+        "x": 4.120154652386265,
+        "y": 1.4313427157408274
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.783718297032052,
+        "y": 1.4926793231868936
+      },
+      "prevControl": {
+        "x": 4.378716379860013,
+        "y": 1.4457225791669472
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "BlazeAC3End"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.75,
-      "rotationDegrees": 0,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Slow Pick",
-      "minWaypointRelativePos": 1.5,
-      "maxWaypointRelativePos": 2.3,
+      "minWaypointRelativePos": 0.4,
+      "maxWaypointRelativePos": 0.65,
       "constraints": {
         "maxVelocity": 2.5,
         "maxAcceleration": 2.0,
@@ -99,7 +61,7 @@
   "eventMarkers": [
     {
       "name": "Feed",
-      "waypointRelativePos": 2.35,
+      "waypointRelativePos": 0.7,
       "command": {
         "type": "parallel",
         "data": {
@@ -116,7 +78,7 @@
     },
     {
       "name": "Intake",
-      "waypointRelativePos": 0.75,
+      "waypointRelativePos": 0.2,
       "command": {
         "type": "parallel",
         "data": {
@@ -133,14 +95,14 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -37.0,
+    "rotation": 3.9451862290374695,
     "rotateFast": false
   },
   "reversed": false,

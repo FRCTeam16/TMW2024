@@ -4,6 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "BlazeAB",
+    "BlazeAC",
     "BlazeBA",
     "BlazeBC",
     "BlazeCB",
@@ -11,6 +12,7 @@
     "DCL_BCL",
     "DropShot",
     "Front",
+    "CLStuff",
     "Tab",
     "Test"
   ],
