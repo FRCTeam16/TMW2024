@@ -151,6 +151,10 @@ public class ShooterHelper implements Sendable {
     }
 
     public boolean isAtSpeed() {
-        return Math.abs(this.motor.getVelocity().getValue()) > 5;
+        return Math.abs(this.motor.getVelocity().getValue()) > 5; 
+    }
+
+    public boolean shooterSpeedIsAccurate() {
+        return Math.abs(this.motor.getVelocity().getValue() - (direction() * velocitySetpoint)) < 2.0;
     }
 }

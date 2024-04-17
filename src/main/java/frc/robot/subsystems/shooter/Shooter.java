@@ -87,6 +87,12 @@ public class Shooter extends SubsystemBase implements Lifecycle, Sendable {
         return upper.isAtSpeed() && lower.isAtSpeed();
     }
 
+    public boolean isShooterAccurate() {
+        return upper.shooterSpeedIsAccurate() && lower.shooterSpeedIsAccurate();
+    }
+
+    
+
     public boolean isFeederAtSpeed() {
         return feeder.isAtSpeed();
     }

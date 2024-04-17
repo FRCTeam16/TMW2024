@@ -49,7 +49,7 @@ public class VisionSubsystem extends SubsystemBase implements Lifecycle {
 
     public boolean hasTarget(){
         TargetInfo info = this.getDefaultLimelight().getTargetInfo();
-        return info.hasTarget() && Math.abs(info.xOffset()) < 2;
+        return info.hasTarget() && Math.abs(info.xOffset()) < 2.5;
     }
 
 }

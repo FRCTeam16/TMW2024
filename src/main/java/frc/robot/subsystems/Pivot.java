@@ -42,6 +42,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     private TrapezoidProfile.State goal = new TrapezoidProfile.State(0, 0);
     private PivotPosition currentPosition = PivotPosition.Up;
     private VisionAimManager.ShootingProfile queuedProfile;
+    private double pivotAngleSetpoint = 0;
 
 
     public Pivot() {
@@ -248,10 +249,11 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
         this.openLoop = false;
         this.currentPosition = PivotPosition.Custom;
         this.setPivotSetpoint(profile.pivotAngle());
+        pivotAngleSetpoint = profile.pivotAngle();
     }
 
     public boolean isInPosition() {
-        return Math.abs(this.getPivotAngleDegrees() - this.getPivotSetpoint()) <= 2;
+        return Math.abs(this.getPivotAngleDegrees() - pivotAngleSetpoint) <= 2;
     }
 
     public void queueNextProfile(VisionAimManager.ShootingProfile profile) {
