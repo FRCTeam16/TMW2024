@@ -28,6 +28,7 @@ import frc.robot.commands.auto.FeedNoteInAuto;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.RotationController;
 import frc.robot.subsystems.pose.ClimbManager;
 import frc.robot.subsystems.pose.PoseManager;
@@ -359,7 +360,7 @@ public class RobotContainer {
                                     Commands.runOnce(() -> Subsystems.shooter.setShootWhenReady(false)),
                                     Commands.runOnce(() -> useVisionAlignment = false),
                                     Commands.runOnce(Subsystems.shooter::runShooter), // reset to default
-                                    Subsystems.poseManager.getPoseCommand(PoseManager.Pose.Drive)));
+                                    Subsystems.pivot.moveToPositionCmd(Pivot.PivotPosition.FeedPosition)));
 
             //
                 tryClearNote.or(tryClearNoteJoy)
