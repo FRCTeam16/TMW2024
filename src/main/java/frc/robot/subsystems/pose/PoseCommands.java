@@ -76,7 +76,7 @@ class PoseCommands {
                 Commands.parallel(
                         new WaitPivotInPosition(),
                         new WaitIntakeInPosition(IntakePivot.IntakePosition.Zero)
-                ).withTimeout(1.0),
+                ).withTimeout(.25),
                 new FeedNoteToShooterCommandVelocity().withTimeout(2.0),
                 Commands.runOnce(Subsystems.shooter::stopFeeder, Subsystems.shooter),
                 Subsystems.poseManager.getPoseCommand(PoseManager.Pose.ReadyToShoot),
