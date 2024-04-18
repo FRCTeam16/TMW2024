@@ -36,7 +36,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
     private final PIDController pid;
     private final VisionAimManager visionAimManager;
     private final DoubleLogEntry setpointLog;
-    private boolean softLimitsEnabled = true;
+    private boolean softLimitsEnabled = false;
     private boolean openLoop = true;
     private double speed = 0.0;
     private TrapezoidProfile.State goal = new TrapezoidProfile.State(0, 0);
@@ -147,7 +147,12 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
      * Returns the angle of the pivoted arm, with 0 degrees at the top
      */
     public double getPivotAngleDegrees() {
-        return -encoder.get() * 360.0;
+        double value = -encoder.get() * 360.0;
+        if (value < 0)
+            value = value + 360;
+        if (value > 360)
+            value = value - 360;
+        return value;
     }
 
     public double getPivotEncoderPosition() {
@@ -293,7 +298,7 @@ public class Pivot extends SubsystemBase implements Lifecycle, Sendable {
 
     private static class EncoderConstants {
 //        static final double ZERO_OFFSET = 0.3285406832135171;
-        static final double ZERO_OFFSET = 0.380;
+        static final double ZERO_OFFSET = 0.18;
         static final double MIN_ANGLE = -1.0;
         static final double MAX_ANGLE = 81.75;      // 0.12004950300123758
     }
