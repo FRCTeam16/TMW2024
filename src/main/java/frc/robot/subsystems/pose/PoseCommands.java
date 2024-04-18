@@ -197,7 +197,7 @@ class PoseCommands {
                         Subsystems.trap.moveToStateCmd(Trap.TrapState.Drive)
                 ),
                 Commands.runOnce(Subsystems.shooter::runShooter),
-                new WaitCommand(0.5),
+                new WaitCommand(0.25),
                 Subsystems.shooter.shootCmd());
     }
 
