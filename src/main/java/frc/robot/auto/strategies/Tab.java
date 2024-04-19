@@ -22,8 +22,8 @@ public class Tab extends AutoPathStrategy {
 
     public static final VisionAimManager.ShootingProfile TabStraightFirst = new VisionAimManager.ShootingProfile(41.5, 30, 26); // 87"
     public static final VisionAimManager.ShootingProfile SecondShot = new VisionAimManager.ShootingProfile(40.0, 30, 26); // 87"
-    public static final VisionAimManager.ShootingProfile ThirdShot = new VisionAimManager.ShootingProfile(38, 37, 37); // 55"
-    public static final VisionAimManager.ShootingProfile ForthShot = new VisionAimManager.ShootingProfile(23.6, 46, 46); // 76.5"
+    public static final VisionAimManager.ShootingProfile ThirdShot = new VisionAimManager.ShootingProfile(45, 37, 37); // 55"
+    public static final VisionAimManager.ShootingProfile ForthShot = new VisionAimManager.ShootingProfile(28, 46, 46); // 76.5"
     public static final VisionAimManager.ShootingProfile FifthShot = new VisionAimManager.ShootingProfile(31.5, 45, 32); // 98.8"
     private final Pose2d blueStraightStartPose = new Pose2d(1.28, 4.79, Rotation2d.fromDegrees(0));
 

@@ -31,7 +31,13 @@ public class VisionAimManager {
         VisionTypes.TargetInfo targetInfo = limelight.getTargetInfo();
         if (targetInfo.hasTarget()) {
             final double distance = targetInfo.calculateDistance();
-            final double shooterSpeed = (0.2 * distance) + 24.9;
+            
+            double shooterSpeed = (0.2 * distance) + 24.9;
+
+            if(distance < 100) {
+                shooterSpeed = .7 * shooterSpeed;
+            }
+
             // final double angle = 61.1 - (0.409 * distance) + (0.000847 * distance * distance);
             // y = 0.0021x2 - 0.6675x + 70.6
 //            final double angle = (distance * distance * .0021) - (0.6675 * distance) + 70.6;
