@@ -36,12 +36,12 @@
         "y": 2.28
       },
       "prevControl": {
-        "x": 8.211560610488148,
-        "y": 2.426739825062333
+        "x": 8.21156281366127,
+        "y": 2.426735506762934
       },
       "nextControl": {
-        "x": 7.056427164173767,
-        "y": 1.837386025922342
+        "x": 7.056420518703045,
+        "y": 1.8373990512865028
       },
       "isLocked": false,
       "linkedName": "BlazeLinePickupB"
@@ -138,7 +138,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "BlazeAB",
+  "folder": "BlazeCB",
   "previewStartingState": {
     "rotation": -40.0,
     "velocity": 0

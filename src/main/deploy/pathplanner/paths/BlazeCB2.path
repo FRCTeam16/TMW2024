@@ -33,15 +33,15 @@
     {
       "anchor": {
         "x": 3.72,
-        "y": 2.89
+        "y": 2.82
       },
       "prevControl": {
-        "x": 4.445652036394344,
-        "y": 3.1754240515649808
+        "x": 4.445659165042942,
+        "y": 3.105405927275886
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "BlazeShoot"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
