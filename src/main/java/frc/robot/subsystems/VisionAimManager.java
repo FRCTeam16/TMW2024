@@ -35,7 +35,7 @@ public class VisionAimManager {
             double shooterSpeed = (0.2 * distance) + 24.9;
 
             if(distance < 100) {
-                shooterSpeed = .7 * shooterSpeed;
+                shooterSpeed = .8 * shooterSpeed;
             }
 
             // final double angle = 61.1 - (0.409 * distance) + (0.000847 * distance * distance);

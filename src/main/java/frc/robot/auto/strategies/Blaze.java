@@ -20,8 +20,8 @@ import static edu.wpi.first.units.Units.Degrees;
 
 public class Blaze extends AutoPathStrategy {
     private final Pose2d blueStartPose = new Pose2d(1.4478, 2.184, new Rotation2d(Degrees.of(-90)));
-    private final VisionAimManager.ShootingProfile firstShotProfile = new VisionAimManager.ShootingProfile(20.74, 52.5, 52);
-    public static final VisionAimManager.ShootingProfile shootingPositionProfile = new VisionAimManager.ShootingProfile(16.5, 56, 56);
+    private final VisionAimManager.ShootingProfile firstShotProfile = new VisionAimManager.ShootingProfile(19, 52.5, 52);
+    public static final VisionAimManager.ShootingProfile shootingPositionProfile = new VisionAimManager.ShootingProfile(16.5, 50, 50);
 
     public enum BlazeRoute {
         BlazeAB(new RouteNames("BlazeAB", "BlazeAB2", "BlazeAB2a")),
